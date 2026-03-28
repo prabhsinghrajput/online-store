@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Search, X, ShoppingCart, LogOut, ChevronDown, User, Package, Settings, LogIn, Heart } from "lucide-react";
-import { useCart } from "../context/CartContext";
-import { useWishlist } from "../context/WishlistContext";
-import { supabase } from "../lib/supabase";
+import { useCart } from "../../context/CartContext";
+import { useWishlist } from "../../context/WishlistContext";
+import { supabase } from "../../lib/supabase";
 
 const Navbar = ({ user }) => {
   const { state, dispatch } = useCart();

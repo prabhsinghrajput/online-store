@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { Package, Search, ShoppingBag, Clock, CheckCircle, Truck, XCircle } from 'lucide-react';
+import { Package, Search, ShoppingBag, Clock, CheckCircle, Truck, XCircle, Star, ChevronRight } from 'lucide-react';
 import { supabase } from '../lib/supabase';
+import { useNavigate } from 'react-router-dom';
 
 const Orders = () => {
+  const navigate = useNavigate();
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
@@ -11,13 +13,29 @@ const Orders = () => {
   useEffect(() => {
     const fetchOrders = async () => {
       try {
-        const user = JSON.parse(localStorage.getItem('user') || '{}');
-        if (!user.email) { setLoading(false); return; }
+        let currentUserEmail = null;
+        
+        // 1. Try to get user from Supabase Session
+        const { data: { user } } = await supabase.auth.getUser();
+        if (user?.email) {
+          currentUserEmail = user.email;
+        } else {
+          // 2. Fallback to localStorage (for development or legacy auth)
+          const localUser = JSON.parse(localStorage.getItem('user') || '{}');
+          if (localUser.email) {
+            currentUserEmail = localUser.email;
+          }
+        }
+
+        if (!currentUserEmail) {
+          setLoading(false);
+          return;
+        }
 
         const { data, error } = await supabase
           .from('orders')
           .select('*, order_items(*)')
-          .eq('user_email', user.email)
+          .eq('user_email', currentUserEmail)
           .order('created_at', { ascending: false });
 
         if (error) throw error;
@@ -93,7 +111,11 @@ const Orders = () => {
               const StatusIcon = config.icon;
 
               return (
-                <div key={order.id} className="bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-md transition-all">
+                <div 
+                  key={order.id} 
+                  onClick={() => navigate(`/orders/${order.id}`)}
+                  className="bg-white rounded-2xl border border-gray-100 overflow-hidden hover:shadow-md transition-all cursor-pointer group/card"
+                >
                   {/* Order Header */}
                   <div className="p-4 flex items-center justify-between">
                     <div>
@@ -109,17 +131,30 @@ const Orders = () => {
                   </div>
 
                   {/* Items */}
-                  <div className="px-4 pb-3 space-y-2">
+                  <div className="px-4 pb-3 space-y-3">
                     {order.order_items?.map((item, i) => (
-                      <div key={i} className="flex items-center gap-3 bg-gray-50 rounded-xl p-2">
+                      <div 
+                        key={i} 
+                        className="flex items-start gap-4 p-2 -mx-2 hover:bg-gray-50 rounded-xl transition-colors cursor-pointer group"
+                      >
                         {item.product_image && (
-                          <img src={item.product_image} alt={item.product_name} className="w-12 h-12 object-contain rounded-lg bg-white p-1" />
+                          <div className="w-16 h-16 bg-white border border-gray-100 rounded-xl p-2 flex-shrink-0">
+                            <img src={item.product_image} alt={item.product_name} className="w-full h-full object-contain mix-blend-multiply" />
+                          </div>
                         )}
-                        <div className="flex-1 min-w-0">
-                          <p className="text-xs font-semibold text-gray-700 line-clamp-1">{item.product_name}</p>
-                          <p className="text-[10px] text-gray-400">Qty: {item.quantity}{item.weight ? ` • ${item.weight}` : ''}</p>
+                        <div className="flex-1 min-w-0 py-1">
+                          <div className="flex justify-between items-start gap-2">
+                             <div>
+                                <h4 className="text-sm font-bold text-gray-900 line-clamp-2 group-hover:text-primary transition-colors">
+                                    {item.product_name}
+                                </h4>
+                                <p className="text-xs text-gray-500 mt-1">
+                                    Qty: {item.quantity} {item.weight && `• ${item.weight}`}
+                                </p>
+                             </div>
+                             <span className="text-sm font-bold text-gray-900">₹{item.price * item.quantity}</span>
+                          </div>
                         </div>
-                        <span className="text-xs font-bold text-gray-700">₹{item.price * item.quantity}</span>
                       </div>
                     ))}
                   </div>

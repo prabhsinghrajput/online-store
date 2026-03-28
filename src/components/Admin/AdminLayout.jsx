@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom';
-import { Package, ShoppingBag, Plus, ArrowLeft, Menu, X, LayoutGrid, ImageIcon } from 'lucide-react';
+import { Package, ShoppingBag, Plus, ArrowLeft, Menu, X, LayoutGrid, ImageIcon, BarChart2 } from 'lucide-react';
 
 const AdminLayout = () => {
     const location = useLocation();
@@ -8,6 +8,7 @@ const AdminLayout = () => {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
 
     const navItems = [
+        { icon: BarChart2, label: 'Dashboard', path: '/admin/dashboard' },
         { icon: Package, label: 'Products', path: '/admin/products' },
         { icon: Plus, label: 'Add Product', path: '/admin/products/new' },
         { icon: LayoutGrid, label: 'Categories', path: '/admin/categories' },

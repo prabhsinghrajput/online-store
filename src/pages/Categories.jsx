@@ -100,6 +100,30 @@ const Categories = () => {
     <div className="min-h-screen bg-gray-50/50">
       <div className="max-w-7xl mx-auto px-4 py-5 space-y-8">
 
+        {/* Top Categories Strip */}
+        <div className="overflow-x-auto pb-2 [&::-webkit-scrollbar]:hidden [-ms-overflow-style:none] [scrollbar-width:none]">
+          <div className="flex items-start gap-4 sm:gap-8 min-w-max mx-auto md:mx-0 px-2">
+            {categories.map((category, i) => (
+              <Link 
+                key={category.id} 
+                to={`/category/${category.id}`}
+                className="group flex flex-col items-center gap-2 min-w-[64px]"
+              >
+                <div className="w-16 h-16 sm:w-20 sm:h-20 flex items-center justify-center group-hover:scale-110 transition-all duration-300">
+                  <img
+                    src={category.image}
+                    alt={category.name}
+                    className="w-full h-full object-contain drop-shadow-sm"
+                  />
+                </div>
+                <span className="text-xs sm:text-sm font-semibold text-gray-700 group-hover:text-primary text-center whitespace-nowrap">
+                  {category.name}
+                </span>
+              </Link>
+            ))}
+          </div>
+        </div>
+
         {/* Hero Banner */}
         <div className="relative rounded-3xl overflow-hidden shadow-xl bg-gray-900 h-[220px] sm:h-[280px] md:h-[360px]">
           <AnimatePresence mode="wait">
@@ -159,45 +183,8 @@ const Categories = () => {
           </div>
         </div>
 
-        {/* Categories */}
-        <div>
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-2">
-              <div className="w-1 h-6 bg-primary rounded-full" />
-              <h2 className="text-lg font-bold text-gray-800">Shop by Category</h2>
-            </div>
-            <Link to="/products" className="text-xs font-semibold text-gray-900 hover:underline flex items-center gap-0.5">
-              View All <ChevronRight size={14} />
-            </Link>
-          </div>
+        {/* Categories - Removed and moved to top */}
 
-          <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 gap-3 sm:gap-4">
-            {categories.map((category, i) => (
-              <motion.div
-                key={category.id}
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: i * 0.03, duration: 0.3 }}
-              >
-                <Link
-                  to={`/category/${category.id}`}
-                  className="group flex flex-col items-center"
-                >
-                  <div className="w-full aspect-square max-w-[110px] bg-white rounded-2xl border border-gray-100 p-3 flex items-center justify-center shadow-sm group-hover:shadow-md group-hover:border-gray-900 group-hover:-translate-y-1 transition-all duration-300">
-                    <img
-                      src={category.image}
-                      alt={category.name}
-                      className="w-full h-full object-contain group-hover:scale-110 transition-transform duration-300"
-                    />
-                  </div>
-                  <p className="text-[11px] sm:text-xs font-semibold text-gray-600 group-hover:text-primary text-center mt-2 transition-colors line-clamp-2">
-                    {category.name}
-                  </p>
-                </Link>
-              </motion.div>
-            ))}
-          </div>
-        </div>
 
         {/* Product Sections by Category */}
         <div className="space-y-8">

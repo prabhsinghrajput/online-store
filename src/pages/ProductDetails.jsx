@@ -5,6 +5,7 @@ import { useCart } from "../context/CartContext";
 import { useWishlist } from "../context/WishlistContext";
 import { supabase } from "../lib/supabase";
 import { motion } from "framer-motion";
+import Reviews from "../components/common/Reviews";
 
 const ProductDetails = () => {
   const { id } = useParams();
@@ -90,7 +91,7 @@ const ProductDetails = () => {
           Back
         </button>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-14">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-14 mb-12">
           {/* Image */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
@@ -249,6 +250,9 @@ const ProductDetails = () => {
             </div>
           </motion.div>
         </div>
+
+        {/* Reviews Section */}
+        {product && <Reviews productId={product.id} />}
       </div>
     </div>
   );

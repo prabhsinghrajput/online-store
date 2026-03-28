@@ -1,9 +1,9 @@
 // components/Cart.jsx
 import React, { useState, useEffect } from 'react';
 import { X, Clock, Info, Plus, MapPin, Package, ChevronDown, Navigation } from 'lucide-react';
-import { useCart } from '../context/CartContext';
+import { useCart } from '../../context/CartContext';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '../lib/supabase';
+import { supabase } from '../../lib/supabase';
 
 // Add predefined societies
 const AVAILABLE_SOCIETIES = [
