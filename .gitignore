@@ -23,7 +23,33 @@ dist-ssr
 *.sln
 *.sw?
 
-# local env files
+# Environment variables - NEVER commit these
 .env
 .env.*
 .env.local
+.env.production
+.env.development
+!.env.example
+
+# Supabase
+.supabase
+.supabase_*
+
+# Build files
+build
+.cache
+
+# OS files
+Thumbs.db
+.DS_Store
+
+# IDE
+.vscode
+.idea
+*.swp
+*.swo
+*~
+
+# Testing
+coverage
+.nyc_output
