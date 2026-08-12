@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Plus, Edit, Trash2, Search, ImageIcon, AlertCircle } from 'lucide-react';
+import { Plus, Edit, Trash2, ImageIcon, AlertCircle } from 'lucide-react';
 import api from '../../lib/api';
 
 const BannerList = () => {
@@ -77,7 +77,7 @@ const BannerList = () => {
                 </div>
                 <Link
                     to="/admin/banners/new"
-                    className="inline-flex items-center gap-2 bg-gray-800 hover:bg-gray-700 text-white px-5 py-2.5 rounded-xl text-sm font-semibold shadow-lg shadow-gray-400/20 hover:shadow-xl hover:shadow-gray-400/30 hover:-translate-y-0.5 transition-all"
+                    className="inline-flex items-center gap-2 bg-black hover:bg-neutral-900 text-white dark:bg-white dark:hover:bg-neutral-100 dark:text-black px-5 py-2.5 rounded-xl text-sm font-bold shadow-md hover:-translate-y-0.5 transition-all"
                 >
                     <Plus size={18} />
                     Add Banner

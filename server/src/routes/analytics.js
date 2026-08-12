@@ -1,25 +1,28 @@
 import { Router } from 'express';
-import { supabaseAdmin } from '../db/supabase.js';
+import { Order } from '../models/Order.js';
+import { Product } from '../models/Product.js';
+import { Category } from '../models/Category.js';
 import { authenticateUser, requireAdmin } from '../middleware/auth.js';
 
 const router = Router();
 
 router.get('/', authenticateUser, requireAdmin, async (req, res) => {
   try {
-    const { data: orders, error: ordersError } = await supabaseAdmin
-      .from('orders')
-      .select('*, order_items(*)')
-      .order('created_at', { ascending: false });
+    const orders = await Order.find().sort({ created_at: -1 });
+    const products = await Product.find();
+    const categories = await Category.find();
 
-    if (ordersError) throw ordersError;
+    const categoriesById = new Map(categories.map(c => [c._id, c]));
 
-    const { data: products, error: productsError } = await supabaseAdmin
-      .from('products')
-      .select('*, category:categories(*)');
+    const populatedProducts = products.map(p => {
+      const copy = { ...p };
+      if (p.category_id && categoriesById.has(p.category_id)) {
+        copy.category = categoriesById.get(p.category_id);
+      }
+      return copy;
+    });
 
-    if (productsError) throw productsError;
-
-    res.json({ orders: orders || [], products: products || [] });
+    res.json({ orders: orders || [], products: populatedProducts || [] });
   } catch (error) {
     res.status(500).json({ error: error.message });
   }

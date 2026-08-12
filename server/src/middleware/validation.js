@@ -4,32 +4,27 @@ import { z } from 'zod';
  * Validation schemas for different entities
  */
 
-// Product validation schema
 export const productSchema = z.object({
   id: z.string().uuid().optional(),
   name: z.string().min(1, 'Product name is required').max(255, 'Product name too long').trim(),
-  description: z.string().max(5000, 'Description too long').optional(),
+  description: z.string().max(5000, 'Description too long').or(z.literal('')).nullable().optional(),
   price: z.number().positive('Price must be positive').finite(),
-  discounted_price: z.number().positive('Discounted price must be positive').finite().optional(),
-  category_id: z.string().uuid('Invalid category ID').optional(),
-  image: z.string().url('Invalid image URL').max(2048, 'Image URL too long').optional(),
-  images: z.array(z.string().url('Invalid image URL')).max(10, 'Too many images').optional(),
-  weight: z.string().max(100, 'Weight description too long').optional(),
+  discounted_price: z.number().positive('Discounted price must be positive').finite().nullable().optional(),
+  category_id: z.string().uuid('Invalid category ID').or(z.literal('')).nullable().optional(),
+  image: z.string().url('Invalid image URL').max(2048, 'Image URL too long').or(z.literal('')).nullable().optional(),
+  brand: z.string().max(255, 'Brand too long').or(z.literal('')).nullable().optional(),
+  key_benefits: z.string().max(5000, 'Key benefits too long').or(z.literal('')).nullable().optional(),
+  usage_instructions: z.string().max(5000, 'Usage instructions too long').or(z.literal('')).nullable().optional(),
+  weight: z.string().max(100, 'Weight description too long').or(z.literal('')).nullable().optional(),
+  colors: z.array(z.string()).optional(),
   stock: z.number().int('Stock must be integer').min(0, 'Stock cannot be negative').default(0),
-  featured: z.boolean().default(false),
-  status: z.enum(['active', 'inactive', 'out_of_stock']).default('active'),
 }).strict();
 
 // Category validation schema
 export const categorySchema = z.object({
   id: z.string().uuid().optional(),
   name: z.string().min(1, 'Category name is required').max(255, 'Category name too long').trim(),
-  description: z.string().max(1000, 'Description too long').optional(),
-  image: z.string().url('Invalid image URL').max(2048, 'Image URL too long').optional(),
-  slug: z.string().max(255, 'Slug too long').optional(),
-  parent_id: z.string().uuid().optional(),
-  order: z.number().int().min(0).optional(),
-  featured: z.boolean().default(false),
+  image: z.string().url('Invalid image URL').max(2048, 'Image URL too long').or(z.literal('')).optional(),
 }).strict();
 
 // Order validation schema
@@ -62,20 +57,16 @@ export const bannerSchema = z.object({
   id: z.string().uuid().optional(),
   title: z.string().min(1, 'Title required').max(255).trim(),
   description: z.string().max(500).optional(),
+  buttonText: z.string().max(100).optional(),
   image: z.string().url('Invalid image URL').max(2048),
-  link: z.string().url('Invalid link URL').max(2048).optional(),
-  position: z.enum(['home', 'category', 'product']).default('home'),
-  order: z.number().int().min(0).optional(),
   active: z.boolean().default(true),
-  start_date: z.string().datetime().optional(),
-  end_date: z.string().datetime().optional(),
 }).strict();
 
 // File upload validation schema
 export const fileUploadSchema = z.object({
   bucket: z.enum(['products', 'categories', 'banners', 'documents']).default('products'),
-  folder: z.string().max(100, 'Folder name too long').regex(/^[a-zA-Z0-9\-_\/]+$/, 'Invalid folder name').optional().default(''),
-}).strict();
+  folder: z.string().max(100, 'Folder name too long').regex(/^[a-zA-Z0-9\-_\/]*$/, 'Invalid folder name').optional().default(''),
+});
 
 /**
  * Validation middleware factory
@@ -100,7 +91,7 @@ export const validate = (schema, source = 'body') => {
       if (error instanceof z.ZodError) {
         return res.status(400).json({
           error: 'Validation failed',
-          details: error.errors.map(e => ({
+          details: error.issues.map(e => ({
             field: e.path.join('.'),
             message: e.message
           }))
@@ -109,32 +100,4 @@ export const validate = (schema, source = 'body') => {
       next(error);
     }
   };
-};
-
-/**
- * Sanitization helpers
- */
-export const sanitizeString = (str) => {
-  if (typeof str !== 'string') return str;
-  // Remove potentially dangerous characters
-  return str
-    .replace(/[<>]/g, '') // Remove < and >
-    .trim();
-};
-
-export const sanitizeObject = (obj) => {
-  if (!obj || typeof obj !== 'object') return obj;
-  const sanitized = {};
-  for (const [key, value] of Object.entries(obj)) {
-    if (typeof value === 'string') {
-      sanitized[key] = sanitizeString(value);
-    } else if (Array.isArray(value)) {
-      sanitized[key] = value.map(sanitizeString);
-    } else if (typeof value === 'object') {
-      sanitized[key] = sanitizeObject(value);
-    } else {
-      sanitized[key] = value;
-    }
-  }
-  return sanitized;
 };

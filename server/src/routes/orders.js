@@ -1,25 +1,20 @@
 import { Router } from 'express';
-import { supabaseAdmin } from '../db/supabase.js';
-import { authenticateUser, optionalAuth } from '../middleware/auth.js';
+import { Order } from '../models/Order.js';
+import { authenticateUser } from '../middleware/auth.js';
 import { validate, orderSchema } from '../middleware/validation.js';
 
 const router = Router();
 
+const isAdminEmail = (email) => {
+  return (process.env.ADMIN_EMAILS || '').split(',').map(e => e.trim()).includes(email);
+};
+
 router.get('/', authenticateUser, async (req, res) => {
   try {
-    const isAdmin = process.env.ADMIN_EMAILS?.split(',').map(e => e.trim()).includes(req.user.email);
+    const isAdmin = isAdminEmail(req.user.email) || req.user.isAdmin;
 
-    let query = supabaseAdmin
-      .from('orders')
-      .select('*, order_items(*)')
-      .order('created_at', { ascending: false });
-
-    if (!isAdmin) {
-      query = query.eq('user_email', req.user.email);
-    }
-
-    const { data, error } = await query;
-    if (error) throw error;
+    const filter = isAdmin ? {} : { user_email: req.user.email };
+    const data = await Order.find(filter).sort({ created_at: -1 });
     res.json(data || []);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch orders' });
@@ -28,15 +23,10 @@ router.get('/', authenticateUser, async (req, res) => {
 
 router.get('/:id', authenticateUser, async (req, res) => {
   try {
-    const { data, error } = await supabaseAdmin
-      .from('orders')
-      .select('*, order_items(*)')
-      .eq('id', req.params.id)
-      .single();
-    if (error) throw error;
+    const data = await Order.findById(req.params.id);
     if (!data) return res.status(404).json({ error: 'Order not found' });
 
-    const isAdmin = process.env.ADMIN_EMAILS?.split(',').map(e => e.trim()).includes(req.user.email);
+    const isAdmin = isAdminEmail(req.user.email) || req.user.isAdmin;
     if (!isAdmin && data.user_email !== req.user.email) {
       return res.status(403).json({ error: 'Forbidden' });
     }
@@ -51,23 +41,8 @@ router.post('/', authenticateUser, validate(orderSchema), async (req, res) => {
   try {
     const { items, shipping_address, customer_name, customer_phone, total_amount } = req.body;
 
-    const { data: orderData, error: orderError } = await supabaseAdmin
-      .from('orders')
-      .insert([{
-        user_email: req.user.email,
-        customer_name,
-        customer_phone,
-        shipping_address,
-        total_amount,
-        status: 'pending',
-      }])
-      .select()
-      .single();
-
-    if (orderError) throw orderError;
-
     const orderItems = items.map(item => ({
-      order_id: orderData.id,
+      product_id: item.product_id || null,
       product_name: item.name,
       product_image: item.image || '',
       quantity: item.quantity,
@@ -75,13 +50,17 @@ router.post('/', authenticateUser, validate(orderSchema), async (req, res) => {
       weight: item.weight || '',
     }));
 
-    const { error: itemsError } = await supabaseAdmin
-      .from('order_items')
-      .insert(orderItems);
+    const order = await Order.create({
+      user_email: req.user.email,
+      customer_name,
+      customer_phone,
+      shipping_address,
+      total_amount,
+      status: 'pending',
+      items: orderItems,
+    });
 
-    if (itemsError) throw itemsError;
-
-    res.status(201).json(orderData);
+    res.status(201).json(order.toObject());
   } catch (error) {
     res.status(500).json({ error: 'Failed to create order' });
   }
@@ -89,7 +68,7 @@ router.post('/', authenticateUser, validate(orderSchema), async (req, res) => {
 
 router.put('/:id/status', authenticateUser, async (req, res) => {
   try {
-    const isAdmin = process.env.ADMIN_EMAILS?.split(',').map(e => e.trim()).includes(req.user.email);
+    const isAdmin = isAdminEmail(req.user.email) || req.user.isAdmin;
     if (!isAdmin) {
       return res.status(403).json({ error: 'Forbidden' });
     }
@@ -99,13 +78,8 @@ router.put('/:id/status', authenticateUser, async (req, res) => {
       return res.status(400).json({ error: 'Invalid status' });
     }
 
-    const { data, error } = await supabaseAdmin
-      .from('orders')
-      .update({ status })
-      .eq('id', req.params.id)
-      .select()
-      .single();
-    if (error) throw error;
+    const data = await Order.findByIdAndUpdate(req.params.id, { status }, { new: true, runValidators: true });
+    if (!data) return res.status(404).json({ error: 'Order not found' });
     res.json(data);
   } catch (error) {
     res.status(500).json({ error: 'Failed to update order status' });

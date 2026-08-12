@@ -22,20 +22,10 @@ const AdminLayout = () => {
             <div className="sticky top-0 z-20 bg-white/80 backdrop-blur-xl border-b border-gray-200/60">
                 <div className="max-w-7xl mx-auto px-4 md:px-6 py-3 flex items-center justify-between">
                     <div className="flex items-center gap-3">
-                        <button
-                            onClick={() => navigate('/')}
-                            className="w-9 h-9 flex items-center justify-center rounded-xl hover:bg-gray-100 text-gray-500 transition-colors"
-                        >
-                            <ArrowLeft size={18} />
-                        </button>
                         <div className="flex items-center gap-2.5">
                             <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                                <LayoutGrid size={16} className="text-white" />
-                            </div>
-                            <div>
-                                <h1 className="text-sm font-bold text-gray-800">Admin Panel</h1>
-                                <p className="text-[10px] text-gray-400 -mt-0.5">Fuel Supplements</p>
-                            </div>
+                                <LayoutGrid size={16} className="text-inverse" />
+                            </div>  
                         </div>
                     </div>
 

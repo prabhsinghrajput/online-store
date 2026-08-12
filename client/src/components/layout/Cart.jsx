@@ -1,6 +1,6 @@
 // components/Cart.jsx
 import React, { useState, useEffect } from 'react';
-import { X, Clock, Info, Plus, MapPin, Package, ChevronDown, Navigation } from 'lucide-react';
+import { X, Info, Plus, MapPin, Package, ChevronDown, Navigation } from 'lucide-react';
 import { useCart } from '../../context/CartContext';
 import { useNavigate } from 'react-router-dom';
 import api from '../../lib/api';
@@ -131,6 +131,7 @@ const Cart = ({ user }) => {
           address: selectedAddress,
           items: [...state.items],
           totalAmount: grandTotal,
+          orderDate: new Date().toISOString(),
           orderEmail: user.email,
         }
       });
@@ -324,7 +325,7 @@ const Cart = ({ user }) => {
                           <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center flex-shrink-0 mt-0.5 ${selectedAddress?.id === address.id ? 'border-primary bg-primary' : 'border-gray-300'
                             }`}>
                             {selectedAddress?.id === address.id && (
-                              <svg className="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 20 20">
+                              <svg className="w-3 h-3 text-inverse" fill="currentColor" viewBox="0 0 20 20">
                                 <path fillRule="evenodd" d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z" clipRule="evenodd" />
                               </svg>
                             )}
@@ -333,7 +334,7 @@ const Cart = ({ user }) => {
                             <div className="flex items-center justify-between">
                               <p className="font-semibold text-sm text-gray-800">{address.name}</p>
                               {selectedAddress?.id === address.id && (
-                                <span className="text-[10px] bg-primary text-white px-2 py-0.5 rounded-full font-bold tracking-wide">
+                                <span className="text-[10px] bg-primary text-inverse px-2 py-0.5 rounded-full font-bold tracking-wide">
                                   SELECTED
                                 </span>
                               )}
@@ -405,7 +406,7 @@ const Cart = ({ user }) => {
                         </button>
                         <button
                           onClick={handleAddAddress}
-                          className="flex-1 bg-primary text-white py-2.5 rounded-xl hover:opacity-90 transition-all disabled:bg-gray-200 disabled:text-gray-400 text-sm font-semibold"
+                          className="flex-1 bg-primary text-inverse py-2.5 rounded-xl hover:opacity-90 transition-all disabled:bg-gray-200 disabled:text-gray-400 text-sm font-semibold"
                           disabled={!newAddress.flatNo || !newAddress.society || !newAddress.name || newAddress.phone.length !== 10}
                         >
                           Save Address
@@ -459,8 +460,8 @@ const Cart = ({ user }) => {
               disabled={!selectedAddress || !isOrderValid}
               onClick={handlePlaceOrder}
               className={`w-full py-3.5 rounded-2xl flex items-center justify-between px-5 font-semibold transition-all duration-300 ${selectedAddress && isOrderValid
-                ? 'bg-gradient-to-r from-green-600 to-emerald-600 text-white shadow-lg shadow-green-200 hover:shadow-xl hover:shadow-green-300 hover:-translate-y-0.5'
-                : !user ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'bg-gray-100 text-gray-400 cursor-not-allowed'
+                ? 'bg-gradient-to-r from-green-600 to-emerald-600 text-inverse shadow-lg shadow-green-200 hover:shadow-xl hover:shadow-green-300 hover:-translate-y-0.5'
+                : !user ? 'bg-primary text-inverse shadow-lg shadow-primary/20' : 'bg-gray-100 text-gray-400 cursor-not-allowed'
                 }`}
             >
               <span className="text-lg">₹{grandTotal}</span>
@@ -536,7 +537,7 @@ const Cart = ({ user }) => {
               </button>
               <button
                 onClick={requestLocation}
-                className="flex-1 px-4 py-2.5 bg-primary text-white rounded-xl text-sm font-semibold hover:opacity-90 transition-all"
+                className="flex-1 px-4 py-2.5 bg-primary text-inverse rounded-xl text-sm font-semibold hover:opacity-90 transition-all"
               >
                 Allow
               </button>

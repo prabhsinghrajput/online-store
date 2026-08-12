@@ -1,53 +1,66 @@
 import React, { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { supabase } from '../lib/supabase';
-import { FcGoogle } from "react-icons/fc";
+import { useNavigate, useLocation } from "react-router-dom";
+import { login, register, getSession } from '../lib/auth';
 import { motion } from "framer-motion";
-import { Sparkles, ShieldCheck } from "lucide-react";
+import { Sparkles, ShieldCheck, Mail, Lock } from "lucide-react";
 
 const Login = () => {
   const navigate = useNavigate();
+  const location = useLocation();
+  const [mode, setMode] = useState('signin'); // 'signin' | 'signup'
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
+  const [message, setMessage] = useState("");
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    // Properly validate session with Supabase instead of checking localStorage
+    // Properly validate session before showing the login form
     const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
+      const { data: { session } } = await getSession();
       if (session) {
         navigate("/");
       }
     };
     checkSession();
-  }, [navigate]);
 
-  const handleGoogleSignIn = async () => {
+    // Show any error passed back from a redirect
+    const params = new URLSearchParams(location.search);
+    const errorParam = params.get('error');
+    if (errorParam) {
+      setError(errorParam);
+      params.delete('error');
+      const newSearch = params.toString();
+      navigate(`${location.pathname}${newSearch ? `?${newSearch}` : ''}`, { replace: true });
+    }
+  }, [navigate, location.pathname, location.search]);
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     try {
       setIsLoading(true);
       setError("");
+      setMessage("");
 
-      // Store current path for redirect after auth
-      sessionStorage.setItem('redirectPath', window.location.hash.replace('#', '') || '/');
-
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: {
-          redirectTo: `${window.location.origin}/#/auth/callback`,
-          queryParams: {
-            access_type: 'offline',
-            prompt: 'consent',
-          }
-        }
-      });
-
-      if (error) throw error;
-      // Note: Redirect is handled by Supabase, so we don't need to navigate explicitly here
-      // unless we want to handle failures before redirect.
-    } catch (error) {
-      console.error("Supabase Sign-In Error:", error);
-      setError(error.message || "Failed to sign in with Google");
+      if (mode === 'signup') {
+        await register(email, password);
+        navigate("/");
+      } else {
+        await login(email, password);
+        navigate("/");
+      }
+    } catch (err) {
+      console.error("Auth error:", err);
+      setError(err.message || "Authentication failed");
+    } finally {
       setIsLoading(false);
     }
+  };
+
+  const toggleMode = () => {
+    setError("");
+    setMessage("");
+    setMode(mode === 'signin' ? 'signup' : 'signin');
   };
 
   return (
@@ -73,14 +86,18 @@ const Login = () => {
             className="flex justify-center mb-6"
           >
             <div className="w-20 h-20 bg-gradient-to-br from-primary/10 to-blue-500/10 rounded-2xl flex items-center justify-center">
-              <img src="/logo.png" alt="Fuel Supplements" className="w-14 h-14 object-contain" />
+              <img src="https://res.cloudinary.com/dwfalgx6c/image/upload/v1786181989/cross_logo_xlumhw.webp" alt="Cross" className="w-14 h-14 object-contain" />
             </div>
           </motion.div>
 
           {/* Heading */}
           <div className="text-center mb-8">
-            <h1 className="text-2xl font-bold text-gray-800 mb-1">Welcome Back</h1>
-            <p className="text-sm text-gray-400">Sign in to continue with Fuel Supplements</p>
+            <h1 className="text-2xl font-bold text-gray-800 mb-1">
+              {mode === 'signin' ? 'Welcome Back' : 'Create Account'}
+            </h1>
+            <p className="text-sm text-gray-400">
+              {mode === 'signin' ? 'Sign in to continue with Cross' : 'Sign up to start shopping with Cross'}
+            </p>
           </div>
 
           {/* Error */}
@@ -97,20 +114,79 @@ const Login = () => {
             </motion.div>
           )}
 
-          {/* Google Button */}
-          <motion.button
-            onClick={handleGoogleSignIn}
-            disabled={isLoading}
-            className="w-full flex items-center justify-center gap-3 px-5 py-3.5 bg-white border-2 border-gray-200 rounded-2xl text-gray-700 text-sm font-semibold hover:border-primary/30 hover:shadow-lg hover:-translate-y-0.5 active:translate-y-0 transition-all disabled:opacity-60"
-            whileTap={{ scale: 0.98 }}
+          {/* Success message */}
+          {message && (
+            <motion.div
+              initial={{ opacity: 0, y: -8 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="mb-5 flex items-center gap-2 text-sm text-green-700 bg-green-50 border border-green-100 px-4 py-3 rounded-xl"
+            >
+              <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
+                <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+              </svg>
+              <span className="line-clamp-3">{message}</span>
+            </motion.div>
+          )}
+
+          {/* Auth Form */}
+          <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Email</label>
+              <div className="relative">
+                <Mail size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="you@example.com"
+                  required
+                  className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all"
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-xs font-semibold text-gray-500 uppercase tracking-wide mb-1.5">Password</label>
+              <div className="relative">
+                <Lock size={16} className="absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400" />
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder={mode === 'signup' ? 'At least 6 characters' : 'Your password'}
+                  required
+                  minLength={6}
+                  className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all"
+                />
+              </div>
+            </div>
+
+            <motion.button
+              type="submit"
+              disabled={isLoading}
+              className="w-full flex items-center justify-center gap-3 px-5 py-3.5 bg-primary text-inverse rounded-2xl text-sm font-semibold hover:opacity-90 hover:-translate-y-0.5 active:translate-y-0 transition-all disabled:opacity-60 shadow-lg shadow-primary/20"
+              whileTap={{ scale: 0.98 }}
+            >
+              {isLoading ? (
+                <div className="w-5 h-5 border-2 border-inverse/40 border-t-inverse rounded-full animate-spin" />
+              ) : (
+                <Sparkles size={18} />
+              )}
+              {isLoading
+                ? (mode === 'signin' ? 'Signing in...' : 'Creating account...')
+                : (mode === 'signin' ? 'Sign In' : 'Create Account')}
+            </motion.button>
+          </form>
+
+          {/* Mode toggle */}
+          <button
+            onClick={toggleMode}
+            className="mt-4 w-full text-center text-sm text-gray-500 hover:text-primary transition-colors"
           >
-            {isLoading ? (
-              <div className="w-5 h-5 border-2 border-gray-300 border-t-primary rounded-full animate-spin" />
-            ) : (
-              <FcGoogle size={22} />
-            )}
-            {isLoading ? 'Signing in...' : 'Continue with Google'}
-          </motion.button>
+            {mode === 'signin'
+              ? <>Don't have an account? <span className="text-primary font-semibold">Sign Up</span></>
+              : <>Already have an account? <span className="text-primary font-semibold">Sign In</span></>}
+          </button>
 
           {/* Features */}
           <div className="mt-6 flex items-center justify-center gap-6 text-[11px] text-gray-400">

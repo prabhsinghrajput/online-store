@@ -1,1 +1,114 @@
 @import "tailwindcss";
+
+@custom-variant dark (&:where(.dark, .dark *));
+
+@theme {
+  --color-primary: #4f46e5;
+}
+
+/* Global Dark Mode Overrides - Pure Black Theme */
+html.dark body {
+  background-color: #000000 !important;
+  color: #f3f4f6 !important;
+}
+
+html.dark .bg-white {
+  background-color: #000000 !important; /* dark card background */
+}
+
+html.dark .bg-white\/80 {
+  background-color: rgba(0, 0, 0, 0.8) !important;
+}
+
+html.dark .bg-white\/90 {
+  background-color: rgba(0, 0, 0, 0.9) !important;
+}
+
+html.dark .bg-white\/95 {
+  background-color: rgba(0, 0, 0, 0.95) !important;
+}
+
+html.dark .bg-\[\#f9f9fa\] {
+  background-color: #000000 !important; /* dark app background */
+}
+
+html.dark .bg-gray-55 {
+  background-color: #000000 !important;
+}
+
+html.dark .bg-gray-50 {
+  background-color: #000000 !important;
+}
+
+html.dark .bg-gray-50\/50 {
+  background-color: #000000 !important;
+}
+
+html.dark .bg-gray-50\/60 {
+  background-color: #000000 !important;
+}
+
+html.dark .bg-gray-100 {
+  background-color: #121212 !important; /* dark card items/inputs */
+}
+
+html.dark .bg-gray-100\/80 {
+  background-color: rgba(18, 18, 18, 0.8) !important;
+}
+
+/* Border Overrides */
+html.dark .border-gray-100 {
+  border-color: #1a1a1a !important;
+}
+
+html.dark .border-gray-200 {
+  border-color: #1a1a1a !important;
+}
+
+html.dark .border-gray-200\/60 {
+  border-color: rgba(26, 26, 26, 0.6) !important;
+}
+
+/* Text Overrides */
+html.dark .text-gray-900 {
+  color: #f3f4f6 !important;
+}
+
+html.dark .text-gray-950 {
+  color: #ffffff !important;
+}
+
+html.dark .text-gray-800 {
+  color: #e5e7eb !important;
+}
+
+html.dark .text-gray-700 {
+  color: #d1d5db !important;
+}
+
+html.dark .text-gray-650,
+html.dark .text-gray-600 {
+  color: #9ca3af !important;
+}
+
+html.dark .text-gray-500 {
+  color: #9ca3af !important;
+}
+
+html.dark .text-gray-400 {
+  color: #8b8b8b !important;
+}
+
+/* Input overrides */
+html.dark input, 
+html.dark select, 
+html.dark textarea {
+  background-color: #121212 !important;
+  color: #f3f4f6 !important;
+  border-color: #222222 !important;
+}
+
+html.dark input::placeholder, 
+html.dark textarea::placeholder {
+  color: #666666 !important;
+}

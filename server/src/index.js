@@ -1,8 +1,11 @@
 import 'dotenv/config';
+import path from 'path';
+import { fileURLToPath } from 'url';
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
+import { connectDB } from './db/mongo.js';
 
 import productsRouter from './routes/products.js';
 import categoriesRouter from './routes/categories.js';
@@ -12,12 +15,14 @@ import bannersRouter from './routes/banners.js';
 import authRouter from './routes/auth.js';
 import analyticsRouter from './routes/analytics.js';
 import uploadRouter from './routes/upload.js';
-import adminRouter from './routes/admin.js';
-import { attachRole } from './middleware/roles.js';
 import { errorHandler } from './middleware/errorHandler.js';
 
 const app = express();
 const PORT = process.env.PORT || 3001;
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const UPLOADS_DIR = path.join(__dirname, '..', 'uploads');
 
 // Security headers
 app.use(helmet({
@@ -27,8 +32,8 @@ app.use(helmet({
       defaultSrc: ["'self'"],
       styleSrc: ["'self'", "'unsafe-inline'"],
       scriptSrc: ["'self'"],
-      imgSrc: ["'self'", "data:", "https:"],
-      connectSrc: ["'self'"],
+      imgSrc: ["'self'", "data:", "http:", "https:"],
+      connectSrc: ["'self'", "http:"],
       fontSrc: ["'self'"],
       objectSrc: ["'none'"],
       mediaSrc: ["'self'"],
@@ -37,24 +42,14 @@ app.use(helmet({
   },
 }));
 
-// Rate limiting - 100 requests per 15 minutes per IP
+// Rate limiting - 100 requests per 15 minutes per IP (increased in development)
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 100 requests per windowMs
+  max: process.env.NODE_ENV === 'production' ? 100 : 10000, // Limit each IP to 100 requests per windowMs in production, 10000 in dev
   message: { error: 'Too many requests from this IP, please try again later.' },
   standardHeaders: true,
   legacyHeaders: false,
 });
-
-// Stricter rate limiting for auth endpoints
-const authLimiter = rateLimit({
-  windowMs: 15 * 60 * 1000,
-  max: 5, // 5 requests per 15 minutes for auth
-  message: { error: 'Too many auth attempts, please try again later.' },
-});
-
-// Apply rate limiting to all API routes
-app.use('/api', limiter);
 
 // CORS configuration
 const allowedOrigins = process.env.CLIENT_ORIGIN
@@ -77,15 +72,18 @@ app.use(cors({
   allowedHeaders: ['Content-Type', 'Authorization'],
 }));
 
+// Apply rate limiting to all API routes
+app.use('/api', limiter);
+
 // Body parser with reduced size limit (was 10mb, now 100kb)
 app.use(express.json({ limit: '100kb' }));
 app.use(express.urlencoded({ limit: '100kb', extended: true }));
 
-// Attach role to all authenticated requests
-app.use('/api', attachRole);
+// Serve uploaded files
+app.use('/uploads', express.static(UPLOADS_DIR));
 
 // API routes
-app.use('/api/auth', authLimiter, authRouter);
+app.use('/api/auth', authRouter);
 app.use('/api/products', productsRouter);
 app.use('/api/categories', categoriesRouter);
 app.use('/api/orders', ordersRouter);
@@ -93,19 +91,16 @@ app.use('/api/reviews', reviewsRouter);
 app.use('/api/banners', bannersRouter);
 app.use('/api/analytics', analyticsRouter);
 app.use('/api/upload', uploadRouter);
-app.use('/api/admin', adminRouter);
-
-// Health check
-app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', timestamp: new Date().toISOString() });
-});
 
 // Error handling middleware (must be last)
 app.use(errorHandler);
 
 // Start server
-app.listen(PORT, () => {
-  console.log(`Server running on http://localhost:${PORT}`);
-  console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`Allowed origins: ${allowedOrigins.join(', ')}`);
+connectDB().then(() => {
+  app.listen(PORT, () => {
+    console.log(`Server running on http://localhost:${PORT}`);
+    console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+    console.log(`Allowed origins: ${allowedOrigins.join(', ')}`);
+  });
 });
+// Trigger restart to pick up free port 3001

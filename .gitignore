@@ -38,6 +38,8 @@ dist-ssr
 # Build files
 build
 .cache
+.vite
+uploads
 
 # OS files
 Thumbs.db

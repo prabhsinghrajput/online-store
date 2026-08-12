@@ -4,13 +4,17 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Fuel Supplements</title>
+    <title>Cross</title>
     <script>
       // Check for redirect
       const redirectPath = sessionStorage.getItem('redirectPath');
       if (redirectPath) {
         sessionStorage.removeItem('redirectPath');
         window.history.replaceState(null, '', redirectPath);
+      }
+      // Apply saved theme before paint to avoid flash
+      if (localStorage.getItem('theme') === 'dark') {
+        document.documentElement.classList.add('dark');
       }
     </script>
   </head>

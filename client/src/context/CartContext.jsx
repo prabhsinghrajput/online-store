@@ -4,7 +4,6 @@ const CartContext = createContext();
 
 const initialState = {
   items: [],
-  orders: [],
   isOpen: false
 };
 
@@ -101,8 +100,7 @@ export const CartProvider = ({ children }) => {
     state,
     dispatch,
     isOpen: state.isOpen,
-    items: state.items,
-    totalItems: state.items.reduce((sum, item) => sum + item.quantity, 0)
+    items: state.items
   };
 
   return (

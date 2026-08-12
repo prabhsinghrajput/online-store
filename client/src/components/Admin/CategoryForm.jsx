@@ -5,7 +5,15 @@ import api from '../../lib/api';
 
 const CategoryForm = () => {
     const navigate = useNavigate();
-    const { id } = useParams();
+    const params = useParams();
+    const wildcard = params['*'] || '';
+    let id = params.id;
+    if (!id && wildcard) {
+        const parts = wildcard.split('/');
+        if (parts[0] === 'categories' && parts[2] === 'edit') {
+            id = parts[1];
+        }
+    }
     const isEditMode = !!id;
 
     const [loading, setLoading] = useState(false);
@@ -124,7 +132,7 @@ const CategoryForm = () => {
                                         e.preventDefault();
                                         setFormData(prev => ({ ...prev, image: '' }));
                                     }}
-                                    className="absolute top-2 right-2 w-7 h-7 bg-red-500 text-white rounded-lg flex items-center justify-center hover:bg-red-600 z-10 shadow-md"
+                                    className="absolute top-2 right-2 w-7 h-7 bg-red-500 text-inverse rounded-lg flex items-center justify-center hover:bg-red-600 z-10 shadow-md"
                                 >
                                     <X size={14} />
                                 </button>
@@ -166,7 +174,7 @@ const CategoryForm = () => {
                     <button
                         type="submit"
                         disabled={loading || uploading}
-                        className="inline-flex items-center gap-2 bg-gray-800 hover:bg-gray-700 text-white px-6 py-2.5 rounded-xl text-sm font-semibold shadow-lg shadow-gray-400/20 hover:shadow-xl hover:shadow-gray-400/30 hover:-translate-y-0.5 transition-all disabled:opacity-50"
+                        className="inline-flex items-center gap-2 bg-black hover:bg-neutral-900 text-white dark:bg-white dark:hover:bg-neutral-100 dark:text-black px-6 py-2.5 rounded-xl text-sm font-bold shadow-lg hover:-translate-y-0.5 transition-all disabled:opacity-50"
                     >
                         <Save size={16} />
                         {loading ? 'Saving...' : isEditMode ? 'Update Category' : 'Save Category'}

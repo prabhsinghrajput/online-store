@@ -9,8 +9,7 @@ import {
   BarChart2,
   Package,
   ArrowUpRight,
-  ArrowDownRight,
-  Calendar
+  ArrowDownRight
 } from 'lucide-react';
 
 const AnalyticsDashboard = () => {
@@ -21,7 +20,7 @@ const AnalyticsDashboard = () => {
   const [productMap, setProductMap] = useState({});
   
   // Filter States
-  const [dateRange, setDateRange] = useState('7d'); // '7d', '30d', '6m', 'custom'
+  const [dateRange, setDateRange] = useState('6m'); // '7d', '30d', '6m', 'custom'
   const [customStart, setCustomStart] = useState('');
   const [customEnd, setCustomEnd] = useState('');
   
@@ -75,14 +74,18 @@ const AnalyticsDashboard = () => {
     const now = new Date();
     let startDate = new Date();
     let endDate = new Date(); 
+    endDate.setHours(23, 59, 59, 999);
     let groupBy = 'day'; // 'day' or 'month'
 
     if (dateRange === '7d') {
       startDate.setDate(now.getDate() - 7);
+      startDate.setHours(0, 0, 0, 0);
     } else if (dateRange === '30d') {
       startDate.setDate(now.getDate() - 30);
+      startDate.setHours(0, 0, 0, 0);
     } else if (dateRange === '6m') {
       startDate.setMonth(now.getMonth() - 6);
+      startDate.setHours(0, 0, 0, 0);
       groupBy = 'month';
     } else if (dateRange === 'custom') {
       if (!customStart) {
@@ -286,7 +289,7 @@ const AnalyticsDashboard = () => {
           icon={DollarSign} 
           trend={dateRange === '7d' ? "+-" : null} 
           trendUp={true}
-          color="bg-emerald-50 text-emerald-600"
+          color="bg-emerald-50 dark:bg-emerald-955/20 text-emerald-650 dark:text-emerald-400"
         />
         <StatCard 
           title="Total Orders" 
@@ -294,7 +297,7 @@ const AnalyticsDashboard = () => {
           icon={ShoppingBag} 
           trend={null} 
           trendUp={true}
-          color="bg-blue-50 text-blue-600"
+          color="bg-blue-50 dark:bg-blue-955/20 text-blue-600 dark:text-blue-400"
         />
          <StatCard 
           title="Avg. Order Value" 
@@ -302,7 +305,7 @@ const AnalyticsDashboard = () => {
           icon={Target} 
           trend={null} 
           trendUp={false}
-          color="bg-purple-50 text-purple-600"
+          color="bg-purple-50 dark:bg-purple-955/20 text-purple-650 dark:text-purple-400"
         />
         <StatCard 
           title="Total Customers" 
@@ -310,7 +313,7 @@ const AnalyticsDashboard = () => {
           icon={Users} 
           trend={null}
           trendUp={true}
-          color="bg-amber-50 text-amber-600"
+          color="bg-amber-50 dark:bg-amber-955/20 text-amber-600 dark:text-amber-400"
         />
       </div>
 
@@ -461,21 +464,25 @@ const AnalyticsDashboard = () => {
 };
 
 const StatCard = ({ title, value, icon: Icon, trend, trendUp, color }) => (
-  <div className="bg-white p-5 rounded-2xl border border-gray-100 shadow-sm hover:shadow-md transition-shadow">
+  <div className="bg-white dark:bg-zinc-955 p-6 rounded-3xl border border-gray-100 dark:border-neutral-900 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-305 group">
     <div className="flex items-start justify-between mb-4">
-      <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${color}`}>
-        <Icon size={20} />
+      <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-105 duration-300 ${color} shadow-sm`}>
+        <Icon size={22} className="stroke-[2]" />
       </div>
       {trend && (
-        <div className={`flex items-center gap-1 text-xs font-semibold px-2 py-1 rounded-full ${trendUp ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}`}>
-          {trendUp ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
+        <div className={`flex items-center gap-1 text-[11px] font-extrabold px-2.5 py-1 rounded-full shadow-sm ${
+          trendUp 
+            ? 'bg-green-50 dark:bg-green-955/20 text-green-600 dark:text-green-400 border border-green-100 dark:border-green-900/30' 
+            : 'bg-red-50 dark:bg-red-955/20 text-red-600 dark:text-red-400 border border-red-100 dark:border-red-900/30'
+        }`}>
+          {trendUp ? <ArrowUpRight size={12} className="stroke-[2.5]" /> : <ArrowDownRight size={12} className="stroke-[2.5]" />}
           {trend}
         </div>
       )}
     </div>
-    <div>
-      <p className="text-xs font-medium text-gray-400 uppercase tracking-wider mb-1">{title}</p>
-      <h3 className="text-2xl font-bold text-gray-900">{value}</h3>
+    <div className="space-y-1">
+      <p className="text-[10px] font-black text-gray-400 dark:text-neutral-500 uppercase tracking-widest">{title}</p>
+      <h3 className="text-3xl font-black text-gray-900 dark:text-white tracking-tight">{value}</h3>
     </div>
   </div>
 );

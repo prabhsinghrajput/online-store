@@ -1,31 +1,22 @@
 import { Router } from 'express';
-import { supabaseAdmin } from '../db/supabase.js';
-import { authenticateUser, requireAdmin, optionalAuth } from '../middleware/auth.js';
+import { Product } from '../models/Product.js';
+import { authenticateUser, requireAdmin } from '../middleware/auth.js';
 import { validate, productSchema } from '../middleware/validation.js';
 
 const router = Router();
 
 router.get('/', async (req, res) => {
   try {
-    const { data, error } = await supabaseAdmin
-      .from('products')
-      .select('*')
-      .order('created_at', { ascending: false });
-    if (error) throw error;
+    const data = await Product.find().sort({ created_at: -1 });
     res.json(data || []);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch products' });
   }
 });
 
-router.get('/:id', validate(productSchema.partial(), 'params'), async (req, res) => {
+router.get('/:id', validate(productSchema.partial().pick({ id: true }), 'params'), async (req, res) => {
   try {
-    const { data, error } = await supabaseAdmin
-      .from('products')
-      .select('*')
-      .eq('id', req.params.id)
-      .single();
-    if (error) throw error;
+    const data = await Product.findById(req.params.id);
     if (!data) return res.status(404).json({ error: 'Product not found' });
     res.json(data);
   } catch (error) {
@@ -35,27 +26,17 @@ router.get('/:id', validate(productSchema.partial(), 'params'), async (req, res)
 
 router.post('/', authenticateUser, requireAdmin, validate(productSchema), async (req, res) => {
   try {
-    const { data, error } = await supabaseAdmin
-      .from('products')
-      .insert([req.body])
-      .select()
-      .single();
-    if (error) throw error;
-    res.status(201).json(data);
+    const data = await Product.create(req.body);
+    res.status(201).json(data.toObject());
   } catch (error) {
     res.status(500).json({ error: 'Failed to create product' });
   }
 });
 
-router.put('/:id', authenticateUser, requireAdmin, validate(productSchema.partial(), 'params'), validate(productSchema.partial()), async (req, res) => {
+router.put('/:id', authenticateUser, requireAdmin, validate(productSchema.partial().pick({ id: true }), 'params'), validate(productSchema.partial()), async (req, res) => {
   try {
-    const { data, error } = await supabaseAdmin
-      .from('products')
-      .update(req.body)
-      .eq('id', req.params.id)
-      .select()
-      .single();
-    if (error) throw error;
+    const data = await Product.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
+    if (!data) return res.status(404).json({ error: 'Product not found' });
     res.json(data);
   } catch (error) {
     res.status(500).json({ error: 'Failed to update product' });
@@ -64,11 +45,8 @@ router.put('/:id', authenticateUser, requireAdmin, validate(productSchema.partia
 
 router.delete('/:id', authenticateUser, requireAdmin, validate(productSchema.partial().pick({ id: true }), 'params'), async (req, res) => {
   try {
-    const { error } = await supabaseAdmin
-      .from('products')
-      .delete()
-      .eq('id', req.params.id);
-    if (error) throw error;
+    const result = await Product.findByIdAndDelete(req.params.id);
+    if (!result) return res.status(404).json({ error: 'Product not found' });
     res.json({ success: true });
   } catch (error) {
     res.status(500).json({ error: 'Failed to delete product' });

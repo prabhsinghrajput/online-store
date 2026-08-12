@@ -53,27 +53,30 @@ const AdminOrders = () => {
 
     // Stats
     const stats = [
-        { label: 'Total', value: orders.length, color: 'bg-gray-100 text-gray-700' },
-        { label: 'Pending', value: orders.filter(o => o.status === 'pending').length, color: 'bg-amber-50 text-amber-700' },
-        { label: 'Shipped', value: orders.filter(o => o.status === 'shipped').length, color: 'bg-blue-50 text-blue-700' },
-        { label: 'Delivered', value: orders.filter(o => o.status === 'delivered').length, color: 'bg-green-50 text-green-700' },
+        { label: 'Total Orders', value: orders.length, icon: ShoppingBag, color: 'bg-gray-50 dark:bg-neutral-900 text-gray-700 dark:text-neutral-400' },
+        { label: 'Pending Orders', value: orders.filter(o => o.status === 'pending').length, icon: Clock, color: 'bg-amber-50 dark:bg-amber-955/20 text-amber-600 dark:text-amber-400' },
+        { label: 'Shipped Orders', value: orders.filter(o => o.status === 'shipped').length, icon: Truck, color: 'bg-blue-50 dark:bg-blue-955/20 text-blue-600 dark:text-blue-400' },
+        { label: 'Delivered Orders', value: orders.filter(o => o.status === 'delivered').length, icon: CheckCircle, color: 'bg-green-50 dark:bg-green-955/20 text-green-600 dark:text-green-400' },
     ];
 
     return (
         <div className="space-y-6">
             {/* Header */}
             <div>
-                <h2 className="text-2xl font-bold text-gray-800">Orders</h2>
+                <h2 className="text-2xl font-bold text-gray-800 dark:text-white">Orders</h2>
                 <p className="text-sm text-gray-400 mt-0.5">Manage and track customer orders</p>
             </div>
 
             {/* Stats */}
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
                 {stats.map((stat) => (
-                    <div key={stat.label} className={`${stat.color} rounded-2xl p-4 text-center`}>
-                        <p className="text-2xl font-bold">{stat.value}</p>
-                        <p className="text-xs font-medium opacity-70 mt-0.5">{stat.label}</p>
-                    </div>
+                    <StatCard 
+                        key={stat.label}
+                        title={stat.label}
+                        value={stat.value}
+                        icon={stat.icon}
+                        color={stat.color}
+                    />
                 ))}
             </div>
 
@@ -172,9 +175,9 @@ const AdminOrders = () => {
                                                                         e.stopPropagation();
                                                                         updateStatus(order.id, status);
                                                                     }}
-                                                                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium border transition-all capitalize ${order.status === status
-                                                                            ? 'bg-gray-800 text-white border-gray-800 shadow-sm'
-                                                                            : 'bg-white text-gray-600 border-gray-200 hover:border-gray-300 hover:bg-gray-50'
+                                                                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold border transition-all capitalize ${order.status === status
+                                                                            ? 'bg-black text-white border-black dark:bg-white dark:text-black dark:border-white shadow-sm'
+                                                                            : 'bg-white dark:bg-zinc-950 text-gray-600 dark:text-neutral-400 border-gray-200 dark:border-neutral-800 hover:border-gray-350 dark:hover:border-neutral-700 hover:bg-gray-50'
                                                                         }`}
                                                                 >
                                                                     <Icon size={12} />
@@ -196,5 +199,19 @@ const AdminOrders = () => {
         </div>
     );
 };
+
+const StatCard = ({ title, value, icon: Icon, color }) => (
+  <div className="bg-white dark:bg-zinc-955 p-6 rounded-3xl border border-gray-100 dark:border-neutral-900 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-305 group">
+    <div className="flex items-start justify-between mb-4">
+      <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-105 duration-300 ${color} shadow-sm`}>
+        <Icon size={22} className="stroke-[2]" />
+      </div>
+    </div>
+    <div className="space-y-1">
+      <p className="text-[10px] font-black text-gray-400 dark:text-neutral-500 uppercase tracking-widest">{title}</p>
+      <h3 className="text-3xl font-black text-gray-900 dark:text-white tracking-tight">{value}</h3>
+    </div>
+  </div>
+);
 
 export default AdminOrders;

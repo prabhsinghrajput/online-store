@@ -5,13 +5,21 @@ import api from '../../lib/api';
 
 const BannerForm = () => {
     const navigate = useNavigate();
-    const { id } = useParams();
+    const params = useParams();
+    const wildcard = params['*'] || '';
+    let id = params.id;
+    if (!id && wildcard) {
+        const parts = wildcard.split('/');
+        if (parts[0] === 'banners' && parts[2] === 'edit') {
+            id = parts[1];
+        }
+    }
     const isEditMode = !!id;
 
     const [loading, setLoading] = useState(false);
     const [uploading, setUploading] = useState(false);
     const [formData, setFormData] = useState({
-        title: '',
+        title: 'Banner',
         description: '',
         buttonText: '',
         image: '',
@@ -30,7 +38,7 @@ const BannerForm = () => {
             const data = banners.find(b => b.id === id);
             if (data) {
                 setFormData({
-                    title: data.title || '',
+                    title: data.title || 'Banner',
                     description: data.description || '',
                     buttonText: data.buttonText || '',
                     image: data.image || '',
@@ -89,8 +97,6 @@ const BannerForm = () => {
         }
     };
 
-    const inputClass = "w-full px-4 py-2.5 bg-gray-50/50 border border-gray-200 rounded-xl text-sm focus:ring-2 focus:ring-primary/20 focus:border-primary focus:outline-none focus:bg-white transition-all";
-
     return (
         <div className="max-w-2xl mx-auto space-y-6">
             {/* Header */}
@@ -134,7 +140,7 @@ const BannerForm = () => {
                                         e.preventDefault();
                                         setFormData(prev => ({ ...prev, image: '' }));
                                     }}
-                                    className="absolute top-2 right-2 w-7 h-7 bg-red-500 text-white rounded-lg flex items-center justify-center hover:bg-red-600 z-10 shadow-md transition-colors"
+                                    className="absolute top-2 right-2 w-7 h-7 bg-red-500 text-inverse rounded-lg flex items-center justify-center hover:bg-red-600 z-10 shadow-md transition-colors"
                                 >
                                     <X size={14} />
                                 </button>
@@ -157,36 +163,19 @@ const BannerForm = () => {
                     </div>
                 </div>
 
-                {/* Content Card */}
+                {/* Status Settings Card */}
                 <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 space-y-4">
-                    <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Banner Content</h3>
-                    
-                    <div className="space-y-1.5">
-                        <label className="text-xs font-medium text-gray-600">Banner Title</label>
-                        <input name="title" value={formData.title} onChange={handleChange} className={inputClass} placeholder="e.g. Mega Summer Sale" />
-                    </div>
-
-                    <div className="space-y-1.5">
-                        <label className="text-xs font-medium text-gray-600">Description</label>
-                        <textarea name="description" rows={2} value={formData.description} onChange={handleChange} className={`${inputClass} resize-none`} placeholder="e.g. Get up to 50% off on all proteins" />
-                    </div>
-
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-1">
-                        <div className="space-y-1.5">
-                            <label className="text-xs font-medium text-gray-600">Button Text</label>
-                            <input name="buttonText" value={formData.buttonText} onChange={handleChange} className={inputClass} placeholder="e.g. Shop Now" />
-                        </div>
-                        <div className="flex items-center space-x-3 pt-6">
-                            <input
-                                type="checkbox"
-                                id="active"
-                                name="active"
-                                checked={formData.active}
-                                onChange={handleChange}
-                                className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary/20"
-                            />
-                            <label htmlFor="active" className="text-sm font-medium text-gray-700">Set as Active</label>
-                        </div>
+                    <h3 className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Status Settings</h3>
+                    <div className="flex items-center space-x-3">
+                        <input
+                            type="checkbox"
+                            id="active"
+                            name="active"
+                            checked={formData.active}
+                            onChange={handleChange}
+                            className="w-4 h-4 text-primary border-gray-300 rounded focus:ring-primary/20 cursor-pointer"
+                        />
+                        <label htmlFor="active" className="text-sm font-medium text-gray-700 cursor-pointer select-none">Set as Active</label>
                     </div>
                 </div>
 
@@ -202,7 +191,7 @@ const BannerForm = () => {
                     <button
                         type="submit"
                         disabled={loading || uploading}
-                        className="inline-flex items-center gap-2 bg-gray-800 hover:bg-gray-700 text-white px-6 py-2.5 rounded-xl text-sm font-semibold shadow-lg shadow-gray-400/20 hover:shadow-xl hover:shadow-gray-400/30 hover:-translate-y-0.5 transition-all disabled:opacity-50"
+                        className="inline-flex items-center gap-2 bg-black hover:bg-neutral-900 text-white dark:bg-white dark:hover:bg-neutral-100 dark:text-black px-6 py-2.5 rounded-xl text-sm font-bold shadow-lg hover:-translate-y-0.5 transition-all disabled:opacity-50"
                     >
                         <Save size={16} />
                         {loading ? 'Saving...' : isEditMode ? 'Update Banner' : 'Save Banner'}
