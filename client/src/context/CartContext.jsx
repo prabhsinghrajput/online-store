@@ -3,13 +3,12 @@ import React, { createContext, useContext, useReducer, useEffect } from 'react';
 const CartContext = createContext();
 
 const initialState = {
-  items: [],
-  isOpen: false
+  items: []
 };
 
 const cartReducer = (state, action) => {
   switch (action.type) {
-    case 'ADD_ITEM':
+    case 'ADD_ITEM': {
       const existingItem = state.items.find(item => item.id === action.payload.id);
       if (existingItem) {
         return {
@@ -25,6 +24,7 @@ const cartReducer = (state, action) => {
         ...state,
         items: [...state.items, { ...action.payload, quantity: 1 }],
       };
+    }
 
     case 'REMOVE_ITEM':
       return {
@@ -55,20 +55,7 @@ const cartReducer = (state, action) => {
     case 'CLEAR_CART':
       return {
         ...state,
-        items: [],
-        isOpen: false
-      };
-
-    case 'CLOSE_CART':
-      return {
-        ...state,
-        isOpen: false
-      };
-
-    case 'OPEN_CART':
-      return {
-        ...state,
-        isOpen: true
+        items: []
       };
 
     case 'LOAD_CART':
@@ -99,7 +86,6 @@ export const CartProvider = ({ children }) => {
   const value = {
     state,
     dispatch,
-    isOpen: state.isOpen,
     items: state.items
   };
 

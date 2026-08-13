@@ -17,7 +17,7 @@ const MindsetSection = () => {
           </svg>
           
           <div className="space-y-3">
-            <span className="text-[10px] font-bold tracking-[0.2em] text-gray-500 dark:text-neutral-450 uppercase block">
+            <span className="text-[10px] font-bold tracking-[0.2em] text-gray-500 dark:text-neutral-500 uppercase block">
               Our Mindset
             </span>
             <h2 className="text-3xl sm:text-4xl font-black tracking-tight leading-none uppercase space-y-1">
@@ -29,7 +29,7 @@ const MindsetSection = () => {
 
         {/* Right Column: Paragraph + Signature */}
         <div className="lg:col-span-5 space-y-6">
-          <p className="text-xs sm:text-sm text-gray-600 dark:text-neutral-450 font-medium leading-relaxed max-w-md">
+          <p className="text-xs sm:text-sm text-gray-600 dark:text-neutral-500 font-medium leading-relaxed max-w-md">
             CROSS isn&apos;t just a brand, it&apos;s a mindset.<br />
             We challenge the norm and create our own lane.<br />
             Built for those who move different and choose their own path.

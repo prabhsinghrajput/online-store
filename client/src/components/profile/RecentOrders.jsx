@@ -12,9 +12,9 @@ const RecentOrders = () => {
   ];
 
   return (
-    <div className="bg-white dark:bg-zinc-955 border border-gray-200 dark:border-neutral-900 rounded-3xl shadow-sm dark:shadow-none overflow-hidden">
+    <div className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-neutral-900 rounded-3xl shadow-sm dark:shadow-none overflow-hidden">
       <div className="flex items-center justify-between p-6 border-b border-gray-100 dark:border-neutral-900">
-        <h3 className="text-xs font-bold uppercase tracking-wider text-gray-955 dark:text-white">
+        <h3 className="text-xs font-bold uppercase tracking-wider text-gray-900 dark:text-white">
           Recent Orders
         </h3>
         <button 
@@ -30,11 +30,11 @@ const RecentOrders = () => {
           <div key={idx} className="p-4 flex items-center gap-4 hover:bg-gray-50/50 dark:hover:bg-neutral-900/20 transition-colors">
             <img src={order.img} alt={order.name} className="w-12 h-12 rounded-xl object-cover border border-gray-100 dark:border-neutral-900 flex-shrink-0" />
             <div className="flex-1 min-w-0">
-              <h4 className="text-xs font-bold text-gray-955 dark:text-white truncate">{order.name}</h4>
+              <h4 className="text-xs font-bold text-gray-900 dark:text-white truncate">{order.name}</h4>
               <p className="text-[10px] text-gray-400 dark:text-neutral-500 font-semibold mt-0.5">Order {order.orderId}</p>
             </div>
             <div className="text-right flex-shrink-0 space-y-1">
-              <p className="text-xs font-bold text-gray-955 dark:text-white">{order.price}</p>
+              <p className="text-xs font-bold text-gray-900 dark:text-white">{order.price}</p>
               <p className="text-[9px] text-gray-400 dark:text-neutral-500 font-bold uppercase">{order.items}</p>
             </div>
             <div className="flex-shrink-0 pl-2">

@@ -20,7 +20,7 @@ const ProfileSidebar = ({ isAdmin, handleLogout, activeTab, setActiveTab }) => {
   ];
 
   return (
-    <div className="w-full lg:w-[250px] bg-white dark:bg-zinc-955 border-r border-gray-200 dark:border-neutral-900 p-6 pt-10 md:px-8 md:pb-8 md:pt-14 lg:pt-16 flex-shrink-0 lg:fixed lg:top-20 lg:bottom-0 lg:left-0 overflow-y-auto z-30 flex flex-col justify-between space-y-8 animate-[fadeIn_0.2s_ease-out]">
+    <div className="hidden lg:flex w-full lg:w-[250px] bg-white dark:bg-zinc-900 border-r border-gray-200 dark:border-neutral-900 p-6 pt-10 md:px-8 md:pb-8 md:pt-14 lg:pt-16 flex-shrink-0 lg:fixed lg:top-20 lg:bottom-0 lg:left-0 overflow-y-auto z-30 flex-col justify-between space-y-8 animate-[fadeIn_0.2s_ease-out]">
       <div>
         <h2 className="text-[10px] font-black tracking-[0.25em] text-gray-400 dark:text-neutral-500 uppercase px-3 mb-4">
           My Account
@@ -33,7 +33,7 @@ const ProfileSidebar = ({ isAdmin, handleLogout, activeTab, setActiveTab }) => {
               className={`w-full flex items-center gap-3 px-4 py-3 rounded-2xl text-xs font-semibold tracking-wider transition-all duration-200 ${
                 activeTab === link.id 
                   ? 'bg-gray-100 dark:bg-neutral-900 text-black dark:text-white' 
-                  : 'text-gray-500 dark:text-neutral-450 hover:bg-gray-50 dark:hover:bg-neutral-900/50 hover:text-black dark:hover:text-white'
+                  : 'text-gray-500 dark:text-neutral-500 hover:bg-gray-50 dark:hover:bg-neutral-900/50 hover:text-black dark:hover:text-white'
               }`}
             >
               <link.icon size={16} className={link.danger ? 'text-red-500' : ''} />

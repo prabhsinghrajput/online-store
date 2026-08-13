@@ -44,13 +44,13 @@ const OrderView = () => {
   if (loading) return (
     <div className="flex flex-col items-center justify-center py-24">
       <div className="w-10 h-10 border-3 border-neutral-200 dark:border-zinc-800 border-t-neutral-900 dark:border-t-white rounded-full animate-spin" />
-      <p className="text-xs text-neutral-400 dark:text-zinc-555 font-bold uppercase tracking-wider mt-4">Loading order details...</p>
+      <p className="text-xs text-neutral-400 dark:text-zinc-500 font-bold uppercase tracking-wider mt-4">Loading order details...</p>
     </div>
   );
 
   if (!order) return (
     <div className="text-center py-16 bg-white/70 dark:bg-zinc-900/40 backdrop-blur-xl rounded-3xl border border-neutral-200/60 dark:border-zinc-800/40 p-8 shadow-sm">
-      <div className="w-16 h-16 bg-neutral-100 dark:bg-zinc-850 rounded-full flex items-center justify-center mx-auto mb-4 border border-neutral-150 dark:border-zinc-800">
+      <div className="w-16 h-16 bg-neutral-100 dark:bg-zinc-800 rounded-full flex items-center justify-center mx-auto mb-4 border border-neutral-200 dark:border-zinc-800">
         <Package size={24} className="text-neutral-400" />
       </div>
       <p className="text-sm font-bold text-neutral-500 mb-6">Order not found</p>
@@ -114,10 +114,10 @@ const OrderView = () => {
                     <h4 className="font-extrabold text-sm text-neutral-900 dark:text-white leading-snug line-clamp-2 hover:text-primary transition-colors cursor-pointer" onClick={() => navigate(`/products/${item.product_id}`)}>
                       {item.product_name}
                     </h4>
-                    <p className="text-[10px] text-neutral-450 dark:text-zinc-500 font-medium">Seller: CROSS</p>
+                    <p className="text-[10px] text-neutral-500 dark:text-zinc-500 font-medium">Seller: CROSS</p>
                     <div className="font-black text-sm text-neutral-900 dark:text-white pt-1">₹{item.price * item.quantity}</div>
                   </div>
-                  <div className="w-18 h-18 bg-white dark:bg-zinc-850 rounded-2xl p-2 border border-neutral-150 dark:border-zinc-800 shrink-0 flex items-center justify-center">
+                  <div className="w-18 h-18 bg-white dark:bg-zinc-800 rounded-2xl p-2 border border-neutral-200 dark:border-zinc-800 shrink-0 flex items-center justify-center">
                     {item.product_image ? (
                       <img src={item.product_image} alt={item.product_name} className="max-h-full max-w-full object-contain" />
                     ) : (
@@ -217,21 +217,21 @@ const OrderView = () => {
             
             <div className="space-y-4">
               <div className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-full bg-neutral-100 dark:bg-zinc-800/40 flex items-center justify-center shrink-0 text-neutral-500 dark:text-zinc-400 border border-neutral-150 dark:border-zinc-750">
+                <div className="w-8 h-8 rounded-full bg-neutral-100 dark:bg-zinc-800/40 flex items-center justify-center shrink-0 text-neutral-500 dark:text-zinc-400 border border-neutral-200 dark:border-zinc-700">
                   <MapPin size={13} />
                 </div>
                 <div className="min-w-0">
-                  <p className="font-extrabold text-sm text-neutral-900 dark:text-zinc-150">{order.customer_name || 'N/A'}</p>
+                  <p className="font-extrabold text-sm text-neutral-900 dark:text-zinc-200">{order.customer_name || 'N/A'}</p>
                   <p className="text-xs text-neutral-500 dark:text-zinc-400 leading-relaxed font-semibold mt-1.5">{order.shipping_address || 'No address provided'}</p>
                 </div>
               </div>
               
               <div className="flex items-start gap-3">
-                <div className="w-8 h-8 rounded-full bg-neutral-100 dark:bg-zinc-800/40 flex items-center justify-center shrink-0 text-neutral-500 dark:text-zinc-400 border border-neutral-150 dark:border-zinc-750">
+                <div className="w-8 h-8 rounded-full bg-neutral-100 dark:bg-zinc-800/40 flex items-center justify-center shrink-0 text-neutral-500 dark:text-zinc-400 border border-neutral-200 dark:border-zinc-700">
                   <Phone size={13} />
                 </div>
                 <div>
-                  <p className="text-[10px] font-black text-neutral-450 dark:text-zinc-500 uppercase tracking-widest">Phone Number</p>
+                  <p className="text-[10px] font-black text-neutral-500 dark:text-zinc-500 uppercase tracking-widest">Phone Number</p>
                   <p className="text-xs text-neutral-800 dark:text-zinc-300 font-extrabold mt-0.5">{order.customer_phone || order.user_email}</p>
                 </div>
               </div>
@@ -245,11 +245,11 @@ const OrderView = () => {
             <div className="space-y-3.5 text-xs font-semibold text-neutral-600 dark:text-zinc-400">
               <div className="flex justify-between">
                 <span>List Price</span>
-                <span className="line-through text-neutral-400 dark:text-zinc-650">₹{Math.round(order.total_amount * 1.2)}</span>
+                <span className="line-through text-neutral-400 dark:text-zinc-500">₹{Math.round(order.total_amount * 1.2)}</span>
               </div>
               <div className="flex justify-between">
                 <span>Selling Price</span>
-                <span className="text-neutral-900 dark:text-zinc-150 font-extrabold">₹{order.total_amount}</span>
+                <span className="text-neutral-900 dark:text-zinc-200 font-extrabold">₹{order.total_amount}</span>
               </div>
               <div className="flex justify-between text-emerald-600 dark:text-emerald-400">
                 <span>Discount</span>
@@ -268,7 +268,7 @@ const OrderView = () => {
 
             {/* Payment Method Badge */}
             <div className="mt-5 pt-4.5 border-t border-neutral-100 dark:border-zinc-800/40">
-              <div className="flex items-center justify-between text-[9px] font-black bg-neutral-50 dark:bg-zinc-950/60 p-2.5 rounded-xl border border-neutral-150 dark:border-zinc-800/60">
+              <div className="flex items-center justify-between text-[9px] font-black bg-neutral-50 dark:bg-zinc-950/60 p-2.5 rounded-xl border border-neutral-200 dark:border-zinc-800/60">
                 <span className="text-neutral-400 dark:text-zinc-500 uppercase tracking-widest flex items-center gap-1.5">
                   <CreditCard size={12} />
                   Payment Method
@@ -327,7 +327,7 @@ const OrderView = () => {
                   <div className="w-1.5 h-1.5 bg-white rounded-full" />
                 </div>
                 <div>
-                  <h4 className="text-xs font-black text-neutral-850 dark:text-zinc-150">Order Confirmed</h4>
+                  <h4 className="text-xs font-black text-neutral-800 dark:text-zinc-200">Order Confirmed</h4>
                   <p className="text-[10px] text-neutral-400 dark:text-zinc-500 font-bold">
                     {new Date(order.created_at).toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' })} - {new Date(order.created_at).toLocaleTimeString('en-IN', { hour: '2-digit', minute: '2-digit' })}
                   </p>
@@ -346,7 +346,7 @@ const OrderView = () => {
                     <div className="w-1.5 h-1.5 bg-white rounded-full" />
                   </div>
                   <div>
-                    <h4 className="text-xs font-black text-neutral-850 dark:text-zinc-150">Shipped</h4>
+                    <h4 className="text-xs font-black text-neutral-800 dark:text-zinc-200">Shipped</h4>
                     <p className="text-[10px] text-neutral-400 dark:text-zinc-500 font-bold">
                       {new Date(order.created_at).toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' })} - Shipped out
                     </p>
@@ -366,7 +366,7 @@ const OrderView = () => {
                     <div className="w-1.5 h-1.5 bg-white rounded-full" />
                   </div>
                   <div>
-                    <h4 className="text-xs font-black text-neutral-850 dark:text-zinc-150">Out For Delivery</h4>
+                    <h4 className="text-xs font-black text-neutral-800 dark:text-zinc-200">Out For Delivery</h4>
                     <p className="text-[10px] text-neutral-400 dark:text-zinc-500 font-bold">
                       {new Date(order.created_at).toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' })} - In Transit
                     </p>
@@ -384,7 +384,7 @@ const OrderView = () => {
                     <div className="w-1.5 h-1.5 bg-white rounded-full" />
                   </div>
                   <div>
-                    <h4 className="text-xs font-black text-neutral-850 dark:text-zinc-150">Delivered</h4>
+                    <h4 className="text-xs font-black text-neutral-800 dark:text-zinc-200">Delivered</h4>
                     <p className="text-[10px] text-neutral-400 dark:text-zinc-500 font-bold">
                       {new Date(order.created_at).toLocaleDateString('en-IN', { weekday: 'short', day: 'numeric', month: 'short' })} - Complete
                     </p>

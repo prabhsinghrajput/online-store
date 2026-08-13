@@ -17,8 +17,10 @@ import {
   ShieldCheck
 } from 'lucide-react';
 import { useCart } from '../context/CartContext';
+import { useToast } from '../context/ToastContext';
 import api from '../lib/api';
 import { getStoredUser } from '../lib/auth';
+import CustomDropdown from '../components/common/CustomDropdown';
 
 const AVAILABLE_SOCIETIES = [
   'Sushant Golf City',
@@ -30,6 +32,7 @@ const AVAILABLE_SOCIETIES = [
 
 const CartPage = ({ user: propUser }) => {
   const { state, dispatch } = useCart();
+  const { toast } = useToast();
   const navigate = useNavigate();
 
   const [user, setUser] = useState(propUser || getStoredUser());
@@ -112,7 +115,7 @@ const CartPage = ({ user: propUser }) => {
   const handlePlaceOrder = async () => {
     if (!selectedAddress) return;
     if (!isOrderValid) {
-      alert(`Minimum order amount is ₹${minimumOrderAmount}`);
+      toast(`Minimum order amount is ₹${minimumOrderAmount}`, 'error');
       return;
     }
 
@@ -172,7 +175,7 @@ const CartPage = ({ user: propUser }) => {
 
     } catch (error) {
       console.error('Error placing order:', error);
-      alert('Failed to place order. ' + (error.message || 'Please try again.'));
+      toast('Failed to place order. ' + (error.message || 'Please try again.'), 'error');
     } finally {
       setIsPlacingOrder(false);
     }
@@ -197,12 +200,12 @@ const CartPage = ({ user: propUser }) => {
               <span className="w-5 h-5 rounded-full bg-neutral-900 dark:bg-white text-white dark:text-black flex items-center justify-center text-[9px] font-bold">1</span>
               Bag
             </span>
-            <ChevronRight size={12} className="text-neutral-350 dark:text-zinc-650" />
+            <ChevronRight size={12} className="text-neutral-400 dark:text-zinc-500" />
             <span className="flex items-center gap-1.5">
               <span className="w-5 h-5 rounded-full border border-neutral-300 dark:border-zinc-800 flex items-center justify-center text-[9px] font-medium">2</span>
               Address
             </span>
-            <ChevronRight size={12} className="text-neutral-350 dark:text-zinc-650" />
+            <ChevronRight size={12} className="text-neutral-400 dark:text-zinc-500" />
             <span className="flex items-center gap-1.5">
               <span className="w-5 h-5 rounded-full border border-neutral-300 dark:border-zinc-800 flex items-center justify-center text-[9px] font-medium">3</span>
               Payment
@@ -214,7 +217,7 @@ const CartPage = ({ user: propUser }) => {
 
         {state.items.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 text-center bg-white/70 dark:bg-zinc-900/40 backdrop-blur-xl border border-white/20 dark:border-zinc-800/30 rounded-3xl p-10 shadow-xl shadow-neutral-100/30 dark:shadow-none animate-[fadeIn_0.3s_ease-out]">
-            <div className="w-24 h-24 bg-neutral-100 dark:bg-zinc-850 rounded-full flex items-center justify-center mb-8 relative">
+            <div className="w-24 h-24 bg-neutral-100 dark:bg-zinc-800 rounded-full flex items-center justify-center mb-8 relative">
               <ShoppingBag size={38} className="text-neutral-400 dark:text-zinc-500" />
               <div className="absolute -top-1 -right-1 w-4 h-4 bg-primary rounded-full animate-ping" />
             </div>
@@ -224,7 +227,7 @@ const CartPage = ({ user: propUser }) => {
             </p>
             <Link 
               to="/products" 
-              className="bg-black hover:bg-neutral-850 dark:bg-white dark:hover:bg-neutral-100 text-white dark:text-black font-extrabold text-sm px-10 py-4 rounded-2xl transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0"
+              className="bg-black hover:bg-neutral-800 dark:bg-white dark:hover:bg-neutral-100 text-white dark:text-black font-extrabold text-sm px-10 py-4 rounded-2xl transition-all shadow-lg hover:shadow-xl hover:-translate-y-0.5 active:translate-y-0"
             >
               Explore Products
             </Link>
@@ -247,14 +250,14 @@ const CartPage = ({ user: propUser }) => {
                   {state.items.map((item) => (
                     <div key={item.id} className="p-6 flex flex-col sm:flex-row items-start sm:items-center gap-5 hover:bg-neutral-50/50 dark:hover:bg-zinc-900/20 transition-all duration-300 relative group/item">
                       {/* Product Image wrapper with lift effect */}
-                      <div className="w-24 h-24 bg-neutral-50 dark:bg-zinc-850 rounded-2xl overflow-hidden flex-shrink-0 flex items-center justify-center border border-neutral-150 dark:border-zinc-800 transition-transform group-hover/item:scale-105 duration-350">
+                      <div className="w-24 h-24 bg-neutral-50 dark:bg-zinc-800 rounded-2xl overflow-hidden flex-shrink-0 flex items-center justify-center border border-neutral-200 dark:border-zinc-800 transition-transform group-hover/item:scale-105 duration-350">
                         <img src={item.image} alt={item.name} className="w-20 h-20 object-contain p-1" />
                       </div>
 
                       {/* Product Details */}
                       <div className="flex-1 min-w-0">
                         <h3 className="font-extrabold text-lg line-clamp-1 group-hover/item:text-primary transition-colors">{item.name}</h3>
-                        <span className="inline-block text-[10px] text-neutral-400 dark:text-zinc-550 mt-1.5 px-2 py-0.5 bg-neutral-100 dark:bg-zinc-800 rounded font-black tracking-widest uppercase">{item.weight}</span>
+                        <span className="inline-block text-[10px] text-neutral-400 dark:text-zinc-500 mt-1.5 px-2 py-0.5 bg-neutral-100 dark:bg-zinc-800 rounded font-black tracking-widest uppercase">{item.weight}</span>
                         
                         <div className="flex items-baseline gap-2 mt-4">
                           <span className="font-black text-lg text-neutral-900 dark:text-white">₹{item.discounted_price || item.price}</span>
@@ -267,7 +270,7 @@ const CartPage = ({ user: propUser }) => {
                       {/* Quantity & Action controls */}
                       <div className="flex items-center justify-between w-full sm:w-auto gap-8 sm:mt-0 mt-4 border-t sm:border-t-0 pt-4 sm:pt-0 border-neutral-100 dark:border-zinc-800">
                         {/* Quantity Counter container with subtle shadow */}
-                        <div className="flex items-center bg-neutral-100/80 dark:bg-zinc-850/80 border border-neutral-200/40 dark:border-zinc-800 rounded-2xl p-1">
+                        <div className="flex items-center bg-neutral-100/80 dark:bg-zinc-800/80 border border-neutral-200/40 dark:border-zinc-800 rounded-2xl p-1">
                           <button
                             className="w-8 h-8 flex items-center justify-center text-neutral-500 hover:text-black dark:hover:text-white hover:bg-white dark:hover:bg-zinc-800 rounded-xl transition-all font-bold text-base shadow-sm active:scale-90"
                             onClick={() => dispatch({ type: 'DECREASE_QUANTITY', payload: item.id })}
@@ -319,7 +322,7 @@ const CartPage = ({ user: propUser }) => {
                 {!isAddingAddress ? (
                   addresses.length === 0 ? (
                     <div className="text-center py-10 border-2 border-dashed border-neutral-200 dark:border-zinc-800/80 rounded-2xl bg-neutral-50/20 dark:bg-zinc-950/10">
-                      <p className="text-sm text-neutral-400 dark:text-zinc-550 mb-5 font-medium">No saved addresses found</p>
+                      <p className="text-sm text-neutral-400 dark:text-zinc-500 mb-5 font-medium">No saved addresses found</p>
                       <button
                         onClick={() => setIsAddingAddress(true)}
                         className="inline-flex items-center gap-2 bg-neutral-900 dark:bg-white text-white dark:text-black font-extrabold text-xs px-6 py-3 rounded-xl transition-all hover:opacity-90 active:scale-95 shadow-md"
@@ -344,7 +347,7 @@ const CartPage = ({ user: propUser }) => {
                             <div className="flex items-start justify-between">
                               <div>
                                 <p className="font-extrabold text-base text-neutral-900 dark:text-white">{address.name}</p>
-                                <p className="text-xs text-neutral-400 dark:text-zinc-455 mt-1 font-semibold">{address.phone}</p>
+                                <p className="text-xs text-neutral-400 dark:text-zinc-500 mt-1 font-semibold">{address.phone}</p>
                                 <p className="text-xs text-neutral-500 dark:text-zinc-300 mt-3 font-semibold leading-relaxed">
                                   {address.flatNo}, {address.society}
                                 </p>
@@ -393,25 +396,19 @@ const CartPage = ({ user: propUser }) => {
                           onChange={(e) => setNewAddress({ ...newAddress, flatNo: e.target.value })}
                           className="w-full bg-white dark:bg-zinc-900 border border-neutral-200 dark:border-zinc-800 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-neutral-200 dark:focus:ring-zinc-800 transition-all font-semibold"
                         />
-                        <div className="relative">
-                          <select
-                            value={newAddress.society}
-                            onChange={(e) => setNewAddress({ ...newAddress, society: e.target.value })}
-                            className="w-full bg-white dark:bg-zinc-900 border border-neutral-200 dark:border-zinc-800 rounded-xl px-4 py-3 text-sm appearance-none focus:outline-none focus:ring-2 focus:ring-neutral-200 dark:focus:ring-zinc-800 transition-all font-semibold"
-                          >
-                            <option value="">Select Locality / Society</option>
-                            {AVAILABLE_SOCIETIES.map((society) => (
-                              <option key={society} value={society}>{society}</option>
-                            ))}
-                          </select>
-                          <ChevronDown className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-400 pointer-events-none" size={16} />
-                        </div>
+                        <CustomDropdown
+                          options={AVAILABLE_SOCIETIES}
+                          value={newAddress.society}
+                          onChange={(e) => setNewAddress({ ...newAddress, society: e.target.value })}
+                          placeholder="Select Locality / Society"
+                          className="w-full text-sm font-semibold"
+                        />
                       </div>
 
                       <div className="flex justify-end gap-3 pt-3">
                         <button
                           onClick={() => setIsAddingAddress(false)}
-                          className="px-5 py-3 text-xs font-black border border-neutral-250 dark:border-zinc-800 rounded-xl hover:bg-neutral-100 dark:hover:bg-zinc-900 transition-all text-neutral-600 dark:text-zinc-350"
+                          className="px-5 py-3 text-xs font-black border border-neutral-300 dark:border-zinc-800 rounded-xl hover:bg-neutral-100 dark:hover:bg-zinc-900 transition-all text-neutral-600 dark:text-zinc-400"
                         >
                           Cancel
                         </button>
@@ -442,7 +439,7 @@ const CartPage = ({ user: propUser }) => {
                     <p className="text-xs font-bold text-neutral-500 dark:text-zinc-400 mb-2.5">
                       Add <span className="font-extrabold text-neutral-900 dark:text-white">₹{freeShippingThreshold - itemsTotal}</span> more for <span className="text-primary font-black uppercase">Free Shipping</span>
                     </p>
-                    <div className="w-full bg-neutral-200 dark:bg-zinc-850 h-2 rounded-full overflow-hidden">
+                    <div className="w-full bg-neutral-200 dark:bg-zinc-800 h-2 rounded-full overflow-hidden">
                       <div 
                         className="bg-neutral-900 dark:bg-white h-full transition-all duration-500"
                         style={{ width: `${(itemsTotal / freeShippingThreshold) * 100}%` }}
@@ -470,7 +467,7 @@ const CartPage = ({ user: propUser }) => {
                   <div className="flex justify-between items-center text-sm font-semibold">
                     <span className="text-neutral-500 dark:text-zinc-400 flex items-center gap-1">
                       Platform Fee
-                      <Info size={14} className="text-neutral-300 dark:text-zinc-650" />
+                      <Info size={14} className="text-neutral-300 dark:text-zinc-500" />
                     </span>
                     <span className="font-bold text-neutral-900 dark:text-white">₹{platformFee}</span>
                   </div>
@@ -515,7 +512,7 @@ const CartPage = ({ user: propUser }) => {
                   className={`w-full py-4.5 rounded-2xl font-black text-sm tracking-widest uppercase mt-6 flex items-center justify-center gap-2 transition-all active:scale-[0.98] ${
                     selectedAddress && isOrderValid && !isPlacingOrder
                       ? 'bg-neutral-900 text-white hover:bg-neutral-800 dark:bg-white dark:text-black dark:hover:bg-neutral-100 shadow-xl shadow-neutral-900/10 dark:shadow-none'
-                      : 'bg-neutral-100 dark:bg-zinc-800/80 text-neutral-400 dark:text-zinc-555 cursor-not-allowed border border-neutral-200/20'
+                      : 'bg-neutral-100 dark:bg-zinc-800/80 text-neutral-400 dark:text-zinc-500 cursor-not-allowed border border-neutral-200/20'
                   }`}
                 >
                   {isPlacingOrder ? (

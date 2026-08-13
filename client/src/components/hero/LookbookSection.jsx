@@ -42,17 +42,17 @@ const LookbookSection = () => {
       {/* Left Content Column */}
       <div className="lg:col-span-4 space-y-6">
         <div className="space-y-1">
-          <span className="text-[10px] font-bold tracking-[0.2em] text-gray-550 dark:text-neutral-400 uppercase pb-1 border-b border-gray-200 dark:border-neutral-850 inline-block">
+          <span className="text-[10px] font-bold tracking-[0.2em] text-gray-500 dark:text-neutral-400 uppercase pb-1 border-b border-gray-200 dark:border-neutral-800 inline-block">
             Lookbook &apos;24
           </span>
         </div>
         <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight leading-none uppercase">
           <span className="text-gray-900 dark:text-white block">Timeless</span>
           <span className="text-gray-900 dark:text-white block">Pieces.</span>
-          <span className="text-gray-450 dark:text-neutral-500 block">Limitless</span>
-          <span className="text-gray-455 dark:text-neutral-500 block">Vibes.</span>
+          <span className="text-gray-500 dark:text-neutral-500 block">Limitless</span>
+          <span className="text-gray-500 dark:text-neutral-500 block">Vibes.</span>
         </h2>
-        <p className="text-xs sm:text-sm text-gray-550 dark:text-neutral-400 font-medium leading-relaxed">
+        <p className="text-xs sm:text-sm text-gray-500 dark:text-neutral-400 font-medium leading-relaxed">
           Designed for the streets.<br />
           Made for the misfits.
         </p>
@@ -75,7 +75,7 @@ const LookbookSection = () => {
             <div 
               key={idx} 
               onClick={() => item.id ? navigate(`/products/${item.id}`) : navigate('/products')}
-              className="aspect-[2/3] overflow-hidden rounded-[6px] bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-neutral-850 cursor-pointer group relative"
+              className="aspect-[2/3] overflow-hidden rounded-[6px] bg-gray-50 dark:bg-[#111] border border-gray-200 dark:border-neutral-800 cursor-pointer group relative"
             >
               <img 
                 src={item.image} 

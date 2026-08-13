@@ -2,12 +2,14 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Plus, Edit, Trash2, ImageIcon, AlertCircle } from 'lucide-react';
 import api from '../../lib/api';
+import { useToast } from '../../context/ToastContext';
 
 const BannerList = () => {
     const [banners, setBanners] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const [deletingId, setDeletingId] = useState(null);
+    const { toast, confirm } = useToast();
 
     useEffect(() => {
         fetchBanners();
@@ -27,17 +29,23 @@ const BannerList = () => {
     };
 
     const handleDelete = async (id) => {
-        if (window.confirm('Are you sure you want to delete this banner?')) {
-            try {
-                setDeletingId(id);
-                await api.banners.delete(id);
-                setBanners(banners.filter(b => b.id !== id));
-            } catch (error) {
-                console.error('Error deleting banner:', error);
-                alert('Failed to delete banner');
-            } finally {
-                setDeletingId(null);
-            }
+        const confirmed = await confirm({
+            title: 'Delete Banner',
+            message: 'Are you sure you want to delete this banner?',
+            confirmLabel: 'Delete',
+            danger: true
+        });
+        if (!confirmed) return;
+        try {
+            setDeletingId(id);
+            await api.banners.delete(id);
+            setBanners(banners.filter(b => b.id !== id));
+            toast('Banner deleted', 'success');
+        } catch (error) {
+            console.error('Error deleting banner:', error);
+            toast('Failed to delete banner', 'error');
+        } finally {
+            setDeletingId(null);
         }
     };
 
@@ -47,7 +55,7 @@ const BannerList = () => {
             setBanners(banners.map(b => b.id === banner.id ? { ...b, active: !b.active } : b));
         } catch (error) {
             console.error('Error toggling banner status:', error);
-            alert('Failed to update banner status');
+            toast('Failed to update banner status', 'error');
         }
     };
 

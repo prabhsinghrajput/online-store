@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Plus, Edit, Trash2, Search, LayoutGrid, AlertCircle } from 'lucide-react';
 import api from '../../lib/api';
+import { useToast } from '../../context/ToastContext';
 
 const CategoryList = () => {
     const [categories, setCategories] = useState([]);
@@ -9,6 +10,7 @@ const CategoryList = () => {
     const [searchTerm, setSearchTerm] = useState('');
     const [error, setError] = useState(null);
     const [deletingId, setDeletingId] = useState(null);
+    const { toast, confirm } = useToast();
 
     useEffect(() => {
         fetchCategories();
@@ -28,17 +30,23 @@ const CategoryList = () => {
     };
 
     const handleDelete = async (id) => {
-        if (window.confirm('Are you sure you want to delete this category? Products in this category will become uncategorized.')) {
-            try {
-                setDeletingId(id);
-                await api.categories.delete(id);
-                setCategories(categories.filter(c => c.id !== id));
-            } catch (error) {
-                console.error('Error deleting category:', error);
-                alert('Failed to delete category');
-            } finally {
-                setDeletingId(null);
-            }
+        const confirmed = await confirm({
+            title: 'Delete Category',
+            message: 'Are you sure you want to delete this category? Products in this category will become uncategorized.',
+            confirmLabel: 'Delete',
+            danger: true
+        });
+        if (!confirmed) return;
+        try {
+            setDeletingId(id);
+            await api.categories.delete(id);
+            setCategories(categories.filter(c => c.id !== id));
+            toast('Category deleted', 'success');
+        } catch (error) {
+            console.error('Error deleting category:', error);
+            toast('Failed to delete category', 'error');
+        } finally {
+            setDeletingId(null);
         }
     };
 

@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Check, MapPin, Clock, ShoppingBag } from 'lucide-react';
 import confetti from 'canvas-confetti';
-import { motion } from 'framer-motion';
 
 const OrderConfirmation = () => {
   const { state } = useLocation();
@@ -21,34 +20,20 @@ const OrderConfirmation = () => {
     <div className="min-h-screen bg-gradient-to-b from-primary/5 to-gray-50/50 dark:from-zinc-950 dark:to-black py-8 px-4">
       <div className="max-w-lg mx-auto space-y-5">
         {/* Success */}
-        <motion.div
-          initial={{ opacity: 0, scale: 0.9 }}
-          animate={{ opacity: 1, scale: 1 }}
-          transition={{ duration: 0.5 }}
-          className="bg-white dark:bg-zinc-955 rounded-3xl p-8 text-center shadow-xl border border-gray-100 dark:border-neutral-900"
-        >
+        <div className="bg-white dark:bg-zinc-900 rounded-3xl p-8 text-center shadow-xl border border-gray-100 dark:border-neutral-900 animate-[fadeUp_0.5s_ease-out]">
           <div className="w-20 h-20 bg-gradient-to-br from-green-50 to-green-100 dark:from-green-950/20 dark:to-green-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-            <motion.div
-              initial={{ scale: 0 }}
-              animate={{ scale: 1 }}
-              transition={{ delay: 0.3, type: "spring", stiffness: 200 }}
-            >
+            <div className="animate-[scaleIn_0.4s_ease-out_0.3s_backwards]">
               <Check className="w-10 h-10 text-green-500" strokeWidth={3} />
-            </motion.div>
+            </div>
           </div>
           <h1 className="text-2xl font-bold text-gray-800 dark:text-white mb-1">Order Confirmed!</h1>
           <p className="text-sm text-gray-400 dark:text-neutral-500">
             Order #{orderId.slice(-8)} • {confirmedDate.toLocaleDateString('en-IN', { day: 'numeric', month: 'short', year: 'numeric' })}
           </p>
-        </motion.div>
+        </div>
 
         {/* Details */}
-        <motion.div
-          initial={{ opacity: 0, y: 15 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.2 }}
-          className="bg-white dark:bg-zinc-955 rounded-2xl border border-gray-100 dark:border-neutral-900 shadow-sm overflow-hidden"
-        >
+        <div className="bg-white dark:bg-zinc-900 rounded-2xl border border-gray-100 dark:border-neutral-900 shadow-sm overflow-hidden animate-[fadeUp_0.4s_ease-out_0.2s_backwards]">
           {/* Address */}
           <div className="p-4 flex items-start gap-3 border-b border-gray-100 dark:border-neutral-900/50">
             <div className="w-9 h-9 bg-primary/5 rounded-xl flex items-center justify-center flex-shrink-0">
@@ -56,7 +41,7 @@ const OrderConfirmation = () => {
             </div>
             <div>
               <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Delivery Address</p>
-              <p className="text-sm text-gray-705 dark:text-neutral-350 mt-1">
+              <p className="text-sm text-gray-700 dark:text-neutral-300 mt-1">
                 {address.name}<br />
                 {address.flatNo}, {address.society}
                 {address.landmark && `, ${address.landmark}`}<br />
@@ -68,7 +53,7 @@ const OrderConfirmation = () => {
           {/* Expected Time */}
           <div className="p-4 flex items-start gap-3 border-b border-gray-100 dark:border-neutral-900/50">
             <div className="w-9 h-9 bg-amber-50 dark:bg-amber-950/20 rounded-xl flex items-center justify-center flex-shrink-0">
-              <Clock size={16} className="text-amber-605" />
+              <Clock size={16} className="text-amber-600" />
             </div>
             <div>
               <p className="text-xs font-semibold text-gray-500 uppercase tracking-wider">Expected Delivery</p>
@@ -112,19 +97,16 @@ const OrderConfirmation = () => {
               </div>
             </div>
           </div>
-        </motion.div>
+        </div>
 
         {/* CTA */}
-        <motion.button
-          initial={{ opacity: 0, y: 10 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.4 }}
+        <button
           onClick={() => navigate('/')}
-          className="w-full bg-black hover:bg-neutral-900 text-white dark:bg-white dark:hover:bg-neutral-100 dark:text-black py-3.5 rounded-2xl font-bold text-sm shadow-md hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2"
+          className="w-full bg-black hover:bg-neutral-900 text-white dark:bg-white dark:hover:bg-neutral-100 dark:text-black py-3.5 rounded-2xl font-bold text-sm shadow-md hover:-translate-y-0.5 transition-all flex items-center justify-center gap-2 animate-[fadeUp_0.4s_ease-out_0.4s_backwards]"
         >
           <ShoppingBag size={18} />
           Continue Shopping
-        </motion.button>
+        </button>
       </div>
     </div>
   );

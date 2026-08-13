@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import api from '../../lib/api';
+import { useToast } from '../../context/ToastContext';
 import { Package, ChevronDown, ChevronUp, Clock, Truck, CheckCircle, XCircle, ShoppingBag } from 'lucide-react';
 
 const AdminOrders = () => {
     const [orders, setOrders] = useState([]);
     const [loading, setLoading] = useState(true);
     const [expandedOrder, setExpandedOrder] = useState(null);
+    const { toast } = useToast();
 
     useEffect(() => {
         fetchOrders();
@@ -31,7 +33,7 @@ const AdminOrders = () => {
             ));
         } catch (error) {
             console.error('Error updating status:', error);
-            alert('Failed to update status');
+            toast('Failed to update status', 'error');
         }
     };
 
@@ -54,9 +56,9 @@ const AdminOrders = () => {
     // Stats
     const stats = [
         { label: 'Total Orders', value: orders.length, icon: ShoppingBag, color: 'bg-gray-50 dark:bg-neutral-900 text-gray-700 dark:text-neutral-400' },
-        { label: 'Pending Orders', value: orders.filter(o => o.status === 'pending').length, icon: Clock, color: 'bg-amber-50 dark:bg-amber-955/20 text-amber-600 dark:text-amber-400' },
-        { label: 'Shipped Orders', value: orders.filter(o => o.status === 'shipped').length, icon: Truck, color: 'bg-blue-50 dark:bg-blue-955/20 text-blue-600 dark:text-blue-400' },
-        { label: 'Delivered Orders', value: orders.filter(o => o.status === 'delivered').length, icon: CheckCircle, color: 'bg-green-50 dark:bg-green-955/20 text-green-600 dark:text-green-400' },
+        { label: 'Pending Orders', value: orders.filter(o => o.status === 'pending').length, icon: Clock, color: 'bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400' },
+        { label: 'Shipped Orders', value: orders.filter(o => o.status === 'shipped').length, icon: Truck, color: 'bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400' },
+        { label: 'Delivered Orders', value: orders.filter(o => o.status === 'delivered').length, icon: CheckCircle, color: 'bg-green-50 dark:bg-green-950/20 text-green-600 dark:text-green-400' },
     ];
 
     return (
@@ -177,7 +179,7 @@ const AdminOrders = () => {
                                                                     }}
                                                                     className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold border transition-all capitalize ${order.status === status
                                                                             ? 'bg-black text-white border-black dark:bg-white dark:text-black dark:border-white shadow-sm'
-                                                                            : 'bg-white dark:bg-zinc-950 text-gray-600 dark:text-neutral-400 border-gray-200 dark:border-neutral-800 hover:border-gray-350 dark:hover:border-neutral-700 hover:bg-gray-50'
+                                                                            : 'bg-white dark:bg-zinc-950 text-gray-600 dark:text-neutral-400 border-gray-200 dark:border-neutral-800 hover:border-gray-300 dark:hover:border-neutral-700 hover:bg-gray-50'
                                                                         }`}
                                                                 >
                                                                     <Icon size={12} />
@@ -201,7 +203,7 @@ const AdminOrders = () => {
 };
 
 const StatCard = ({ title, value, icon: Icon, color }) => (
-  <div className="bg-white dark:bg-zinc-955 p-6 rounded-3xl border border-gray-100 dark:border-neutral-900 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-305 group">
+  <div className="bg-white dark:bg-zinc-900 p-6 rounded-3xl border border-gray-100 dark:border-neutral-900 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 group">
     <div className="flex items-start justify-between mb-4">
       <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-105 duration-300 ${color} shadow-sm`}>
         <Icon size={22} className="stroke-[2]" />

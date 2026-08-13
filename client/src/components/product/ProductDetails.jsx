@@ -4,7 +4,6 @@ import { Minus, Plus, ShoppingCart, ArrowLeft, Truck, ShieldCheck, RotateCcw, He
 import { useCart } from "../../context/CartContext";
 import { useWishlist } from "../../context/WishlistContext";
 import api from "../../lib/api";
-import { motion } from "framer-motion";
 import Reviews from "./Reviews";
 import Recommended from "./Recommended";
 
@@ -125,12 +124,12 @@ const ProductDetails = () => {
   const formatPrice = (value) => Number(value || 0).toLocaleString('en-IN');
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-white dark:bg-black text-gray-900 dark:text-white transition-colors duration-300">
       <div className="max-w-6xl mx-auto px-4 py-8">
         {/* Back */}
         <button
           onClick={() => navigate(-1)}
-          className="flex items-center gap-2 text-xs font-semibold text-gray-500 hover:text-black mb-8 transition-colors group"
+          className="flex items-center gap-2 text-xs font-semibold text-gray-500 hover:text-black dark:hover:text-white mb-8 transition-colors group"
         >
           <ArrowLeft size={14} className="group-hover:-translate-x-0.5 transition-transform" />
           Back
@@ -138,36 +137,26 @@ const ProductDetails = () => {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8 lg:gap-14 mb-16">
           {/* Image */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-            className="bg-gray-50 dark:bg-neutral-950 rounded-3xl overflow-hidden aspect-[3/4] flex items-center justify-center border border-gray-100 dark:border-neutral-900 shadow-sm relative"
-          >
+          <div className="bg-gray-50/50 dark:bg-zinc-950/20 md:bg-gray-50 md:dark:bg-neutral-950 rounded-3xl overflow-hidden h-[380px] sm:h-[450px] md:h-auto md:aspect-[3/4] flex items-center justify-center border border-gray-100 dark:border-neutral-900/60 shadow-sm relative animate-[fadeUp_0.4s_ease-out]">
             <img
               src={product.image}
               alt={product.name}
-              className="w-full h-full object-cover"
+              className="max-w-full max-h-full object-contain md:w-full md:h-full md:object-cover"
             />
-          </motion.div>
+          </div>
 
           {/* Info */}
-          <motion.div
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4, delay: 0.1 }}
-            className="flex flex-col space-y-6"
-          >
+          <div className="flex flex-col space-y-6 animate-[fadeUp_0.4s_ease-out_0.1s_backwards]">
             <div>
               {/* Brand & Category */}
-              <div className="flex items-center gap-2 mb-2">
+              <div className="flex items-center gap-2 mb-3">
                 {product.brand && (
-                  <span className="text-[10px] font-black text-black dark:text-white uppercase tracking-widest bg-gray-100 dark:bg-neutral-900 px-2 py-0.5 rounded">
+                  <span className="text-[9px] font-black text-black dark:text-white uppercase tracking-widest bg-gray-100 dark:bg-neutral-900 px-2.5 py-1 rounded-lg">
                     {product.brand}
                   </span>
                 )}
                 {product.categories?.name && (
-                  <span className="text-[10px] font-bold text-gray-400 uppercase tracking-widest">{product.categories.name}</span>
+                  <span className="text-[9px] font-black text-gray-400 dark:text-neutral-500 uppercase tracking-widest bg-gray-50/50 dark:bg-zinc-900/30 px-2.5 py-1 rounded-lg border border-gray-100/50 dark:border-neutral-900">{product.categories.name}</span>
                 )}
               </div>
 
@@ -181,17 +170,26 @@ const ProductDetails = () => {
                 {hasDiscount && (
                   <div className="flex items-center gap-2 mt-1">
                     <span className="text-sm text-gray-400 line-through">Rs. {formatPrice(product.price)}.00 INR</span>
-                    <span className="text-[9px] font-black text-green-600 bg-green-50 px-1.5 py-0.5 rounded uppercase tracking-wider">
+                    <span className="text-[10px] font-bold text-emerald-700 dark:text-emerald-300 bg-emerald-500/10 dark:bg-emerald-500/15 border border-emerald-500/20 dark:border-emerald-500/30 px-2 py-0.5 rounded-md uppercase tracking-wider">
                       {Math.round(((product.price - product.discounted_price) / product.price) * 100)}% OFF
                     </span>
                   </div>
                 )}
               </div>
 
-              <span className={`inline-flex items-center gap-1.5 text-[10px] font-black uppercase tracking-wider px-3 py-1.5 rounded-full ${selectedSizeStock > 0 ? 'bg-green-50 text-green-600' : 'bg-red-50 text-red-600'}`}>
-                <span className={`w-1.5 h-1.5 rounded-full ${selectedSizeStock > 0 ? 'bg-green-500' : 'bg-red-500'}`} />
-                {selectedSizeStock > 0 ? `In Stock (${selectedSizeStock})` : 'Out of Stock'}
-              </span>
+              <div className="flex items-center gap-2 text-xs sm:text-sm font-semibold">
+                <span className={`w-2 h-2 rounded-full shrink-0 ${selectedSizeStock > 0 ? 'bg-emerald-500' : 'bg-red-500'}`} />
+                <span className={selectedSizeStock > 0 ? 'text-emerald-600 dark:text-emerald-400' : 'text-red-600 dark:text-red-400'}>
+                  {selectedSizeStock > 0 ? (
+                    <>
+                      <span>In Stock</span>
+                      <span className="text-gray-400 dark:text-neutral-500 font-normal ml-1">({selectedSizeStock})</span>
+                    </>
+                  ) : (
+                    'Out of Stock'
+                  )}
+                </span>
+              </div>
             </div>
 
             {/* Sizes Select */}
@@ -212,11 +210,11 @@ const ProductDetails = () => {
                           setSelectedSize(size);
                           setQuantity(1);
                         }}
-                        className={`w-11 h-11 rounded-full text-xs font-bold uppercase transition-all flex items-center justify-center border ${
+                         className={`w-12 h-12 rounded-2xl text-xs font-black uppercase transition-all duration-200 flex items-center justify-center border ${
                           isSelected
-                            ? 'bg-black text-white border-black dark:bg-white dark:text-black dark:border-white shadow-md scale-105'
+                            ? 'bg-black text-white border-black dark:bg-white dark:text-black dark:border-white shadow-md scale-105 animate-[scaleUp_0.15s_ease-out]'
                             : isAvailable
-                              ? 'bg-white dark:bg-zinc-955 text-gray-800 dark:text-white border-gray-200 dark:border-neutral-850 hover:border-gray-400'
+                              ? 'bg-white dark:bg-zinc-900 text-gray-800 dark:text-white border-gray-200 dark:border-neutral-800 hover:border-gray-400 dark:hover:border-neutral-600'
                               : 'bg-gray-50/50 dark:bg-neutral-900/50 text-gray-300 dark:text-neutral-700 border-transparent cursor-not-allowed line-through'
                         }`}
                       >
@@ -229,7 +227,7 @@ const ProductDetails = () => {
             ) : product.weight ? (
               <div className="space-y-2">
                 <label className="text-[10px] font-black text-gray-400 dark:text-neutral-500 uppercase tracking-widest block">Size</label>
-                <span className="w-11 h-11 rounded-full border border-gray-200 dark:border-neutral-850 flex items-center justify-center text-xs font-bold text-gray-800 dark:text-white bg-white dark:bg-zinc-955">
+                <span className="w-12 h-12 rounded-2xl border border-gray-200 dark:border-neutral-800 flex items-center justify-center text-xs font-bold text-gray-800 dark:text-white bg-white dark:bg-zinc-900">
                   {product.weight}
                 </span>
               </div>
@@ -241,7 +239,7 @@ const ProductDetails = () => {
                 <div className="flex justify-between items-center">
                   <label className="text-[10px] font-black text-gray-400 dark:text-neutral-500 uppercase tracking-widest block">Select Color</label>
                   {selectedColor && (
-                    <span className="text-[10px] font-bold text-gray-550 dark:text-neutral-400 uppercase tracking-wider">{selectedColor}</span>
+                    <span className="text-[10px] font-black text-gray-500 dark:text-neutral-400 uppercase tracking-wider">{selectedColor}</span>
                   )}
                 </div>
                 <div className="flex flex-wrap gap-2.5">
@@ -251,10 +249,10 @@ const ProductDetails = () => {
                       <button
                         key={color}
                         onClick={() => setSelectedColor(color)}
-                        className={`px-4 py-2 rounded-full text-xs font-black uppercase tracking-wider transition-all border ${
+                        className={`px-5 py-2.5 rounded-2xl text-[10px] font-black uppercase tracking-wider transition-all duration-200 border ${
                           isSelected
-                            ? 'bg-black text-white border-black dark:bg-white dark:text-black dark:border-white shadow-sm'
-                            : 'bg-white dark:bg-zinc-950 text-gray-805 dark:text-neutral-300 border-gray-200 dark:border-neutral-850 hover:border-gray-400'
+                            ? 'bg-black text-white border-black dark:bg-white dark:text-black dark:border-white shadow-sm scale-105'
+                            : 'bg-white dark:bg-zinc-950 text-gray-800 dark:text-neutral-300 border-gray-200 dark:border-neutral-800 hover:border-gray-400 dark:hover:border-neutral-600'
                         }`}
                       >
                         {color}
@@ -268,14 +266,14 @@ const ProductDetails = () => {
             {/* Quantity + Cart Controls */}
             <div className="flex items-center gap-3 pt-2">
               {/* Quantity */}
-              <div className="flex items-center bg-gray-50 dark:bg-neutral-900 border border-gray-200 dark:border-neutral-850 rounded-full h-12 overflow-hidden shrink-0">
+              <div className="flex items-center bg-gray-50 dark:bg-neutral-900 border border-gray-200 dark:border-neutral-800 rounded-2xl h-12 overflow-hidden shrink-0">
                 <button onClick={() => handleQuantityChange(-1)} disabled={quantity <= 1}
-                  className="px-3.5 hover:bg-gray-100 dark:hover:bg-neutral-800 transition-colors text-gray-500 disabled:opacity-30 h-full flex items-center justify-center">
+                  className="px-4 hover:bg-gray-100 dark:hover:bg-neutral-800 transition-colors text-gray-500 disabled:opacity-30 h-full flex items-center justify-center">
                   <Minus size={13} />
                 </button>
-                <span className="px-2 font-bold text-gray-900 dark:text-white min-w-[1.75rem] text-center text-xs">{quantity}</span>
+                <span className="px-2 font-black text-gray-900 dark:text-white min-w-[1.75rem] text-center text-xs">{quantity}</span>
                 <button onClick={() => handleQuantityChange(1)} disabled={quantity >= selectedSizeStock}
-                  className="px-3.5 hover:bg-gray-100 dark:hover:bg-neutral-800 transition-colors text-gray-500 disabled:opacity-30 h-full flex items-center justify-center">
+                  className="px-4 hover:bg-gray-100 dark:hover:bg-neutral-800 transition-colors text-gray-500 disabled:opacity-30 h-full flex items-center justify-center">
                   <Plus size={13} />
                 </button>
               </div>
@@ -284,7 +282,7 @@ const ProductDetails = () => {
               <button
                 onClick={addToCart}
                 disabled={selectedSizeStock <= 0}
-                className="flex-grow bg-black hover:bg-neutral-900 text-white dark:bg-white dark:hover:bg-neutral-100 dark:text-black h-12 rounded-full font-black text-xs uppercase tracking-wider transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-sm"
+                className="flex-grow bg-black hover:bg-neutral-900 text-white dark:bg-white dark:hover:bg-neutral-100 dark:text-black h-12 rounded-2xl font-black text-xs uppercase tracking-wider transition-all duration-200 active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 shadow-sm"
               >
                 <ShoppingCart size={14} />
                 {selectedSizeStock > 0 ? 'Add to Cart' : 'Out of Stock'}
@@ -293,10 +291,10 @@ const ProductDetails = () => {
               {/* Wishlist */}
               <button
                 onClick={toggleWishlist}
-                className={`w-12 h-12 rounded-full shrink-0 flex items-center justify-center border transition-all ${
+                className={`w-12 h-12 rounded-2xl shrink-0 flex items-center justify-center border transition-all duration-200 active:scale-95 ${
                   isWishlisted 
-                    ? 'bg-red-50 border-red-250 text-red-500 hover:bg-red-105' 
-                    : 'bg-white dark:bg-zinc-955 border-gray-200 dark:border-neutral-850 text-gray-500 hover:bg-gray-50 dark:hover:bg-neutral-900/50'
+                    ? 'bg-red-50 border-red-200 dark:bg-red-950/20 dark:border-red-900/30 text-red-500 hover:bg-red-100' 
+                    : 'bg-white dark:bg-zinc-900 border-gray-200 dark:border-neutral-800 text-gray-500 hover:bg-gray-50 dark:hover:bg-neutral-900/50'
                 }`}
               >
                 <Heart size={16} className={isWishlisted ? 'fill-red-500 text-red-500' : ''} />
@@ -310,19 +308,17 @@ const ProductDetails = () => {
                 <button
                   type="button"
                   onClick={() => setOpenAccordion(openAccordion === 'description' ? '' : 'description')}
-                  className="w-full flex items-center justify-between text-xs font-black uppercase tracking-wider text-gray-800 dark:text-neutral-250 text-left"
+                  className="w-full flex items-center justify-between text-xs font-black uppercase tracking-wider text-gray-800 dark:text-neutral-300 text-left"
                 >
                   <span>Description & Fit</span>
                   <ChevronDown size={14} className={`transform transition-transform duration-300 ${openAccordion === 'description' ? 'rotate-180' : ''}`} />
                 </button>
                 {openAccordion === 'description' && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    className="pt-3 text-xs text-gray-550 dark:text-neutral-400 leading-relaxed whitespace-pre-line font-medium"
+                  <div
+                    className="pt-3 text-xs text-gray-500 dark:text-neutral-400 leading-relaxed whitespace-pre-line font-medium animate-[fadeIn_0.2s_ease-out]"
                   >
                     {product.description || "No description available."}
-                  </motion.div>
+                  </div>
                 )}
               </div>
 
@@ -331,16 +327,14 @@ const ProductDetails = () => {
                 <button
                   type="button"
                   onClick={() => setOpenAccordion(openAccordion === 'benefits' ? '' : 'benefits')}
-                  className="w-full flex items-center justify-between text-xs font-black uppercase tracking-wider text-gray-800 dark:text-neutral-250 text-left"
+                  className="w-full flex items-center justify-between text-xs font-black uppercase tracking-wider text-gray-800 dark:text-neutral-300 text-left"
                 >
                   <span>Material & Care</span>
                   <ChevronDown size={14} className={`transform transition-transform duration-300 ${openAccordion === 'benefits' ? 'rotate-180' : ''}`} />
                 </button>
                 {openAccordion === 'benefits' && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    className="pt-3 text-xs text-gray-550 dark:text-neutral-400 leading-relaxed font-medium"
+                  <div
+                    className="pt-3 text-xs text-gray-500 dark:text-neutral-400 leading-relaxed font-medium animate-[fadeIn_0.2s_ease-out]"
                   >
                     {product.key_benefits ? (
                       <ul className="space-y-2">
@@ -352,7 +346,7 @@ const ProductDetails = () => {
                         ))}
                       </ul>
                     ) : <p>No material & care instructions listed.</p>}
-                  </motion.div>
+                  </div>
                 )}
               </div>
 
@@ -361,19 +355,17 @@ const ProductDetails = () => {
                 <button
                   type="button"
                   onClick={() => setOpenAccordion(openAccordion === 'usage' ? '' : 'usage')}
-                  className="w-full flex items-center justify-between text-xs font-black uppercase tracking-wider text-gray-800 dark:text-neutral-250 text-left"
+                  className="w-full flex items-center justify-between text-xs font-black uppercase tracking-wider text-gray-800 dark:text-neutral-300 text-left"
                 >
                   <span>Fit & Style Guide</span>
                   <ChevronDown size={14} className={`transform transition-transform duration-300 ${openAccordion === 'usage' ? 'rotate-180' : ''}`} />
                 </button>
                 {openAccordion === 'usage' && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    className="pt-3 text-xs text-gray-550 dark:text-neutral-400 leading-relaxed whitespace-pre-line font-medium"
+                  <div
+                    className="pt-3 text-xs text-gray-500 dark:text-neutral-400 leading-relaxed whitespace-pre-line font-medium animate-[fadeIn_0.2s_ease-out]"
                   >
                     {product.usage_instructions || "No style guide instructions available."}
-                  </motion.div>
+                  </div>
                 )}
               </div>
 
@@ -382,24 +374,22 @@ const ProductDetails = () => {
                 <button
                   type="button"
                   onClick={() => setOpenAccordion(openAccordion === 'shipping' ? '' : 'shipping')}
-                  className="w-full flex items-center justify-between text-xs font-black uppercase tracking-wider text-gray-800 dark:text-neutral-250 text-left"
+                  className="w-full flex items-center justify-between text-xs font-black uppercase tracking-wider text-gray-800 dark:text-neutral-300 text-left"
                 >
                   <span>Shipping & Returns</span>
                   <ChevronDown size={14} className={`transform transition-transform duration-300 ${openAccordion === 'shipping' ? 'rotate-180' : ''}`} />
                 </button>
                 {openAccordion === 'shipping' && (
-                  <motion.div
-                    initial={{ opacity: 0, height: 0 }}
-                    animate={{ opacity: 1, height: 'auto' }}
-                    className="pt-3 text-xs text-gray-550 dark:text-neutral-400 leading-relaxed space-y-2 font-medium"
+                  <div
+                    className="pt-3 text-xs text-gray-500 dark:text-neutral-400 leading-relaxed space-y-2 font-medium animate-[fadeIn_0.2s_ease-out]"
                   >
                     <p>• Standard Shipping: 3 - 5 business days delivery time.</p>
                     <p>• Returns: Easy 7-day hassle-free return or exchange window from date of delivery.</p>
-                  </motion.div>
+                  </div>
                 )}
               </div>
             </div>
-          </motion.div>
+          </div>
         </div>
 
         {/* Reviews Section */}

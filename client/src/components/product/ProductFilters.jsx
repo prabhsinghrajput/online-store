@@ -16,7 +16,7 @@ const ProductFilters = ({
 }) => {
   return (
     <div className="lg:col-span-3 space-y-8 lg:sticky lg:top-24">
-      <div className="flex items-center justify-between border-b border-gray-150 dark:border-neutral-900 pb-4">
+      <div className="flex items-center justify-between border-b border-gray-200 dark:border-neutral-900 pb-4">
         <h3 className="text-sm font-bold uppercase tracking-widest text-gray-950 dark:text-white">
           Filters
         </h3>
@@ -105,7 +105,7 @@ const ProductFilters = ({
             <button
               key={size}
               onClick={() => setSelectedSize(size)}
-              className={`w-10 h-10 border text-xs font-bold uppercase transition-all rounded-[4px] ${selectedSize === size ? 'bg-black text-white border-black dark:bg-white dark:text-black dark:border-white' : 'bg-transparent border-gray-200 dark:border-neutral-800 text-gray-600 dark:text-neutral-400 hover:border-gray-450 dark:hover:border-neutral-700'}`}
+              className={`w-10 h-10 border text-xs font-bold uppercase transition-all rounded-[4px] ${selectedSize === size ? 'bg-black text-white border-black dark:bg-white dark:text-black dark:border-white' : 'bg-transparent border-gray-200 dark:border-neutral-800 text-gray-600 dark:text-neutral-400 hover:border-gray-500 dark:hover:border-neutral-700'}`}
             >
               {size}
             </button>

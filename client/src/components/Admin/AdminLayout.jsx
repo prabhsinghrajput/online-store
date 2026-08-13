@@ -24,7 +24,7 @@ const AdminLayout = () => {
                     <div className="flex items-center gap-3">
                         <div className="flex items-center gap-2.5">
                             <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                                <LayoutGrid size={16} className="text-inverse" />
+                                <LayoutGrid size={16} className="text-white" />
                             </div>  
                         </div>
                     </div>

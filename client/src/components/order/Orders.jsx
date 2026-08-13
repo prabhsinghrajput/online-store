@@ -94,7 +94,7 @@ const Orders = () => {
       <div className="w-16 h-16 bg-red-50 dark:bg-red-950/20 rounded-full flex items-center justify-center mx-auto mb-4 border border-red-100 dark:border-red-900/30">
         <Package size={24} className="text-red-500" />
       </div>
-      <h3 className="font-extrabold text-lg text-gray-850 dark:text-white mb-2">Error Loading Orders</h3>
+      <h3 className="font-extrabold text-lg text-gray-800 dark:text-white mb-2">Error Loading Orders</h3>
       <p className="text-sm text-neutral-400 dark:text-zinc-500 mb-6 max-w-sm mx-auto leading-relaxed">{error}</p>
       <button 
         onClick={() => window.location.reload()} 
@@ -110,7 +110,7 @@ const Orders = () => {
       {/* Page Header */}
       <div>
         <h1 className="text-2xl font-black tracking-tight text-neutral-900 dark:text-white">My Orders</h1>
-        <p className="text-xs font-bold text-neutral-400 dark:text-zinc-555 mt-1">{orders.length} orders placed in total</p>
+        <p className="text-xs font-bold text-neutral-400 dark:text-zinc-500 mt-1">{orders.length} orders placed in total</p>
       </div>
 
       <div className="w-full space-y-4">
@@ -131,7 +131,7 @@ const Orders = () => {
         {loading ? (
           <div className="flex flex-col items-center justify-center py-24">
             <div className="w-10 h-10 border-3 border-neutral-200 dark:border-zinc-800 border-t-neutral-900 dark:border-t-white rounded-full animate-spin" />
-            <p className="text-xs text-neutral-400 dark:text-zinc-555 font-bold uppercase tracking-wider mt-4">Loading orders...</p>
+            <p className="text-xs text-neutral-400 dark:text-zinc-500 font-bold uppercase tracking-wider mt-4">Loading orders...</p>
           </div>
         ) : filteredItems.length > 0 ? (
           <div className="bg-white/70 dark:bg-zinc-900/40 backdrop-blur-xl border border-neutral-200/60 dark:border-zinc-800/40 rounded-3xl overflow-hidden shadow-xl shadow-neutral-100/30 dark:shadow-none divide-y divide-neutral-100 dark:divide-zinc-800/30">
@@ -151,7 +151,7 @@ const Orders = () => {
                   
                   {/* Item Image */}
                   <div className="md:col-span-2 flex justify-start">
-                    <div className="w-18 h-18 bg-white dark:bg-zinc-850 rounded-2xl p-2 border border-neutral-150 dark:border-zinc-800 shrink-0 flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
+                    <div className="w-18 h-18 bg-white dark:bg-zinc-800 rounded-2xl p-2 border border-neutral-200 dark:border-zinc-800 shrink-0 flex items-center justify-center group-hover:scale-105 transition-transform duration-300">
                       {item.product_image ? (
                         <img src={item.product_image} alt={item.product_name} className="max-h-full max-w-full object-contain" />
                       ) : (
@@ -165,7 +165,7 @@ const Orders = () => {
                     <h3 className="font-extrabold text-sm text-neutral-900 dark:text-white group-hover:text-primary transition-colors line-clamp-2 pr-4">
                       {item.product_name}
                     </h3>
-                    <p className="text-[9px] font-bold text-neutral-400 dark:text-zinc-555 uppercase tracking-wider">
+                    <p className="text-[9px] font-bold text-neutral-400 dark:text-zinc-500 uppercase tracking-wider">
                       Order #{item.orderId.slice(0, 8).toUpperCase()} • {formattedDate}
                     </p>
                   </div>
@@ -204,7 +204,7 @@ const Orders = () => {
           </div>
         ) : (
           <div className="flex flex-col items-center justify-center py-24 bg-white/70 dark:bg-zinc-900/40 backdrop-blur-xl border border-white/20 dark:border-zinc-800/30 rounded-3xl p-10 shadow-sm">
-            <div className="w-20 h-20 bg-neutral-100 dark:bg-zinc-850 rounded-full flex items-center justify-center mb-6 border border-neutral-150 dark:border-zinc-800">
+            <div className="w-20 h-20 bg-neutral-100 dark:bg-zinc-800 rounded-full flex items-center justify-center mb-6 border border-neutral-200 dark:border-zinc-800">
               <ShoppingBag size={30} className="text-neutral-400 dark:text-zinc-500" />
             </div>
             <h3 className="font-bold text-lg text-neutral-900 dark:text-white mb-2">No matching orders found</h3>

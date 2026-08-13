@@ -3,7 +3,7 @@ import { Camera, Shield } from 'lucide-react';
 
 const ProfileHeader = ({ formData, user, isAdmin, uploading, handleImageUpload }) => {
   return (
-    <div className="bg-white dark:bg-zinc-955 border border-gray-200 dark:border-neutral-900 rounded-3xl p-6 shadow-sm dark:shadow-none flex flex-col sm:flex-row items-center gap-6">
+    <div className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-neutral-900 rounded-3xl p-6 shadow-sm dark:shadow-none flex flex-col sm:flex-row items-center gap-6">
       <div className="relative group select-none">
         <img
           src={formData.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(formData.displayName || 'User')}&background=000&color=fff&size=128`}
@@ -34,7 +34,7 @@ const ProfileHeader = ({ formData, user, isAdmin, uploading, handleImageUpload }
         <h1 className="text-xl md:text-2xl font-bold text-gray-900 dark:text-white truncate">
           {formData.displayName || 'User'}
         </h1>
-        <p className="text-gray-550 dark:text-neutral-450 text-sm truncate">
+        <p className="text-gray-500 dark:text-neutral-500 text-sm truncate">
           {user?.email}
         </p>
         <div className="flex flex-wrap items-center justify-center sm:justify-start gap-2 pt-1">
@@ -43,7 +43,7 @@ const ProfileHeader = ({ formData, user, isAdmin, uploading, handleImageUpload }
             Active
           </span>
           {isAdmin && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold tracking-wider uppercase bg-amber-50 dark:bg-amber-955/10 text-amber-700 dark:text-amber-400 border border-amber-100/50 dark:border-amber-900/10">
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold tracking-wider uppercase bg-amber-50 dark:bg-amber-950/10 text-amber-700 dark:text-amber-400 border border-amber-100/50 dark:border-amber-900/10">
               <Shield size={10} />
               Admin
             </span>

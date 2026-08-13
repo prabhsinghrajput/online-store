@@ -32,10 +32,6 @@ html.dark .bg-\[\#f9f9fa\] {
   background-color: #000000 !important; /* dark app background */
 }
 
-html.dark .bg-gray-55 {
-  background-color: #000000 !important;
-}
-
 html.dark .bg-gray-50 {
   background-color: #000000 !important;
 }
@@ -86,7 +82,6 @@ html.dark .text-gray-700 {
   color: #d1d5db !important;
 }
 
-html.dark .text-gray-650,
 html.dark .text-gray-600 {
   color: #9ca3af !important;
 }
@@ -111,4 +106,51 @@ html.dark textarea {
 html.dark input::placeholder, 
 html.dark textarea::placeholder {
   color: #666666 !important;
+}
+
+/* Shared animation keyframes (used by animate-[fadeIn_...], animate-[scaleUp_...], etc.) */
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(-4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(16px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@keyframes scaleIn {
+  from { opacity: 0; transform: scale(0.95); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes scaleUp {
+  from { opacity: 0; transform: scale(0.9); }
+  to { opacity: 1; transform: scale(1); }
+}
+
+@keyframes slideInRight {
+  from { transform: translateX(100%); }
+  to { transform: translateX(0); }
+}
+
+@keyframes slideInLeft {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(0); }
+}
+
+html.dark input.search-input-field {
+  background-color: transparent !important;
+  border: none !important;
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0); }
+  100% { transform: translateX(-50%); }
+}
+
+.animate-marquee {
+  display: flex;
+  width: max-content;
+  animation: marquee 25s linear infinite;
 }

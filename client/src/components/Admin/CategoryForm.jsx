@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Save, X, ImageIcon } from 'lucide-react';
 import api from '../../lib/api';
+import { useToast } from '../../context/ToastContext';
 
 const CategoryForm = () => {
     const navigate = useNavigate();
@@ -15,6 +16,7 @@ const CategoryForm = () => {
         }
     }
     const isEditMode = !!id;
+    const { toast } = useToast();
 
     const [loading, setLoading] = useState(false);
     const [uploading, setUploading] = useState(false);
@@ -59,7 +61,7 @@ const CategoryForm = () => {
             const result = await api.upload.file(file, 'categories');
             setFormData(prev => ({ ...prev, image: result.url }));
         } catch (error) {
-            alert('Error uploading image: ' + error.message);
+            toast('Error uploading image: ' + error.message, 'error');
             console.error(error);
         } finally {
             setUploading(false);
@@ -81,7 +83,7 @@ const CategoryForm = () => {
             navigate('/admin/categories');
         } catch (error) {
             console.error('Error saving category:', error);
-            alert('Failed to save category: ' + error.message);
+            toast('Failed to save category: ' + error.message, 'error');
         } finally {
             setLoading(false);
         }
@@ -132,7 +134,7 @@ const CategoryForm = () => {
                                         e.preventDefault();
                                         setFormData(prev => ({ ...prev, image: '' }));
                                     }}
-                                    className="absolute top-2 right-2 w-7 h-7 bg-red-500 text-inverse rounded-lg flex items-center justify-center hover:bg-red-600 z-10 shadow-md"
+                                    className="absolute top-2 right-2 w-7 h-7 bg-red-500 text-white rounded-lg flex items-center justify-center hover:bg-red-600 z-10 shadow-md"
                                 >
                                     <X size={14} />
                                 </button>

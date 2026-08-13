@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { getStoredUser } from '../../lib/auth';
 import api from '../../lib/api';
 import { Trash2, X, Camera } from 'lucide-react';
+import { useToast } from '../../context/ToastContext';
 
 const Reviews = ({ productId, product }) => {
   const [reviews, setReviews] = useState([]);
@@ -16,6 +17,7 @@ const Reviews = ({ productId, product }) => {
 
   const [showForm, setShowForm] = useState(false);
   const [selectedTag, setSelectedTag] = useState('All');
+  const { toast, confirm } = useToast();
 
   useEffect(() => {
     fetchUserAndReviews();
@@ -50,7 +52,7 @@ const Reviews = ({ productId, product }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!user) return alert('Please login to write a review');
+    if (!user) { toast('Please login to write a review', 'info'); return; }
     
     setSubmitting(true);
     try {
@@ -59,14 +61,20 @@ const Reviews = ({ productId, product }) => {
       setShowForm(false);
     } catch (error) {
       console.error('Error submitting review:', error);
-      alert('Failed to submit review');
+      toast('Failed to submit review', 'error');
     } finally {
       setSubmitting(false);
     }
   };
 
   const handleDelete = async () => {
-    if (!confirm('Are you sure you want to delete your review?')) return;
+    const confirmed = await confirm({
+      title: 'Delete Review',
+      message: 'Are you sure you want to delete your review?',
+      confirmLabel: 'Delete',
+      danger: true
+    });
+    if (!confirmed) return;
     try {
       await api.reviews.delete(existingReview.id);
       setExistingReview(null);
@@ -74,8 +82,10 @@ const Reviews = ({ productId, product }) => {
       setComment('');
       await fetchUserAndReviews();
       setShowForm(false);
+      toast('Review deleted', 'success');
     } catch (error) {
       console.error('Error deleting review:', error);
+      toast('Failed to delete review', 'error');
     }
   };
 
@@ -131,7 +141,7 @@ const Reviews = ({ productId, product }) => {
               </div>
               <span className="text-sm font-bold text-gray-900 dark:text-white">{averageRating} out of 5</span>
             </div>
-            <p className="text-xs text-gray-550 mt-1">{reviews.length} global ratings</p>
+            <p className="text-xs text-gray-500 mt-1">{reviews.length} global ratings</p>
           </div>
 
           {/* Star progress rows */}
@@ -140,7 +150,7 @@ const Reviews = ({ productId, product }) => {
               const pct = getStarPercentage(num);
               return (
                 <div key={num} className="flex items-center gap-3 text-xs">
-                  <span className="w-8 text-gray-655 dark:text-neutral-450 font-semibold hover:underline cursor-pointer">{num} star</span>
+                  <span className="w-8 text-gray-400 dark:text-neutral-500 font-semibold hover:underline cursor-pointer">{num} star</span>
                   <div className="flex-1 h-4 bg-gray-100 dark:bg-neutral-900 rounded border border-gray-200/50 dark:border-neutral-800 overflow-hidden">
                     <div 
                       className="h-full bg-orange-500 transition-all duration-500" 
@@ -175,7 +185,7 @@ const Reviews = ({ productId, product }) => {
           {tagsList.length > 0 && (
             <div className="space-y-2.5">
               <h4 className="text-sm font-bold text-gray-900 dark:text-white">Customers say</h4>
-              <p className="text-xs text-gray-555 leading-relaxed">
+              <p className="text-xs text-gray-500 leading-relaxed">
                 Customers find the apparel fabric to be comfortable and soft, noting how it matches the fit and brand style guide correctly.
               </p>
               <div className="flex flex-wrap gap-2 text-xs font-semibold pt-1">
@@ -184,7 +194,7 @@ const Reviews = ({ productId, product }) => {
                   className={`px-3 py-1 rounded-full border transition-all ${
                     selectedTag === 'All'
                       ? 'bg-black text-white border-black'
-                      : 'bg-white text-gray-605 border-gray-200 hover:border-gray-400'
+                      : 'bg-white text-gray-600 border-gray-200 hover:border-gray-400'
                   }`}
                 >
                   All ({reviews.length})
@@ -196,7 +206,7 @@ const Reviews = ({ productId, product }) => {
                     className={`px-3 py-1 rounded-full border transition-all ${
                       selectedTag === tag.label
                         ? 'bg-black text-white border-black'
-                        : 'bg-white text-gray-605 border-gray-200 hover:border-gray-400'
+                        : 'bg-white text-gray-600 border-gray-200 hover:border-gray-400'
                     }`}
                   >
                     {tag.label} ({tag.count})
@@ -238,18 +248,18 @@ const Reviews = ({ productId, product }) => {
                     {/* Date and verified label */}
                     <div className="flex flex-wrap items-center gap-2 text-[10px] text-gray-400 font-semibold">
                       <span>Reviewed on {new Date(review.created_at).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric' })}</span>
-                      <span className="text-gray-355">•</span>
+                      <span className="text-gray-400">•</span>
                       <span className="text-orange-600 dark:text-orange-500 font-bold uppercase tracking-wider text-[9px]">Verified Purchase</span>
                     </div>
 
                     {/* Review text */}
-                    <p className="text-xs text-gray-655 dark:text-neutral-350 leading-relaxed font-medium">
+                    <p className="text-xs text-gray-400 dark:text-neutral-300 leading-relaxed font-medium">
                       {review.comment}
                     </p>
                   </div>
                 ))
               ) : (
-                <p className="text-xs text-gray-455 py-2">No reviews match the selected tag filter.</p>
+                <p className="text-xs text-gray-500 py-2">No reviews match the selected tag filter.</p>
               )}
             </div>
           </div>
@@ -259,7 +269,7 @@ const Reviews = ({ productId, product }) => {
       {/* Pop-up Modal dialog box */}
       {user && showForm && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60 backdrop-blur-[2px] p-4 overflow-y-auto">
-          <div className="bg-white dark:bg-neutral-950 border border-gray-150 dark:border-neutral-900 rounded-3xl w-full max-w-lg p-6 shadow-2xl space-y-5 animate-[scaleIn_0.2s_ease-out] relative my-8">
+          <div className="bg-white dark:bg-neutral-950 border border-gray-200 dark:border-neutral-900 rounded-3xl w-full max-w-lg p-6 shadow-2xl space-y-5 animate-[scaleIn_0.2s_ease-out] relative my-8">
             {/* Close Button */}
             <button
               onClick={() => setShowForm(false)}
@@ -305,7 +315,7 @@ const Reviews = ({ productId, product }) => {
                 <textarea
                   value={comment}
                   onChange={(e) => setComment(e.target.value)}
-                  className="w-full p-3.5 text-xs bg-gray-50/50 dark:bg-neutral-900 border border-gray-250 dark:border-neutral-800 rounded-xl focus:outline-none focus:border-black dark:focus:border-white transition-all placeholder-gray-400 font-semibold"
+                  className="w-full p-3.5 text-xs bg-gray-50/50 dark:bg-neutral-900 border border-gray-300 dark:border-neutral-800 rounded-xl focus:outline-none focus:border-black dark:focus:border-white transition-all placeholder-gray-400 font-semibold"
                   rows="4"
                   placeholder="What should other customers know?"
                   required
@@ -315,7 +325,7 @@ const Reviews = ({ productId, product }) => {
               {/* Share Photo/Video mock */}
               <div className="space-y-1.5">
                 <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400">Share a video or photo</label>
-                <div className="border border-dashed border-gray-250 dark:border-neutral-800 rounded-xl p-4 flex flex-col items-center justify-center gap-1.5 cursor-pointer hover:bg-gray-50/50 dark:hover:bg-neutral-900 transition-all text-gray-450 dark:text-neutral-500">
+                <div className="border border-dashed border-gray-300 dark:border-neutral-800 rounded-xl p-4 flex flex-col items-center justify-center gap-1.5 cursor-pointer hover:bg-gray-50/50 dark:hover:bg-neutral-900 transition-all text-gray-500 dark:text-neutral-500">
                   <Camera size={20} />
                   <span className="text-[9px] font-bold uppercase tracking-wider">Upload media</span>
                 </div>
@@ -327,7 +337,7 @@ const Reviews = ({ productId, product }) => {
                 <input
                   type="text"
                   placeholder="What's most important to know?"
-                  className="w-full px-3.5 h-10 text-xs bg-gray-50/50 dark:bg-neutral-900 border border-gray-250 dark:border-neutral-800 rounded-xl focus:outline-none focus:border-black dark:focus:border-white transition-all placeholder-gray-405 font-semibold"
+                  className="w-full px-3.5 h-10 text-xs bg-gray-50/50 dark:bg-neutral-900 border border-gray-300 dark:border-neutral-800 rounded-xl focus:outline-none focus:border-black dark:focus:border-white transition-all placeholder-gray-400 font-semibold"
                   defaultValue={rating >= 4 ? 'Verified Quality' : 'Fit Verification'}
                 />
               </div>

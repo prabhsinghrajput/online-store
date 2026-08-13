@@ -10,7 +10,7 @@ function Footer() {
   const isProfileOrAdmin = location.pathname.startsWith('/profile') || location.pathname.startsWith('/admin') || location.pathname.startsWith('/orders') || location.pathname.startsWith('/wishlist') || location.pathname.startsWith('/settings');
 
   return (
-    <footer className={`bg-[#f6f6f6] dark:bg-black border-t border-gray-200 dark:border-neutral-900 text-gray-550 dark:text-neutral-450 font-sans w-full mt-0 transition-colors duration-300 ${isProfileOrAdmin ? 'lg:pl-[250px]' : ''}`}>
+    <footer className={`bg-[#f6f6f6] dark:bg-black border-t border-gray-200 dark:border-neutral-900 text-gray-500 dark:text-neutral-500 font-sans w-full mt-0 transition-colors duration-300 ${isProfileOrAdmin ? 'lg:pl-[250px]' : ''}`}>
 
       {/* Main Footer Links Block */}
       <div className="w-full px-6 md:px-12 py-12 md:py-16">
@@ -23,7 +23,7 @@ function Footer() {
                 alt="Cross Logo" 
                 className="h-10 w-auto object-contain brightness-95 -mt-4" 
               />
-              <p className="text-[9px] font-black tracking-[0.2em] text-gray-450 dark:text-neutral-500 uppercase pl-1">
+              <p className="text-[9px] font-black tracking-[0.2em] text-gray-500 dark:text-neutral-500 uppercase pl-1">
                 Move Different.
               </p>
             </div>
@@ -82,7 +82,7 @@ function Footer() {
               <li><Link to="/products" className="hover:text-gray-900 dark:hover:text-white transition-colors">Signature</Link></li>
               <li><Link to="/products" className="hover:text-gray-900 dark:hover:text-white transition-colors">Street</Link></li>
               <li><Link to="/products" className="hover:text-gray-900 dark:hover:text-white transition-colors">Denim</Link></li>
-              <li><Link to="/products" className="text-red-500 hover:text-red-650 transition-colors">Sale</Link></li>
+              <li><Link to="/products" className="text-red-500 hover:text-red-600 transition-colors">Sale</Link></li>
             </ul>
           </div>
 
@@ -121,7 +121,7 @@ function Footer() {
               <p className="text-[10px] font-black tracking-[0.25em] text-gray-900 dark:text-white uppercase">
                 Be Different
               </p>
-              <p className="text-[10px] font-black tracking-[0.25em] text-gray-450 dark:text-neutral-500 uppercase">
+              <p className="text-[10px] font-black tracking-[0.25em] text-gray-500 dark:text-neutral-500 uppercase">
                 Be Cross
               </p>
             </div>

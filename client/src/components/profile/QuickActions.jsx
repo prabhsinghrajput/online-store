@@ -22,12 +22,12 @@ const QuickActions = () => {
           <button
             key={idx}
             onClick={item.action}
-            className="flex flex-col items-center justify-center p-5 bg-white dark:bg-zinc-955 border border-gray-150 dark:border-neutral-900 rounded-2xl text-center hover:shadow-md transition-all duration-300 group hover:-translate-y-0.5"
+            className="flex flex-col items-center justify-center p-5 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-neutral-900 rounded-2xl text-center hover:shadow-md transition-all duration-300 group hover:-translate-y-0.5"
           >
             <div className={`w-10 h-10 ${item.bg} rounded-full flex items-center justify-center mb-3 group-hover:scale-105 transition-transform`}>
               <item.icon size={18} className={item.color} />
             </div>
-            <h4 className="text-xs font-bold text-gray-955 dark:text-white mb-0.5">{item.label}</h4>
+            <h4 className="text-xs font-bold text-gray-900 dark:text-white mb-0.5">{item.label}</h4>
             <p className="text-[10px] text-gray-400 dark:text-neutral-500 font-semibold">{item.desc}</p>
           </button>
         ))}

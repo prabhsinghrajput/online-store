@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { getSession } from './lib/auth';
 import Navbar from './components/layout/Navbar';
-import Breadcrumbs from './components/layout/Breadcrumbs';
 import ProductDetails from './components/product/ProductDetails';
-import Cart from './components/layout/Cart';
 import CartPage from './pages/CartPage';
 import OrderConfirmation from './components/order/OrderConfirmation';
 import Footer from './components/layout/Footer';
@@ -14,21 +12,7 @@ import Hero from './pages/Hero';
 import CategoryProducts from './pages/CategoryProducts';
 import Login from './pages/Login'; // Import Login Component
 import Profile from './pages/Profile';
-import OrderDetailsPage from './pages/OrderDetailsPage';
-import Orders from './components/order/Orders';
-import OrderView from './components/order/OrderView';
-import Settings from './components/profile/Settings';
-import Wishlist from './components/profile/Wishlist';
-
-import AdminLayout from './components/Admin/AdminLayout';
-import ProductList from './components/Admin/ProductList';
-import ProductForm from './components/Admin/ProductForm';
-import AdminOrders from './components/Admin/AdminOrders';
-import CategoryList from './components/Admin/CategoryList';
-import CategoryForm from './components/Admin/CategoryForm';
-import BannerList from './components/Admin/BannerList';
-import BannerForm from './components/Admin/BannerForm';
-import AnalyticsDashboard from './components/Admin/AnalyticsDashboard';
+import NotFound from './pages/NotFound';
 
 const AdminGuard = ({ children, user }) => {
   // Check admin status from user metadata (set by server during auth)
@@ -103,7 +87,7 @@ const App = () => {
         <Router>
         <div className="min-h-screen flex flex-col">
           <Layout user={user}>
-            <main className="flex-grow">
+            <main className="flex-grow pb-16 md:pb-0">
               <Routes>
                 {/* Public Routes */}
                 <Route path="/cart" element={<CartPage user={user} />} />
@@ -130,7 +114,7 @@ const App = () => {
                 <Route path="/:id" element={<CategoryProducts />} />
 
                 {/* Catch all */}
-                <Route path="*" element={<Navigate to="/" replace />} />
+                <Route path="*" element={<NotFound />} />
               </Routes>
             </main>
           </Layout>

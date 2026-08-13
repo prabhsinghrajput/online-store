@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ArrowLeft, Save, X, ImageIcon, ChevronDown } from 'lucide-react';
 import api from '../../lib/api';
+import { useToast } from '../../context/ToastContext';
+import CustomDropdown from '../common/CustomDropdown';
 
 const ProductForm = () => {
     const navigate = useNavigate();
@@ -15,6 +17,7 @@ const ProductForm = () => {
         }
     }
     const isEditMode = !!id;
+    const { toast } = useToast();
 
     const [loading, setLoading] = useState(false);
     const [categories, setCategories] = useState([]);
@@ -160,7 +163,7 @@ const ProductForm = () => {
             const result = await api.upload.file(file, 'products');
             setFormData(prev => ({ ...prev, image: result.url }));
         } catch (error) {
-            alert('Error uploading image: ' + error.message);
+            toast('Error uploading image: ' + error.message, 'error');
             console.error(error);
         } finally {
             setUploading(false);
@@ -208,7 +211,7 @@ const ProductForm = () => {
             navigate('/admin/products');
         } catch (error) {
             console.error('Error saving product:', error);
-            alert('Failed to save product: ' + error.message);
+            toast('Failed to save product: ' + error.message, 'error');
         } finally {
             setLoading(false);
         }
@@ -256,7 +259,7 @@ const ProductForm = () => {
                                         e.preventDefault();
                                         setFormData(prev => ({ ...prev, image: '' }));
                                     }}
-                                    className="absolute top-2 right-2 w-7 h-7 bg-red-500 text-inverse rounded-lg flex items-center justify-center hover:bg-red-600 z-10 shadow-md"
+                                    className="absolute top-2 right-2 w-7 h-7 bg-red-500 text-white rounded-lg flex items-center justify-center hover:bg-red-600 z-10 shadow-md"
                                 >
                                     <X size={14} />
                                 </button>
@@ -290,15 +293,13 @@ const ProductForm = () => {
                         </div>
                         <div className="space-y-1.5">
                             <label className="text-xs font-medium text-gray-600">Category *</label>
-                            <div className="relative">
-                                <select required name="category_id" value={formData.category_id} onChange={handleChange} className={`${inputClass} appearance-none pr-10`}>
-                                    <option value="">Select Category</option>
-                                    {categories.map(cat => (
-                                        <option key={cat.id} value={cat.id}>{cat.name}</option>
-                                    ))}
-                                </select>
-                                <ChevronDown size={14} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-                            </div>
+                            <CustomDropdown
+                                options={categories.map(cat => ({ value: cat.id, label: cat.name }))}
+                                value={formData.category_id}
+                                onChange={(e) => handleChange({ target: { name: 'category_id', value: e.target.value } })}
+                                placeholder="Select Category"
+                                className="w-full text-sm font-semibold"
+                            />
                         </div>
 
                         {/* Conditional Sizes & Individual Stock */}
@@ -316,7 +317,7 @@ const ProductForm = () => {
                                 </div>
                                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                                     {sizeStocks.map((item, index) => (
-                                        <div key={index} className="flex items-center gap-2 bg-gray-50/50 p-2.5 rounded-xl border border-gray-150 relative group">
+                                        <div key={index} className="flex items-center gap-2 bg-gray-50/50 p-2.5 rounded-xl border border-gray-200 relative group">
                                             <div className="flex-1 space-y-1">
                                                 <input
                                                     required
@@ -339,7 +340,7 @@ const ProductForm = () => {
                                             <button
                                                 type="button"
                                                 onClick={() => removeSizeRow(index)}
-                                                className="text-red-500 hover:text-red-655 opacity-0 group-hover:opacity-100 transition-opacity p-1"
+                                                className="text-red-500 hover:text-red-600 opacity-0 group-hover:opacity-100 transition-opacity p-1"
                                             >
                                                 <X size={14} />
                                             </button>
@@ -422,7 +423,7 @@ const ProductForm = () => {
                                         className={`px-3 py-1.5 rounded-xl border text-xs font-bold transition-all ${
                                             selected
                                                 ? 'bg-black text-white border-black'
-                                                : 'bg-white text-gray-700 border-gray-250 hover:border-gray-400'
+                                                : 'bg-white text-gray-700 border-gray-300 hover:border-gray-400'
                                         }`}
                                     >
                                         {color}
@@ -452,9 +453,9 @@ const ProductForm = () => {
                         {/* Custom Colors Pill Indicators */}
                         {formData.colors?.filter(c => !AVAILABLE_COLORS.includes(c)).length > 0 && (
                             <div className="flex flex-wrap gap-2 items-center mt-2.5">
-                                <span className="text-[10px] font-black uppercase text-gray-450 tracking-wider">Custom Added:</span>
+                                <span className="text-[10px] font-black uppercase text-gray-500 tracking-wider">Custom Added:</span>
                                 {formData.colors.filter(c => !AVAILABLE_COLORS.includes(c)).map(color => (
-                                    <span key={color} className="inline-flex items-center gap-1 bg-gray-100 text-gray-805 text-xs font-bold px-3 py-1 rounded-full border border-gray-200">
+                                    <span key={color} className="inline-flex items-center gap-1 bg-gray-100 text-gray-800 text-xs font-bold px-3 py-1 rounded-full border border-gray-200">
                                         {color}
                                         <button 
                                             type="button" 

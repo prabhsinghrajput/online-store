@@ -265,7 +265,7 @@ const ProductCard = ({
           <div className="p-4 flex flex-col flex-1">
             <div className="flex-1">
               <h3 className="font-bold text-gray-800 line-clamp-2 leading-tight mb-1">{product.name}</h3>
-              {product.weight && <p className="text-xs text-gray-550 dark:text-neutral-400 font-medium mb-3">{formatSizes(product.weight)}</p>}
+              {product.weight && <p className="text-xs text-gray-500 dark:text-neutral-400 font-medium mb-3">{formatSizes(product.weight)}</p>}
               <div className="flex items-center gap-2 mb-4">
                 <span className="text-lg font-bold text-gray-900">₹{formatPrice(displayPrice)}</span>
                 {hasDiscount && (
@@ -287,7 +287,7 @@ const ProductCard = ({
           </div>
           <div className="mt-2 space-y-1">
             <h4 className="text-xs font-extrabold text-gray-900 line-clamp-1">{product.name}</h4>
-            {product.weight && <p className="text-[9px] text-gray-450 dark:text-neutral-500 font-semibold">{formatSizes(product.weight)}</p>}
+            {product.weight && <p className="text-[9px] text-gray-500 dark:text-neutral-500 font-semibold">{formatSizes(product.weight)}</p>}
             <div className="flex justify-between items-center pt-1">
               <span className="text-xs font-black text-gray-950">₹{formatPrice(displayPrice)}</span>
               {renderCartControl()}
@@ -308,7 +308,7 @@ const ProductCard = ({
               className="max-h-full max-w-[85%] object-contain group-hover:scale-105 transition-transform duration-500"
             />
             {hasDiscount && (
-              <span className="absolute top-4 left-4 bg-[#e52e2e] text-inverse text-[10px] font-black px-2 py-0.5 rounded shadow-sm">
+              <span className="absolute top-4 left-4 bg-[#e52e2e] text-white text-[10px] font-black px-2 py-0.5 rounded shadow-sm">
                 {discountPercent}% OFF
               </span>
             )}
@@ -358,7 +358,7 @@ const ProductCard = ({
               className={`max-h-full object-contain group-hover:scale-105 transition-transform duration-300 ${isOutOfStock ? 'grayscale' : ''}`}
             />
             {hasDiscount && !isOutOfStock && (
-              <span className="absolute top-2 left-2 bg-red-500 text-inverse text-[9px] font-bold px-1.5 py-0.5 rounded-md">
+              <span className="absolute top-2 left-2 bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-md">
                 {discountPercent}% OFF
               </span>
             )}
@@ -375,7 +375,7 @@ const ProductCard = ({
               {product.name}
             </h3>
             <div className="flex items-center justify-between gap-1 flex-wrap">
-              {product.weight && <p className="text-[10px] text-gray-450 dark:text-neutral-450">{formatSizes(product.weight)}</p>}
+              {product.weight && <p className="text-[10px] text-gray-500 dark:text-neutral-500">{formatSizes(product.weight)}</p>}
               {product.brand && (
                 <p className="text-[10px] font-bold text-gray-600 bg-gray-100 px-1.5 py-0.5 rounded-md uppercase tracking-wider">
                   {product.brand}
@@ -432,7 +432,7 @@ const ProductCard = ({
           )}
         </div>
         <div className="pt-3 pb-1 space-y-1">
-          <h3 className="text-sm font-bold text-gray-805 dark:text-neutral-200 line-clamp-1 tracking-wide group-hover:text-gray-600 transition-colors">
+          <h3 className="text-sm font-bold text-gray-800 dark:text-neutral-200 line-clamp-1 tracking-wide group-hover:text-gray-600 transition-colors">
             {product.name}
           </h3>
           <div className="flex items-center gap-2 text-xs">

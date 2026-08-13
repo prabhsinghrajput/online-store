@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { login, register, getSession } from '../lib/auth';
-import { motion } from "framer-motion";
 import { Sparkles, ShieldCheck, Mail, Lock } from "lucide-react";
 
 const Login = () => {
@@ -71,24 +70,14 @@ const Login = () => {
         <div className="absolute -bottom-40 -left-40 w-80 h-80 bg-blue-500/5 rounded-full blur-3xl" />
       </div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="relative w-full max-w-sm"
-      >
+      <div className="relative w-full max-w-sm animate-[fadeUp_0.5s_ease-out]">
         <div className="bg-white rounded-3xl shadow-2xl shadow-gray-200/50 p-8 border border-gray-100">
           {/* Logo */}
-          <motion.div
-            initial={{ scale: 0.8, opacity: 0 }}
-            animate={{ scale: 1, opacity: 1 }}
-            transition={{ delay: 0.1, duration: 0.4 }}
-            className="flex justify-center mb-6"
-          >
+          <div className="flex justify-center mb-6 animate-[scaleIn_0.4s_ease-out_0.1s_backwards]">
             <div className="w-20 h-20 bg-gradient-to-br from-primary/10 to-blue-500/10 rounded-2xl flex items-center justify-center">
               <img src="https://res.cloudinary.com/dwfalgx6c/image/upload/v1786181989/cross_logo_xlumhw.webp" alt="Cross" className="w-14 h-14 object-contain" />
             </div>
-          </motion.div>
+          </div>
 
           {/* Heading */}
           <div className="text-center mb-8">
@@ -102,30 +91,22 @@ const Login = () => {
 
           {/* Error */}
           {error && (
-            <motion.div
-              initial={{ opacity: 0, y: -8 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mb-5 flex items-center gap-2 text-sm text-red-600 bg-red-50 border border-red-100 px-4 py-3 rounded-xl"
-            >
+            <div className="mb-5 flex items-center gap-2 text-sm text-red-600 bg-red-50 border border-red-100 px-4 py-3 rounded-xl animate-[fadeIn_0.2s_ease-out]">
               <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
               </svg>
               <span className="line-clamp-2">{error}</span>
-            </motion.div>
+            </div>
           )}
 
           {/* Success message */}
           {message && (
-            <motion.div
-              initial={{ opacity: 0, y: -8 }}
-              animate={{ opacity: 1, y: 0 }}
-              className="mb-5 flex items-center gap-2 text-sm text-green-700 bg-green-50 border border-green-100 px-4 py-3 rounded-xl"
-            >
+            <div className="mb-5 flex items-center gap-2 text-sm text-green-700 bg-green-50 border border-green-100 px-4 py-3 rounded-xl animate-[fadeIn_0.2s_ease-out]">
               <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
                 <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
               </svg>
               <span className="line-clamp-3">{message}</span>
-            </motion.div>
+            </div>
           )}
 
           {/* Auth Form */}
@@ -161,21 +142,20 @@ const Login = () => {
               </div>
             </div>
 
-            <motion.button
+            <button
               type="submit"
               disabled={isLoading}
-              className="w-full flex items-center justify-center gap-3 px-5 py-3.5 bg-primary text-inverse rounded-2xl text-sm font-semibold hover:opacity-90 hover:-translate-y-0.5 active:translate-y-0 transition-all disabled:opacity-60 shadow-lg shadow-primary/20"
-              whileTap={{ scale: 0.98 }}
+              className="w-full flex items-center justify-center gap-3 px-5 py-3.5 bg-black hover:bg-gray-800 text-white rounded-2xl text-sm font-semibold hover:opacity-90 hover:-translate-y-0.5 active:translate-y-0 transition-all disabled:opacity-60 shadow-lg shadow-black/20"
             >
               {isLoading ? (
-                <div className="w-5 h-5 border-2 border-inverse/40 border-t-inverse rounded-full animate-spin" />
+                <div className="w-5 h-5 border-2 border-white/40 border-t-white rounded-full animate-spin" />
               ) : (
                 <Sparkles size={18} />
               )}
               {isLoading
                 ? (mode === 'signin' ? 'Signing in...' : 'Creating account...')
                 : (mode === 'signin' ? 'Sign In' : 'Create Account')}
-            </motion.button>
+            </button>
           </form>
 
           {/* Mode toggle */}
@@ -202,7 +182,7 @@ const Login = () => {
             <a href="#" className="text-primary hover:underline">Privacy Policy</a>
           </p>
         </div>
-      </motion.div>
+      </div>
     </div>
   );
 };

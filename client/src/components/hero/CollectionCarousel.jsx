@@ -60,7 +60,7 @@ const CollectionCarousel = () => {
                   onClick={() => navigate(`/products/${prodId}`)}
                   className="w-[220px] sm:w-[280px] md:w-[320px] cursor-pointer group flex flex-col gap-3.5"
                 >
-                  <div className="aspect-[3/4] w-full overflow-hidden bg-gray-150 dark:bg-zinc-900 rounded-md relative border border-gray-100 dark:border-neutral-900">
+                  <div className="aspect-[3/4] w-full overflow-hidden bg-gray-100 dark:bg-zinc-900 rounded-md relative border border-gray-100 dark:border-neutral-900">
                     {product.image || (product.images && product.images[0]) ? (
                       <img 
                         src={product.image || product.images[0]} 
@@ -78,7 +78,7 @@ const CollectionCarousel = () => {
                     <h3 className="font-bold text-[11px] sm:text-xs md:text-sm text-gray-900 dark:text-white uppercase tracking-wider group-hover:text-primary transition-colors line-clamp-1">
                       {product.name}
                     </h3>
-                    <p className="text-[11px] sm:text-xs md:text-sm text-gray-550 dark:text-gray-400 font-bold">
+                    <p className="text-[11px] sm:text-xs md:text-sm text-gray-500 dark:text-gray-400 font-bold">
                       {formattedPrice}
                     </p>
                     {product.colors && product.colors.length > 0 && (

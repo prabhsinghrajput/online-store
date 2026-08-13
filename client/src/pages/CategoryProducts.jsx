@@ -10,16 +10,19 @@ import {
   Search,
 } from 'lucide-react';
 import ProductCard from '../components/product/ProductCard';
+import CustomDropdown from '../components/common/CustomDropdown';
 import api from '../lib/api';
-import CartPage from './CartPage';
+
+const sortOptions = [
+  { value: 'default', label: 'Sort by: Featured' },
+  { value: 'price_low', label: 'Price: Low to High' },
+  { value: 'price_high', label: 'Price: High to Low' },
+  { value: 'newest', label: 'Newest Arrivals' }
+];
 
 const CategoryProducts = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-
-  if (id === 'cart') {
-    return <CartPage />;
-  }
 
   const [products, setProducts] = useState([]);
   const [category, setCategory] = useState(null);
@@ -255,19 +258,12 @@ const CategoryProducts = () => {
                 </div>
 
                 {/* Sort By Select */}
-                <div className="relative">
-                  <select
-                    value={sortBy}
-                    onChange={(e) => setSortBy(e.target.value)}
-                    className="appearance-none bg-gray-50 border border-gray-200 rounded-xl pl-4 pr-10 py-2.5 text-xs font-bold text-gray-700 focus:outline-none focus:ring-1 focus:ring-gray-900 focus:border-gray-900 transition-all cursor-pointer"
-                  >
-                    <option value="default">Sort by: Featured</option>
-                    <option value="price_low">Price: Low to High</option>
-                    <option value="price_high">Price: High to Low</option>
-                    <option value="newest">Newest Arrivals</option>
-                  </select>
-                  <ChevronDown size={14} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none" />
-                </div>
+                <CustomDropdown
+                  options={sortOptions}
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="w-[160px]"
+                />
               </div>
             </div>
 
@@ -286,7 +282,7 @@ const CategoryProducts = () => {
                 <p className="text-sm text-gray-400 mb-6">Try clearing your filters or checking a different keyword</p>
                 <button
                   onClick={resetFilters}
-                  className="px-5 py-2.5 bg-gray-900 hover:bg-gray-850 text-white rounded-xl text-sm font-semibold transition-all"
+                  className="px-5 py-2.5 bg-gray-900 hover:bg-gray-800 text-white rounded-xl text-sm font-semibold transition-all"
                 >
                   Reset All Filters
                 </button>

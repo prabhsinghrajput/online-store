@@ -23,7 +23,7 @@ const ProductGrid = ({
   return (
     <div className="lg:col-span-9 space-y-6">
       {/* Header Row */}
-      <div className="flex items-center justify-between border-b border-gray-150 dark:border-neutral-900 pb-4">
+      <div className="flex items-center justify-between border-b border-gray-200 dark:border-neutral-900 pb-4">
         <h2 className="text-lg sm:text-xl font-bold tracking-tight text-gray-950 dark:text-white">
           Collections
         </h2>
@@ -41,7 +41,7 @@ const ProductGrid = ({
           {isSortOpen && (
             <>
               <div className="fixed inset-0 z-30" onClick={() => setIsSortOpen(false)} />
-              <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-black rounded-md border border-gray-200 dark:border-neutral-850 shadow-lg py-1.5 z-40">
+              <div className="absolute right-0 mt-2 w-48 bg-white dark:bg-black rounded-md border border-gray-200 dark:border-neutral-800 shadow-lg py-1.5 z-40">
                 {[
                   { value: 'featured', label: 'Featured' },
                   { value: 'price_low', label: 'Price: Low to High' },
@@ -54,7 +54,7 @@ const ProductGrid = ({
                       setSortBy(option.value);
                       setIsSortOpen(false);
                     }}
-                    className="flex items-center justify-between w-full px-4 py-2 text-left text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-neutral-350 hover:bg-gray-50 dark:hover:bg-neutral-900 transition-colors"
+                    className="flex items-center justify-between w-full px-4 py-2 text-left text-xs font-bold uppercase tracking-wider text-gray-700 dark:text-neutral-300 hover:bg-gray-50 dark:hover:bg-neutral-900 transition-colors"
                   >
                     {option.label}
                     {sortBy === option.value && <Check size={12} className="text-black dark:text-white" />}
@@ -106,7 +106,7 @@ const ProductGrid = ({
                   <h3 className="font-bold text-[11px] sm:text-xs md:text-sm text-gray-900 dark:text-white uppercase tracking-wider group-hover:text-primary transition-colors">
                     {product.name}
                   </h3>
-                  <p className="text-[11px] sm:text-xs md:text-sm text-gray-550 dark:text-neutral-450 font-bold">
+                  <p className="text-[11px] sm:text-xs md:text-sm text-gray-500 dark:text-neutral-500 font-bold">
                     ₹{displayPrice.toLocaleString('en-IN')}
                   </p>
                 </div>
@@ -118,8 +118,8 @@ const ProductGrid = ({
 
       {/* Load More Button */}
       {filteredProducts.length > 0 && (
-        <div className="flex justify-center pt-8 border-t border-gray-150 dark:border-neutral-900">
-          <button className="border border-gray-200 dark:border-neutral-850 hover:border-black dark:hover:border-white text-gray-900 dark:text-white text-[10px] font-black tracking-widest uppercase py-3.5 px-10 transition-colors rounded-[6px] bg-transparent">
+        <div className="flex justify-center pt-8 border-t border-gray-200 dark:border-neutral-900">
+          <button className="border border-gray-200 dark:border-neutral-800 hover:border-black dark:hover:border-white text-gray-900 dark:text-white text-[10px] font-black tracking-widest uppercase py-3.5 px-10 transition-colors rounded-[6px] bg-transparent">
             Load More
           </button>
         </div>

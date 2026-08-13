@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Bell, Shield, Moon, Sun, Globe, Volume2 } from 'lucide-react';
 import { useTheme } from '../../context/ThemeContext';
+import CustomDropdown from '../common/CustomDropdown';
 
 const Settings = () => {
   const { theme, toggleTheme } = useTheme();
@@ -56,12 +57,12 @@ const Settings = () => {
     <div className="w-full space-y-5">
         {/* Header */}
         <div>
-          <h1 className="text-2xl font-bold text-gray-805 dark:text-white">Settings</h1>
+          <h1 className="text-2xl font-bold text-gray-800 dark:text-white">Settings</h1>
           <p className="text-sm text-gray-400 mt-0.5">Customize your app preferences</p>
         </div>
 
         {settingsGroups.map((group, idx) => (
-          <div key={idx} className="bg-white dark:bg-zinc-955 border border-gray-100 dark:border-neutral-900 rounded-3xl p-5 md:p-6 shadow-sm dark:shadow-none space-y-4">
+          <div key={idx} className="bg-white dark:bg-zinc-900 border border-gray-100 dark:border-neutral-900 rounded-3xl p-5 md:p-6 shadow-sm dark:shadow-none space-y-4">
             <h3 className="text-xs font-bold text-gray-900 dark:text-white uppercase tracking-wider border-b border-gray-100 dark:border-neutral-900 pb-2">{group.title}</h3>
             <div className="divide-y divide-gray-50 dark:divide-neutral-900/50">
               {group.items.map((item, itemIdx) => {
@@ -69,7 +70,7 @@ const Settings = () => {
                 return (
                   <div key={itemIdx} className="flex items-center justify-between py-3.5 first:pt-0 last:pb-0">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-xl bg-gray-55 dark:bg-neutral-900 flex items-center justify-center text-gray-500 dark:text-neutral-400">
+                      <div className="w-8 h-8 rounded-xl bg-gray-100 dark:bg-neutral-900 flex items-center justify-center text-gray-500 dark:text-neutral-400">
                         <Icon size={16} />
                       </div>
                       <div>
@@ -86,15 +87,12 @@ const Settings = () => {
                     ) : item.themeToggle ? (
                       <Toggle checked={theme === 'dark'} onChange={toggleTheme} />
                     ) : item.select ? (
-                      <select
+                      <CustomDropdown
+                        options={['English', 'Hindi', 'Spanish']}
                         value={settings.language}
                         onChange={(e) => setSettings(prev => ({ ...prev, language: e.target.value }))}
-                        className="text-xs text-gray-700 bg-gray-50 dark:bg-neutral-900 border border-gray-250 dark:border-neutral-800 rounded-xl px-3 py-1.5 focus:ring-2 focus:ring-primary/20 focus:border-primary outline-none dark:text-white"
-                      >
-                        <option>English</option>
-                        <option>Hindi</option>
-                        <option>Spanish</option>
-                      </select>
+                        className="w-[110px]"
+                      />
                     ) : null}
                   </div>
                 );

@@ -5,7 +5,7 @@ import {
   Plus, LayoutGrid, ImageIcon, ShoppingBag, ArrowLeft, Shield 
 } from 'lucide-react';
 import { signOut, getStoredUser } from '../lib/auth';
-import { motion, AnimatePresence } from 'framer-motion';
+import { useToast } from '../context/ToastContext';
 
 // Import subcomponents
 import ProfileSidebar from '../components/profile/ProfileSidebar';
@@ -32,6 +32,7 @@ import Settings from '../components/profile/Settings';
 const Profile = ({ user: propUser }) => {
   const navigate = useNavigate();
   const location = useLocation();
+  const { toast } = useToast();
   const user = propUser || getStoredUser();
   const isLoading = false;
   const isAdminUser = (u) => u?.user_metadata?.role === 'admin' || u?.user_metadata?.isAdmin === true;
@@ -129,7 +130,7 @@ const Profile = ({ user: propUser }) => {
       reader.readAsDataURL(file);
     } catch (error) {
       console.error('Error uploading profile image:', error);
-      alert('Failed to upload image: ' + error.message);
+      toast('Failed to upload image: ' + error.message, 'error');
     } finally {
       setUploading(false);
     }
@@ -159,7 +160,7 @@ const Profile = ({ user: propUser }) => {
   if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-white dark:bg-black">
-        <div className="w-10 h-10 border-3 border-gray-250 dark:border-neutral-800 border-t-black dark:border-t-white rounded-full animate-spin" />
+        <div className="w-10 h-10 border-3 border-gray-300 dark:border-neutral-800 border-t-black dark:border-t-white rounded-full animate-spin" />
       </div>
     );
   }
@@ -193,21 +194,14 @@ const Profile = ({ user: propUser }) => {
             />
 
             {/* Success Toast */}
-            <AnimatePresence>
-              {saveSuccess && (
-                <motion.div
-                  initial={{ opacity: 0, y: -10, scale: 0.95 }}
-                  animate={{ opacity: 1, y: 0, scale: 1 }}
-                  exit={{ opacity: 0, y: -10, scale: 0.95 }}
-                  className="flex items-center gap-3 px-4 py-3 bg-green-50 dark:bg-green-955/20 border border-green-200 dark:border-green-900/30 rounded-2xl"
-                >
-                  <div className="w-8 h-8 bg-green-100 dark:bg-green-955/30 rounded-full flex items-center justify-center">
-                    <Sparkles size={16} className="text-green-600 dark:text-green-400" />
-                  </div>
-                  <p className="text-green-800 dark:text-green-400 text-xs font-semibold">Profile updated successfully!</p>
-                </motion.div>
-              )}
-            </AnimatePresence>
+            {saveSuccess && (
+              <div className="flex items-center gap-3 px-4 py-3 bg-green-50 dark:bg-green-950/20 border border-green-200 dark:border-green-900/30 rounded-2xl animate-[fadeIn_0.25s_ease-out]">
+                <div className="w-8 h-8 bg-green-100 dark:bg-green-950/30 rounded-full flex items-center justify-center">
+                  <Sparkles size={16} className="text-green-600 dark:text-green-400" />
+                </div>
+                <p className="text-green-800 dark:text-green-400 text-xs font-semibold">Profile updated successfully!</p>
+              </div>
+            )}
 
             {/* Personal Information Card */}
             <PersonalInformation 
@@ -224,7 +218,7 @@ const Profile = ({ user: propUser }) => {
           <div className="space-y-6 animate-[fadeIn_0.2s_ease-out]">
             {/* Horizontal Sub-Navigation */}
             <div className="flex justify-start items-center">
-              <nav className="flex flex-wrap items-center gap-1 bg-white dark:bg-zinc-955 border border-gray-200 dark:border-neutral-900 rounded-2xl p-1.5 shadow-sm dark:shadow-none">
+              <nav className="flex flex-wrap items-center gap-1 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-neutral-900 rounded-2xl p-1.5 shadow-sm dark:shadow-none">
                 {[
                   { id: 'dashboard', path: '/admin', icon: BarChart2, label: 'Dashboard' },
                   { id: 'products', path: '/admin/products', icon: Package, label: 'Products' },
@@ -242,7 +236,7 @@ const Profile = ({ user: propUser }) => {
                       className={`flex items-center gap-2 px-4 py-2 rounded-xl text-xs font-bold tracking-wide transition-all duration-200 ${
                         isActive
                           ? 'bg-gray-100 dark:bg-neutral-900 text-gray-900 dark:text-white shadow-sm'
-                          : 'text-gray-550 dark:text-neutral-400 hover:text-gray-900 dark:hover:text-white'
+                          : 'text-gray-500 dark:text-neutral-400 hover:text-gray-900 dark:hover:text-white'
                       }`}
                     >
                       <Icon size={14} />
@@ -290,15 +284,15 @@ const Profile = ({ user: propUser }) => {
         )}
 
         {activeTab === 'payments' && (
-          <div className="bg-white dark:bg-zinc-955 border border-gray-200 dark:border-neutral-900 rounded-3xl p-8 text-center space-y-4">
+          <div className="bg-white dark:bg-zinc-900 border border-gray-200 dark:border-neutral-900 rounded-3xl p-8 text-center space-y-4">
             <div className="w-12 h-12 bg-emerald-50 dark:bg-emerald-950/20 rounded-full flex items-center justify-center mx-auto text-emerald-600">
               <CreditCard size={22} />
             </div>
             <div className="space-y-1">
               <h3 className="text-sm font-bold text-gray-900 dark:text-white uppercase tracking-wider">Payment Methods</h3>
-              <p className="text-xs text-gray-455 dark:text-neutral-500">Manage your linked credit/debit cards or wallets.</p>
+              <p className="text-xs text-gray-500 dark:text-neutral-500">Manage your linked credit/debit cards or wallets.</p>
             </div>
-            <p className="text-xs font-semibold text-gray-550">No saved payment methods. All payments are securely processed via Stripe at checkout.</p>
+            <p className="text-xs font-semibold text-gray-500">No saved payment methods. All payments are securely processed via Stripe at checkout.</p>
           </div>
         )}
 
