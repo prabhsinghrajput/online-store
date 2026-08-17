@@ -23,6 +23,7 @@ import CategoryForm from '../components/Admin/CategoryForm';
 import BannerList from '../components/Admin/BannerList';
 import BannerForm from '../components/Admin/BannerForm';
 import AdminOrders from '../components/Admin/AdminOrders';
+import HeroEditor from '../components/Admin/HeroEditor';
 
 // Import Order subcomponents
 import Orders from '../components/order/Orders';
@@ -76,6 +77,8 @@ const Profile = ({ user: propUser }) => {
     adminSubTab = 'new-banner';
   } else if (location.pathname === '/admin/orders') {
     adminSubTab = 'orders';
+  } else if (location.pathname === '/admin/hero-edit') {
+    adminSubTab = 'hero-edit';
   }
 
   const handleTabChange = (tabId) => {
@@ -236,6 +239,7 @@ const Profile = ({ user: propUser }) => {
                   { id: 'new-product', path: '/admin/products/new', icon: Plus, label: 'Add Product' },
                   { id: 'categories', path: '/admin/categories', icon: LayoutGrid, label: 'Categories' },
                   { id: 'banners', path: '/admin/banners', icon: ImageIcon, label: 'Banners' },
+                  { id: 'hero-edit', path: '/admin/hero-edit', icon: Sparkles, label: 'Edit Hero' },
                   { id: 'orders', path: '/admin/orders', icon: ShoppingBag, label: 'Orders' },
                 ].map((item) => {
                   const Icon = item.icon;
@@ -267,6 +271,7 @@ const Profile = ({ user: propUser }) => {
               {adminSubTab === 'new-category' && <CategoryForm />}
               {adminSubTab === 'banners' && <BannerList />}
               {adminSubTab === 'new-banner' && <BannerForm />}
+              {adminSubTab === 'hero-edit' && <HeroEditor />}
               {adminSubTab === 'orders' && <AdminOrders />}
             </div>
           </div>

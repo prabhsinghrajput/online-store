@@ -2,10 +2,17 @@ import React, { useState, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import api from '../../lib/api';
 
-const LookbookSection = () => {
+const LookbookSection = ({ content }) => {
   const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+
+  const badgeText = content?.lookbookTitle || "Lookbook '24";
+  const h1 = content?.lookbookHeading1 || "Timeless";
+  const h2 = content?.lookbookHeading2 || "Pieces.";
+  const h3 = content?.lookbookHeading3 || "Limitless";
+  const h4 = content?.lookbookHeading4 || "Vibes.";
+  const desc = content?.lookbookDesc || "Designed for the streets.\nMade for the misfits.";
 
   useEffect(() => {
     const fetchProducts = async () => {
@@ -43,18 +50,17 @@ const LookbookSection = () => {
       <div className="lg:col-span-4 space-y-6">
         <div className="space-y-1">
           <span className="text-[10px] font-bold tracking-[0.2em] text-gray-500 dark:text-neutral-400 uppercase pb-1 border-b border-gray-200 dark:border-neutral-800 inline-block">
-            Lookbook &apos;24
+            {badgeText}
           </span>
         </div>
         <h2 className="text-3xl sm:text-4xl md:text-5xl font-black tracking-tight leading-none uppercase">
-          <span className="text-gray-900 dark:text-white block">Timeless</span>
-          <span className="text-gray-900 dark:text-white block">Pieces.</span>
-          <span className="text-gray-500 dark:text-neutral-500 block">Limitless</span>
-          <span className="text-gray-500 dark:text-neutral-500 block">Vibes.</span>
+          <span className="text-gray-900 dark:text-white block">{h1}</span>
+          <span className="text-gray-900 dark:text-white block">{h2}</span>
+          <span className="text-gray-500 dark:text-neutral-500 block">{h3}</span>
+          <span className="text-gray-500 dark:text-neutral-500 block">{h4}</span>
         </h2>
-        <p className="text-xs sm:text-sm text-gray-500 dark:text-neutral-400 font-medium leading-relaxed">
-          Designed for the streets.<br />
-          Made for the misfits.
+        <p className="text-xs sm:text-sm text-gray-500 dark:text-neutral-400 font-medium leading-relaxed whitespace-pre-line">
+          {desc}
         </p>
         <button 
           onClick={() => navigate('/products')}

@@ -13,6 +13,7 @@ import categoriesRouter from './routes/categories.js';
 import ordersRouter from './routes/orders.js';
 import reviewsRouter from './routes/reviews.js';
 import bannersRouter from './routes/banners.js';
+import heroRouter from './routes/hero.js';
 import authRouter from './routes/auth.js';
 import analyticsRouter from './routes/analytics.js';
 import uploadRouter from './routes/upload.js';
@@ -99,6 +100,7 @@ app.use('/api/categories', categoriesRouter);
 app.use('/api/orders', ordersRouter);
 app.use('/api/reviews', reviewsRouter);
 app.use('/api/banners', bannersRouter);
+app.use('/api/hero', heroRouter);
 app.use('/api/analytics', analyticsRouter);
 app.use('/api/upload', uploadRouter);
 

@@ -37,7 +37,7 @@ const profileSchema = z.object({
   phone: z.string().max(20).trim().optional(),
   address: z.string().max(500).trim().optional(),
   photoURL: z.string().url('Invalid URL').max(2048).optional(),
-}).strict();
+});
 
 /**
  * POST /api/auth/register

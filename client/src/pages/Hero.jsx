@@ -1,12 +1,27 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import HeroBanner from '../components/hero/HeroBanner';
 import CollectionCarousel from '../components/hero/CollectionCarousel';
 import FeaturesStrip from '../components/hero/FeaturesStrip';
 import AboutUsSection from '../components/hero/AboutUsSection';
 import LookbookSection from '../components/hero/LookbookSection';
 import MindsetSection from '../components/hero/MindsetSection';
+import api from '../lib/api';
 
 const Hero = () => {
+  const [heroContent, setHeroContent] = useState(null);
+
+  useEffect(() => {
+    const fetchHeroContent = async () => {
+      try {
+        const data = await api.hero.get();
+        setHeroContent(data);
+      } catch (error) {
+        console.error('Error fetching hero content:', error);
+      }
+    };
+    fetchHeroContent();
+  }, []);
+
   return (
     <div className="min-h-screen bg-[#f9f9fa] dark:bg-black font-sans">
       {/* Hero Banner Section */}
@@ -20,13 +35,13 @@ const Hero = () => {
         <FeaturesStrip />
 
         {/* About Us Section */}
-        <AboutUsSection />
+        <AboutUsSection content={heroContent} />
 
         {/* Lookbook Section */}
-        <LookbookSection />
+        <LookbookSection content={heroContent} />
 
         {/* Our Mindset Section */}
-        <MindsetSection />
+        <MindsetSection content={heroContent} />
       </div>
     </div>
   );

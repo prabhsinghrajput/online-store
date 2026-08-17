@@ -70,6 +70,11 @@ const api = {
     delete: (id) => request(`/banners/${id}`, { method: 'DELETE' }),
   },
 
+  hero: {
+    get: (opts) => request('/hero', opts),
+    update: (data) => request('/hero', { method: 'PUT', body: JSON.stringify(data) }),
+  },
+
   analytics: {
     get: () => request('/analytics'),
   },

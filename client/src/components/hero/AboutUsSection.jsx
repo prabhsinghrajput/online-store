@@ -1,8 +1,20 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const AboutUsSection = () => {
+const AboutUsSection = ({ content }) => {
   const navigate = useNavigate();
+
+  const title1 = content?.aboutUsTitle1 || 'BUILT DIFFERENT.';
+  const header1 = content?.aboutUsHeader1 || 'OUR MISSION';
+  const desc1 = content?.aboutUsDesc1 || 'CROSS exists for those who refuse to blend in. We create bold, everyday streetwear that represents individuality, confidence, and the freedom to move on your own terms. Every piece is designed to help you express who you are without saying a word.';
+  const btn1 = content?.aboutUsBtn1 || 'DISCOVER CROSS';
+  const img1 = content?.aboutUsImg1 || 'https://images.unsplash.com/photo-1556821840-3a63f95609a7?q=80&w=1200&auto=format&fit=crop';
+
+  const title2 = content?.aboutUsTitle2 || 'THINK DIFFERENT.';
+  const header2 = content?.aboutUsHeader2 || 'OUR VISION';
+  const desc2 = content?.aboutUsDesc2 || "We're building more than a clothing brand — we're building a mindset. CROSS is for the generation that challenges the ordinary, creates its own path, and never follows the crowd. We believe style should be personal, fearless, and unapologetically different.";
+  const btn2 = content?.aboutUsBtn2 || 'EXPLORE OUR STORY';
+  const img2 = content?.aboutUsImg2 || 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=1200&auto=format&fit=crop';
 
   return (
     <section className="-mx-6 md:-mx-12 my-8 text-gray-900 dark:text-white">
@@ -11,29 +23,27 @@ const AboutUsSection = () => {
         {/* Text Content */}
         <div className="bg-white dark:bg-black px-8 py-12 sm:px-12 sm:py-16 md:px-16 md:py-20 lg:px-24 flex flex-col justify-center items-start space-y-5">
           <div className="flex items-center gap-2 text-xs font-semibold tracking-[0.2em] text-neutral-500 dark:text-neutral-400 font-outfit uppercase">
-            <span className="text-black dark:text-white">✦</span> BUILT DIFFERENT.
+            <span className="text-black dark:text-white">✦</span> {title1}
           </div>
           <h2 className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-wider font-bebas text-gray-950 dark:text-white leading-none">
-            OUR MISSION
+            {header1}
           </h2>
           <p className="text-xs sm:text-sm font-outfit text-gray-600 dark:text-neutral-300 leading-relaxed font-light max-w-md">
-            CROSS exists for those who refuse to blend in. We create bold, everyday streetwear that represents
-            individuality, confidence, and the freedom to move on your own terms. Every piece is designed to help
-            you express who you are without saying a word.
+            {desc1}
           </p>
           <button
             onClick={() => navigate('/products')}
             className="inline-flex items-center justify-center bg-black text-white hover:bg-neutral-800 dark:bg-white dark:text-black dark:hover:bg-neutral-200 font-bold text-xs uppercase tracking-wider px-6 py-3 font-outfit transition-all duration-300 shadow-sm cursor-pointer"
           >
-            DISCOVER CROSS &nbsp; &rarr;
+            {btn1} &nbsp; &rarr;
           </button>
         </div>
 
         {/* Image */}
         <div className="w-full h-[280px] sm:h-[340px] md:h-[400px] relative overflow-hidden bg-neutral-100 dark:bg-neutral-900">
           <img
-            src="https://images.unsplash.com/photo-1556821840-3a63f95609a7?q=80&w=1200&auto=format&fit=crop"
-            alt="Our Mission - CROSS Urban Streetwear"
+            src={img1}
+            alt={header1}
             className="w-full h-full object-cover object-center"
             loading="lazy"
           />
@@ -69,8 +79,8 @@ const AboutUsSection = () => {
         {/* Image */}
         <div className="w-full h-[280px] sm:h-[340px] md:h-[400px] relative overflow-hidden bg-neutral-100 dark:bg-neutral-900 order-2 md:order-1">
           <img
-            src="https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?q=80&w=1200&auto=format&fit=crop"
-            alt="Our Vision - CROSS Contemporary Fashion"
+            src={img2}
+            alt={header2}
             className="w-full h-full object-cover object-center grayscale hover:grayscale-0 transition-all duration-700 ease-out"
             loading="lazy"
           />
@@ -79,21 +89,19 @@ const AboutUsSection = () => {
         {/* Text Content */}
         <div className="bg-white dark:bg-black px-8 py-12 sm:px-12 sm:py-16 md:px-16 md:py-20 lg:px-24 flex flex-col justify-center items-start space-y-5 order-1 md:order-2">
           <div className="flex items-center gap-2 text-xs font-semibold tracking-[0.2em] text-neutral-500 dark:text-neutral-400 font-outfit uppercase">
-            <span className="text-black dark:text-white">✦</span> THINK DIFFERENT.
+            <span className="text-black dark:text-white">✦</span> {title2}
           </div>
           <h2 className="text-5xl sm:text-6xl lg:text-7xl font-bold tracking-wider font-bebas text-gray-950 dark:text-white leading-none">
-            OUR VISION
+            {header2}
           </h2>
           <p className="text-xs sm:text-sm font-outfit text-gray-600 dark:text-neutral-300 leading-relaxed font-light max-w-md">
-            We&apos;re building more than a clothing brand &mdash; we&apos;re building a mindset. CROSS is for the generation that
-            challenges the ordinary, creates its own path, and never follows the crowd. We believe style should be
-            personal, fearless, and unapologetically different.
+            {desc2}
           </p>
           <button
             onClick={() => navigate('/products')}
             className="inline-flex items-center justify-center bg-black text-white hover:bg-neutral-800 dark:bg-white dark:text-black dark:hover:bg-neutral-200 font-bold text-xs uppercase tracking-wider px-6 py-3 font-outfit transition-all duration-300 shadow-sm cursor-pointer"
           >
-            EXPLORE OUR STORY &nbsp; &rarr;
+            {btn2} &nbsp; &rarr;
           </button>
         </div>
       </div>

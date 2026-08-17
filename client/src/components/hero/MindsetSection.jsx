@@ -1,6 +1,11 @@
 import React from 'react';
 
-const MindsetSection = () => {
+const MindsetSection = ({ content }) => {
+  const badgeText = content?.mindsetTitle || "Our Mindset";
+  const h1 = content?.mindsetHeading1 || "We Don't Follow.";
+  const h2 = content?.mindsetHeading2 || "We Cross.";
+  const desc = content?.mindsetDesc || "CROSS isn't just a brand, it's a mindset.\nWe challenge the norm and create our own lane.\nBuilt for those who move different and choose their own path.";
+
   return (
     <div className="dark:bg-black text-gray-900 dark:text-white p-8 md:p-12 rounded-md my-8 relative overflow-hidden">
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center relative z-10">
@@ -18,21 +23,19 @@ const MindsetSection = () => {
           
           <div className="space-y-3">
             <span className="text-[10px] font-bold tracking-[0.2em] text-gray-500 dark:text-neutral-500 uppercase block">
-              Our Mindset
+              {badgeText}
             </span>
             <h2 className="text-3xl sm:text-4xl font-black tracking-tight leading-none uppercase space-y-1">
-              <span className="text-gray-950 dark:text-white block">We Don&apos;t Follow.</span>
-              <span className="text-gray-400 dark:text-neutral-500 block">We Cross.</span>
+              <span className="text-gray-950 dark:text-white block">{h1}</span>
+              <span className="text-gray-400 dark:text-neutral-500 block">{h2}</span>
             </h2>
           </div>
         </div>
 
         {/* Right Column: Paragraph + Signature */}
         <div className="lg:col-span-5 space-y-6">
-          <p className="text-xs sm:text-sm text-gray-600 dark:text-neutral-500 font-medium leading-relaxed max-w-md">
-            CROSS isn&apos;t just a brand, it&apos;s a mindset.<br />
-            We challenge the norm and create our own lane.<br />
-            Built for those who move different and choose their own path.
+          <p className="text-xs sm:text-sm text-gray-600 dark:text-neutral-500 font-medium leading-relaxed max-w-md whitespace-pre-line">
+            {desc}
           </p>
           
           {/* Signature SVG */}

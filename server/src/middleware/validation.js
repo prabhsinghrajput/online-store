@@ -101,3 +101,30 @@ export const validate = (schema, source = 'body') => {
     }
   };
 };
+
+export const heroContentSchema = z.object({
+  aboutUsTitle1: z.string().max(255).optional(),
+  aboutUsHeader1: z.string().max(255).optional(),
+  aboutUsDesc1: z.string().max(5000).optional(),
+  aboutUsBtn1: z.string().max(100).optional(),
+  aboutUsImg1: z.string().url().max(2048).optional(),
+
+  aboutUsTitle2: z.string().max(255).optional(),
+  aboutUsHeader2: z.string().max(255).optional(),
+  aboutUsDesc2: z.string().max(5000).optional(),
+  aboutUsBtn2: z.string().max(100).optional(),
+  aboutUsImg2: z.string().url().max(2048).optional(),
+
+  lookbookTitle: z.string().max(255).optional(),
+  lookbookHeading1: z.string().max(255).optional(),
+  lookbookHeading2: z.string().max(255).optional(),
+  lookbookHeading3: z.string().max(255).optional(),
+  lookbookHeading4: z.string().max(255).optional(),
+  lookbookDesc: z.string().max(5000).optional(),
+
+  mindsetTitle: z.string().max(255).optional(),
+  mindsetHeading1: z.string().max(255).optional(),
+  mindsetHeading2: z.string().max(255).optional(),
+  mindsetDesc: z.string().max(5000).optional(),
+}).strict();
+
