@@ -128,4 +128,4 @@ const ProductGrid = ({
   );
 };
 
-export default ProductGrid;
+export default React.memo(ProductGrid);

@@ -4,12 +4,10 @@
  */
 
 export const errorHandler = (err, req, res, next) => {
-  // Log error for debugging (remove in production)
-  if (process.env.NODE_ENV !== 'production') {
-    console.error('Error:', err);
-  }
+  // Log full error server-side only
+  console.error('Error:', err.message, err.stack);
 
-  // Handle specific error types
+  // Handle specific error types with safe messages
   if (err.name === 'UnauthorizedError') {
     return res.status(401).json({ error: 'Invalid or missing token' });
   }
@@ -29,7 +27,7 @@ export const errorHandler = (err, req, res, next) => {
 
   // Rate limit error
   if (err.status === 429) {
-    return res.status(429).json({ error: err.message || 'Too many requests' });
+    return res.status(429).json({ error: 'Too many requests' });
   }
 
   // Payload too large
@@ -37,14 +35,9 @@ export const errorHandler = (err, req, res, next) => {
     return res.status(413).json({ error: 'Request payload too large' });
   }
 
-  // Default error response (don't expose internal details)
+  // Always return generic error to client — never expose internal details
   const statusCode = err.statusCode || err.status || 500;
-  const message = process.env.NODE_ENV === 'production'
-    ? 'An error occurred. Please try again later.'
-    : err.message || 'Internal server error';
-
   res.status(statusCode).json({
-    error: message,
-    ...(process.env.NODE_ENV !== 'production' && { stack: err.stack })
+    error: 'An error occurred. Please try again later.'
   });
 };

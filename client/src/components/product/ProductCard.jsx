@@ -1,3 +1,4 @@
+import React from 'react';
 import { Link } from 'react-router-dom';
 import {
   Heart,
@@ -458,4 +459,4 @@ const ProductCard = ({
   return <Link to={productLink} className={rootClass()}>{inner}</Link>;
 };
 
-export default ProductCard;
+export default React.memo(ProductCard);

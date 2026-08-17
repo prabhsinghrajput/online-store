@@ -28,17 +28,22 @@ const OrderView = () => {
   const [showUpdatesModal, setShowUpdatesModal] = useState(false);
 
   useEffect(() => {
+    const controller = new AbortController();
+
     const fetchOrder = async () => {
       try {
-        const data = await api.orders.getById(id);
+        const data = await api.orders.getById(id, { signal: controller.signal });
         setOrder(data);
       } catch (error) {
+        if (error.name === 'AbortError') return;
         console.error('Error fetching order:', error);
       } finally {
         setLoading(false);
       }
     };
     fetchOrder();
+
+    return () => controller.abort();
   }, [id]);
 
   if (loading) return (
@@ -106,7 +111,7 @@ const OrderView = () => {
             });
 
             return (
-              <div key={idx} className="bg-white/70 dark:bg-zinc-900/40 backdrop-blur-xl border border-neutral-200/60 dark:border-zinc-800/40 rounded-3xl overflow-hidden shadow-xl shadow-neutral-100/30 dark:shadow-none divide-y divide-neutral-100 dark:divide-zinc-800/40 mb-6">
+              <div key={item.product_id || idx} className="bg-white/70 dark:bg-zinc-900/40 backdrop-blur-xl border border-neutral-200/60 dark:border-zinc-800/40 rounded-3xl overflow-hidden shadow-xl shadow-neutral-100/30 dark:shadow-none divide-y divide-neutral-100 dark:divide-zinc-800/40 mb-6">
                 
                 {/* Section 1: Product info */}
                 <div className="p-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">

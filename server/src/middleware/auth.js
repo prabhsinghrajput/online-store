@@ -31,7 +31,7 @@ const buildUser = (doc) => {
     email: doc.email,
     created_at: doc.created_at,
     last_sign_in_at: doc.last_sign_in_at,
-    user_metadata: doc.user_metadata || {},
+    user_metadata: { ...(doc.user_metadata || {}) },
   };
   user.isAdmin = ADMIN_EMAILS.includes(user.email) || doc.role === 'admin';
   if (user.isAdmin) {
@@ -74,12 +74,12 @@ const loadUserFromToken = async (token) => {
  * Authenticate user from Bearer token
  */
 export const authenticateUser = async (req, res, next) => {
-  const authHeader = req.headers.authorization;
-  if (!authHeader || !authHeader.startsWith('Bearer ')) {
+  const token = req.cookies?.token;
+
+  if (!token) {
     return res.status(401).json({ error: 'Unauthorized' });
   }
 
-  const token = authHeader.split(' ')[1];
   try {
     const { user, error } = await loadUserFromToken(token);
     if (error || !user) {

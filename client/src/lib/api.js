@@ -1,22 +1,20 @@
-import { getToken, clearSession } from './auth';
+import { clearSession } from './auth';
 
 const API_BASE = import.meta.env.VITE_API_URL || '/api';
 
 async function request(endpoint, options = {}) {
   const headers = { 'Content-Type': 'application/json', ...options.headers };
 
-  // Attach auth token if present
-  const token = getToken();
-  if (token) {
-    headers['Authorization'] = `Bearer ${token}`;
-  }
-
   const isFormData = options.body instanceof FormData;
   if (isFormData) {
     delete headers['Content-Type'];
   }
 
-  const res = await fetch(`${API_BASE}${endpoint}`, { ...options, headers });
+  const res = await fetch(`${API_BASE}${endpoint}`, { 
+    ...options, 
+    headers,
+    credentials: 'include'
+  });
 
   if (res.status === 401 || res.status === 403) {
     // Auth failed - clear the session. clearSession() dispatches auth:changed,
@@ -37,36 +35,36 @@ async function request(endpoint, options = {}) {
 
 const api = {
   products: {
-    getAll: () => request('/products'),
-    getById: (id) => request(`/products/${id}`),
+    getAll: (opts) => request('/products', opts),
+    getById: (id, opts) => request(`/products/${id}`, opts),
     create: (data) => request('/products', { method: 'POST', body: JSON.stringify(data) }),
     update: (id, data) => request(`/products/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
     delete: (id) => request(`/products/${id}`, { method: 'DELETE' }),
   },
 
   categories: {
-    getAll: () => request('/categories'),
-    getById: (id) => request(`/categories/${id}`),
+    getAll: (opts) => request('/categories', opts),
+    getById: (id, opts) => request(`/categories/${id}`, opts),
     create: (data) => request('/categories', { method: 'POST', body: JSON.stringify(data) }),
     update: (id, data) => request(`/categories/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
     delete: (id) => request(`/categories/${id}`, { method: 'DELETE' }),
   },
 
   orders: {
-    getAll: () => request('/orders'),
-    getById: (id) => request(`/orders/${id}`),
+    getAll: (opts) => request('/orders', opts),
+    getById: (id, opts) => request(`/orders/${id}`, opts),
     create: (data) => request('/orders', { method: 'POST', body: JSON.stringify(data) }),
     updateStatus: (id, status) => request(`/orders/${id}/status`, { method: 'PUT', body: JSON.stringify({ status }) }),
   },
 
   reviews: {
-    getByProduct: (productId) => request(`/reviews/${productId}`),
+    getByProduct: (productId, opts) => request(`/reviews/${productId}`, opts),
     submit: (data) => request('/reviews', { method: 'POST', body: JSON.stringify(data) }),
     delete: (id) => request(`/reviews/${id}`, { method: 'DELETE' }),
   },
 
   banners: {
-    getAll: () => request('/banners'),
+    getAll: (opts) => request('/banners', opts),
     create: (data) => request('/banners', { method: 'POST', body: JSON.stringify(data) }),
     update: (id, data) => request(`/banners/${id}`, { method: 'PUT', body: JSON.stringify(data) }),
     delete: (id) => request(`/banners/${id}`, { method: 'DELETE' }),

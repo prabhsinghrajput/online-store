@@ -2,6 +2,7 @@ import { Router } from 'express';
 import bcrypt from 'bcryptjs';
 import { User } from '../models/User.js';
 import { authenticateUser, signToken } from '../middleware/auth.js';
+import { validate } from '../middleware/validation.js';
 import { z } from 'zod';
 import rateLimit from 'express-rate-limit';
 
@@ -18,13 +19,25 @@ const authLimiter = rateLimit({
 
 const registerSchema = z.object({
   email: z.string().email('Invalid email address'),
-  password: z.string().min(6, 'Password must be at least 6 characters').max(100),
+  password: z.string()
+    .min(12, 'Password must be at least 12 characters')
+    .max(100)
+    .regex(/[A-Z]/, 'Must contain at least one uppercase letter')
+    .regex(/[a-z]/, 'Must contain at least one lowercase letter')
+    .regex(/[0-9]/, 'Must contain at least one digit'),
 });
 
 const loginSchema = z.object({
   email: z.string().email('Invalid email address'),
   password: z.string().min(1, 'Password is required').max(100),
 });
+
+const profileSchema = z.object({
+  displayName: z.string().max(100).trim().optional(),
+  phone: z.string().max(20).trim().optional(),
+  address: z.string().max(500).trim().optional(),
+  photoURL: z.string().url('Invalid URL').max(2048).optional(),
+}).strict();
 
 /**
  * POST /api/auth/register
@@ -49,9 +62,14 @@ router.post('/register', authLimiter, async (req, res) => {
     });
 
     const token = signToken(user);
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
     res.status(201).json({
       user: { id: user._id, email: user.email, created_at: user.created_at },
-      token,
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -89,9 +107,14 @@ router.post('/login', authLimiter, async (req, res) => {
     await User.updateOne({ _id: user._id }, { last_sign_in_at: new Date() });
 
     const token = signToken(user);
+    res.cookie('token', token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+      maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
+    });
     res.json({
       user: { id: user._id, email: user.email, created_at: user.created_at, last_sign_in_at: user.last_sign_in_at },
-      token,
     });
   } catch (error) {
     if (error instanceof z.ZodError) {
@@ -117,7 +140,7 @@ router.get('/user', authenticateUser, async (req, res) => {
  * PUT /api/auth/profile
  * Update profile details for the authenticated user
  */
-router.put('/profile', authenticateUser, async (req, res) => {
+router.put('/profile', authenticateUser, validate(profileSchema), async (req, res) => {
   try {
     const { displayName, phone, address, photoURL } = req.body;
     
@@ -152,6 +175,11 @@ router.put('/profile', authenticateUser, async (req, res) => {
 router.post('/logout', authenticateUser, async (req, res) => {
   try {
     await User.updateOne({ _id: req.user.id }, { $inc: { token_version: 1 } });
+    res.clearCookie('token', {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === 'production',
+      sameSite: 'lax',
+    });
     res.json({ message: 'Logged out successfully' });
   } catch (error) {
     console.error('Logout error:', error);

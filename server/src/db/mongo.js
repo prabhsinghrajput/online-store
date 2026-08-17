@@ -19,7 +19,6 @@ export const connectDB = async () => {
     await mongoose.connect(uri, {
       serverSelectionTimeoutMS: 10000,
       lookup: dns.lookup,
-      tlsAllowInvalidCertificates: true,
     });
     isConnected = true;
     console.log('MongoDB connected');

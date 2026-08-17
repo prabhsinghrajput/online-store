@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { Order } from '../models/Order.js';
+import { Product } from '../models/Product.js';
 import { leanWithId } from '../models/base.js';
 import { authenticateUser } from '../middleware/auth.js';
 import { validate, orderSchema } from '../middleware/validation.js';
@@ -42,6 +43,26 @@ router.get('/:id', authenticateUser, async (req, res) => {
 router.post('/', authenticateUser, validate(orderSchema), async (req, res) => {
   try {
     const { items, shipping_address, customer_name, customer_phone, total_amount } = req.body;
+
+    // Server-side price verification
+    let computedTotal = 0;
+    for (const item of items) {
+      const product = await Product.findById(item.product_id).lean();
+      if (!product) {
+        return res.status(400).json({ error: `Product not found: ${item.product_id}` });
+      }
+      const effectivePrice = item.discounted_price || item.price;
+      const dbPrice = product.discounted_price || product.price;
+      if (Math.abs(effectivePrice - dbPrice) > 0.01) {
+        return res.status(400).json({ error: `Price mismatch for "${product.name}". Please refresh your cart.` });
+      }
+      computedTotal += dbPrice * item.quantity;
+    }
+
+    // Allow 1% rounding tolerance
+    if (Math.abs(total_amount - computedTotal) > computedTotal * 0.01 + 1) {
+      return res.status(400).json({ error: 'Order total mismatch. Please refresh and try again.' });
+    }
 
     const orderItems = items.map(item => ({
       product_id: item.product_id || null,

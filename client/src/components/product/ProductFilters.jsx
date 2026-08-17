@@ -116,4 +116,4 @@ const ProductFilters = ({
   );
 };
 
-export default ProductFilters;
+export default React.memo(ProductFilters);

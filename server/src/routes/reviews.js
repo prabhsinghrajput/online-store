@@ -1,5 +1,6 @@
 import { Router } from 'express';
 import { Review } from '../models/Review.js';
+import { Product } from '../models/Product.js';
 import { leanWithId } from '../models/base.js';
 import { authenticateUser } from '../middleware/auth.js';
 import { validate, reviewSchema } from '../middleware/validation.js';
@@ -19,6 +20,11 @@ router.get('/:productId', cacheMiddleware(30, 'reviews'), async (req, res) => {
 router.post('/', authenticateUser, validate(reviewSchema), async (req, res) => {
   try {
     const { product_id, rating, comment } = req.body;
+
+    const productExists = await Product.findById(product_id).lean();
+    if (!productExists) {
+      return res.status(404).json({ error: 'Product not found' });
+    }
 
     const existing = await Review.findOne({ product_id, user_id: req.user.id }).lean();
 

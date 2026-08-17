@@ -27,7 +27,8 @@ const Login = () => {
     const params = new URLSearchParams(location.search);
     const errorParam = params.get('error');
     if (errorParam) {
-      setError(errorParam);
+      const sanitized = errorParam.replace(/[<>"'&]/g, '').slice(0, 200);
+      setError(sanitized);
       params.delete('error');
       const newSearch = params.toString();
       navigate(`${location.pathname}${newSearch ? `?${newSearch}` : ''}`, { replace: true });
@@ -134,9 +135,9 @@ const Login = () => {
                   type="password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder={mode === 'signup' ? 'At least 6 characters' : 'Your password'}
+                  placeholder={mode === 'signup' ? 'At least 12 characters' : 'Your password'}
                   required
-                  minLength={6}
+                  minLength={mode === 'signup' ? 12 : 1}
                   className="w-full pl-10 pr-4 py-3 bg-gray-50 border border-gray-200 rounded-2xl text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary/50 transition-all"
                 />
               </div>

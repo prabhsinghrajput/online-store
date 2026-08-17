@@ -37,17 +37,21 @@ export const applyIdVirtual = (schema) => {
  */
 export const leanWithId = (doc) => {
   if (!doc) return doc;
+  const processObj = (obj) => {
+    if (obj && obj._id && !obj.id) {
+      obj.id = obj._id;
+    }
+    if (obj && obj.items && !obj.order_items) {
+      obj.order_items = obj.items;
+    }
+  };
   if (Array.isArray(doc)) {
     for (let i = 0; i < doc.length; i++) {
-      if (doc[i] && doc[i]._id && !doc[i].id) {
-        doc[i].id = doc[i]._id;
-      }
+      processObj(doc[i]);
     }
     return doc;
   }
-  if (doc && doc._id && !doc.id) {
-    doc.id = doc._id;
-  }
+  processObj(doc);
   return doc;
 };
 

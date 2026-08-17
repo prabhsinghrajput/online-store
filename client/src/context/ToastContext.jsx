@@ -1,4 +1,4 @@
-import { createContext, useContext, useState, useCallback } from 'react';
+import { createContext, useContext, useState, useCallback, useRef, useEffect } from 'react';
 import { CheckCircle2, XCircle, Info, X, AlertTriangle } from 'lucide-react';
 import PropTypes from 'prop-types';
 
@@ -15,6 +15,11 @@ let toastId = 0;
 export const ToastProvider = ({ children }) => {
   const [toasts, setToasts] = useState([]);
   const [confirmState, setConfirmState] = useState(null);
+  const timersRef = useRef([]);
+
+  useEffect(() => {
+    return () => { timersRef.current.forEach(clearTimeout); };
+  }, []);
 
   const dismissToast = useCallback((id) => {
     setToasts((prev) => prev.filter((t) => t.id !== id));
@@ -23,7 +28,8 @@ export const ToastProvider = ({ children }) => {
   const toast = useCallback((message, type = 'success') => {
     const id = ++toastId;
     setToasts((prev) => [...prev, { id, message, type }]);
-    setTimeout(() => dismissToast(id), 3500);
+    const timer = setTimeout(() => dismissToast(id), 3500);
+    timersRef.current.push(timer);
   }, [dismissToast]);
 
   const confirmDialog = useCallback((options = {}) => {

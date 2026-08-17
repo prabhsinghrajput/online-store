@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, Component } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { getSession } from './lib/auth';
 import Navbar from './components/layout/Navbar';
@@ -14,9 +14,38 @@ import Login from './pages/Login'; // Import Login Component
 import Profile from './pages/Profile';
 import NotFound from './pages/NotFound';
 
+class ErrorBoundary extends Component {
+  constructor(props) {
+    super(props);
+    this.state = { hasError: false };
+  }
+  static getDerivedStateFromError() {
+    return { hasError: true };
+  }
+  render() {
+    if (this.state.hasError) {
+      return (
+        <div className="min-h-screen flex flex-col items-center justify-center bg-gray-50/50 px-4">
+          <h2 className="text-lg font-bold text-gray-800 mb-2">Something went wrong</h2>
+          <p className="text-sm text-gray-500 mb-6">An unexpected error occurred. Please try again.</p>
+          <button
+            onClick={() => { this.setState({ hasError: false }); window.location.href = '/'; }}
+            className="px-6 py-2 bg-black text-white text-sm font-bold rounded-xl hover:bg-neutral-800 transition-colors"
+          >
+            Go Home
+          </button>
+        </div>
+      );
+    }
+    return this.props.children;
+  }
+}
+
 const AdminGuard = ({ children, user }) => {
-  // Check admin status from user metadata (set by server during auth)
-  // This is a client-side check; server-side enforcement via RLS is critical
+  // SECURITY NOTE: This client-side guard is strictly for UX/UI presentation purposes.
+  // Client-side state can be manipulated. ALL sensitive admin data and operations 
+  // MUST independently enforce authentication and role checks on the server-side 
+  // (using the `requireAdmin` middleware).
   const isAdmin = user?.user_metadata?.role === 'admin' ||
                   user?.user_metadata?.isAdmin === true;
 
@@ -88,6 +117,7 @@ const App = () => {
         <div className="min-h-screen flex flex-col">
           <Layout user={user}>
             <main className="flex-grow pb-16 md:pb-0">
+              <ErrorBoundary>
               <Routes>
                 {/* Public Routes */}
                 <Route path="/cart" element={<CartPage user={user} />} />
@@ -116,6 +146,7 @@ const App = () => {
                 {/* Catch all */}
                 <Route path="*" element={<NotFound />} />
               </Routes>
+              </ErrorBoundary>
             </main>
           </Layout>
         </div>

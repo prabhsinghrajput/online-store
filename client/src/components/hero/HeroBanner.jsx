@@ -10,18 +10,23 @@ const HeroBanner = () => {
 
 
   useEffect(() => {
+    const controller = new AbortController();
+
     const fetchBanners = async () => {
       try {
-        const data = await api.banners.getAll();
+        const data = await api.banners.getAll({ signal: controller.signal });
         const active = data ? data.filter(b => b.active) : [];
         setBanners(active);
       } catch (error) {
+        if (error.name === 'AbortError') return;
         console.error('Error fetching hero banners:', error);
       } finally {
         setLoading(false);
       }
     };
     fetchBanners();
+
+    return () => controller.abort();
   }, []);
 
   useEffect(() => {

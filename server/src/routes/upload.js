@@ -121,7 +121,7 @@ router.post('/profile', authenticateUser, (req, res, next) => {
         console.error('Error deleting temp file:', err);
       }
     } catch (cloudinaryError) {
-      console.error('Cloudinary upload failed, falling back to local storage:', cloudinaryError);
+      console.error('Cloudinary upload failed, falling back to local storage:', cloudinaryError.message);
       imageUrl = `${PUBLIC_URL}/uploads/profile/${req.file.filename}`;
     }
 
@@ -163,7 +163,7 @@ router.post('/', authenticateUser, requireAdmin, upload.single('file'), validate
         console.error('Error deleting temp file:', err);
       }
     } catch (cloudinaryError) {
-      console.error('Cloudinary upload failed, falling back to local storage:', cloudinaryError);
+      console.error('Cloudinary upload failed, falling back to local storage:', cloudinaryError.message);
       const relativePath = folder ? `${bucket}/${folder}/${req.file.filename}` : `${bucket}/${req.file.filename}`;
       imageUrl = `${PUBLIC_URL}/uploads/${relativePath.replace(/\\/g, '/')}`;
     }

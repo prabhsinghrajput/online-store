@@ -12,24 +12,31 @@ const SearchOverlay = ({ isOpen, onClose }) => {
   const [showResults, setShowResults] = useState(false);
 
   useEffect(() => {
-    const fetchSearchResults = async () => {
-      if (searchQuery.trim().length === 0) {
-        setSearchResults([]);
-        setShowResults(false);
-        return;
-      }
+    if (!searchQuery.trim()) {
+      setSearchResults([]);
+      setShowResults(false);
+      return;
+    }
+    const controller = new AbortController();
+    const timer = setTimeout(async () => {
       try {
         const allProducts = await api.products.getAll();
+        if (controller.signal.aborted) return;
         const data = allProducts.filter(p =>
           p.name?.toLowerCase().includes(searchQuery.toLowerCase())
         );
         setSearchResults(data || []);
         setShowResults((data || []).length > 0);
       } catch (error) {
-        console.error("Error fetching search results:", error);
+        if (!controller.signal.aborted) {
+          console.error("Error fetching search results:", error);
+        }
       }
+    }, 300);
+    return () => {
+      clearTimeout(timer);
+      controller.abort();
     };
-    fetchSearchResults();
   }, [searchQuery]);
 
   useEffect(() => {

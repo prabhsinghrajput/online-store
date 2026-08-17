@@ -172,6 +172,13 @@ const ProductForm = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        if (formData.discounted_price && Number(formData.discounted_price) >= Number(formData.price)) {
+            toast('Discounted price must be less than regular price', 'error');
+            setLoading(false);
+            return;
+        }
+
         setLoading(true);
 
         try {

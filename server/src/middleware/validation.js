@@ -64,7 +64,7 @@ export const bannerSchema = z.object({
 
 // File upload validation schema
 export const fileUploadSchema = z.object({
-  bucket: z.enum(['products', 'categories', 'banners', 'documents']).default('products'),
+  bucket: z.enum(['products', 'categories', 'banners', 'documents', 'profile']).default('products'),
   folder: z.string().max(100, 'Folder name too long').regex(/^[a-zA-Z0-9\-_\/]*$/, 'Invalid folder name').optional().default(''),
 });
 

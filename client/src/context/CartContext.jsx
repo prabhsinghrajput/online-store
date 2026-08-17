@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useReducer, useEffect } from 'react';
+import React, { createContext, useContext, useReducer, useEffect, useMemo } from 'react';
 
 const CartContext = createContext();
 
@@ -73,9 +73,18 @@ export const CartProvider = ({ children }) => {
   const [state, dispatch] = useReducer(cartReducer, initialState);
 
   useEffect(() => {
-    const savedCart = localStorage.getItem('cart');
-    if (savedCart) {
-      dispatch({ type: 'LOAD_CART', payload: JSON.parse(savedCart) });
+    try {
+      const savedCart = localStorage.getItem('cart');
+      if (savedCart) {
+        const parsed = JSON.parse(savedCart);
+        if (Array.isArray(parsed) && parsed.every(item => item && typeof item === 'object' && item.id)) {
+          dispatch({ type: 'LOAD_CART', payload: parsed });
+        } else {
+          localStorage.removeItem('cart');
+        }
+      }
+    } catch {
+      localStorage.removeItem('cart');
     }
   }, []);
 
@@ -83,11 +92,11 @@ export const CartProvider = ({ children }) => {
     localStorage.setItem('cart', JSON.stringify(state.items));
   }, [state.items]);
 
-  const value = {
+  const value = useMemo(() => ({
     state,
     dispatch,
     items: state.items
-  };
+  }), [state]);
 
   return (
     <CartContext.Provider value={value}>

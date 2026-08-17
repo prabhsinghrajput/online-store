@@ -52,14 +52,16 @@ const CategoryProducts = () => {
   }, [id]);
 
   useEffect(() => {
+    const controller = new AbortController();
+
     const fetchCategoryData = async () => {
       try {
         setLoading(true);
         setError(null);
 
         const [prodData, allCats] = await Promise.all([
-          api.products.getAll(),
-          api.categories.getAll(),
+          api.products.getAll({ signal: controller.signal }),
+          api.categories.getAll({ signal: controller.signal }),
         ]);
 
         const catsList = allCats || [];
@@ -79,7 +81,7 @@ const CategoryProducts = () => {
 
           if (!matchedCat) {
             try {
-              matchedCat = await api.categories.getById(id);
+              matchedCat = await api.categories.getById(id, { signal: controller.signal });
             } catch (e) {
               // ignore fallback error
             }
@@ -96,6 +98,7 @@ const CategoryProducts = () => {
           }
         }
       } catch (err) {
+        if (err.name === 'AbortError') return;
         console.error('Error fetching category products:', err);
         setError('Failed to load category products');
       } finally {
@@ -104,6 +107,8 @@ const CategoryProducts = () => {
     };
 
     fetchCategoryData();
+
+    return () => controller.abort();
   }, [id]);
 
   // Derived Values

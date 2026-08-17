@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { 
   Sparkles, MapPin, CreditCard, BarChart2, Package, 
@@ -36,8 +36,13 @@ const Profile = ({ user: propUser }) => {
   const { toast } = useToast();
   const user = propUser || getStoredUser();
   const isLoading = false;
+  const successTimerRef = useRef(null);
   const isAdminUser = (u) => u?.user_metadata?.role === 'admin' || u?.user_metadata?.isAdmin === true;
   const isAdmin = isAdminUser(user);
+
+  useEffect(() => {
+    return () => { if (successTimerRef.current) clearTimeout(successTimerRef.current); };
+  }, []);
 
   // Sync activeTab with URL path
   let activeTab = 'profile';
@@ -154,7 +159,8 @@ const Profile = ({ user: propUser }) => {
         saveSession(getToken(), response.user);
         setIsEditing(false);
         setSaveSuccess(true);
-        setTimeout(() => setSaveSuccess(false), 2500);
+        if (successTimerRef.current) clearTimeout(successTimerRef.current);
+        successTimerRef.current = setTimeout(() => setSaveSuccess(false), 2500);
       }
     } catch (error) {
       console.error('Error updating profile:', error);

@@ -20,6 +20,8 @@ const Orders = () => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    const controller = new AbortController();
+
     const fetchOrders = async () => {
       try {
         let currentUserEmail = null;
@@ -38,9 +40,10 @@ const Orders = () => {
           return;
         }
 
-        const data = await api.orders.getAll();
+        const data = await api.orders.getAll({ signal: controller.signal });
         setOrders(data || []);
       } catch (error) {
+        if (error.name === 'AbortError') return;
         console.error('Error fetching orders:', error);
         setError('Failed to load orders. Please try again later.');
       } finally {
@@ -48,6 +51,8 @@ const Orders = () => {
       }
     };
     fetchOrders();
+
+    return () => controller.abort();
   }, []);
 
   // Flatten orders to individual items
@@ -144,7 +149,7 @@ const Orders = () => {
 
               return (
                 <div 
-                  key={idx} 
+                  key={item.orderId || idx}
                   onClick={() => navigate(`/orders/${item.orderId}`)}
                   className="p-5 grid grid-cols-1 md:grid-cols-12 gap-4 items-center hover:bg-neutral-50/50 dark:hover:bg-zinc-900/20 transition-all duration-300 cursor-pointer relative group"
                 >

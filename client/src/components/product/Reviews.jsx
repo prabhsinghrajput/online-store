@@ -20,12 +20,14 @@ const Reviews = ({ productId, product }) => {
   const { toast, confirm } = useToast();
 
   useEffect(() => {
-    fetchUserAndReviews();
+    const controller = new AbortController();
+    fetchUserAndReviews(controller.signal);
+    return () => controller.abort();
   }, [productId]);
 
-  const fetchUserAndReviews = async () => {
+  const fetchUserAndReviews = async (signal) => {
     try {
-      const reviewsData = await api.reviews.getByProduct(productId);
+      const reviewsData = await api.reviews.getByProduct(productId, { signal });
       setReviews(reviewsData || []);
 
       const currentUser = getStoredUser();
@@ -44,6 +46,7 @@ const Reviews = ({ productId, product }) => {
         }
       }
     } catch (error) {
+      if (error.name === 'AbortError') return;
       console.error('Error fetching reviews:', error);
     } finally {
       setLoading(false);
@@ -322,24 +325,13 @@ const Reviews = ({ productId, product }) => {
                 />
               </div>
 
-              {/* Share Photo/Video mock */}
+              {/* Share Photo/Video (placeholder) */}
               <div className="space-y-1.5">
                 <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400">Share a video or photo</label>
-                <div className="border border-dashed border-gray-300 dark:border-neutral-800 rounded-xl p-4 flex flex-col items-center justify-center gap-1.5 cursor-pointer hover:bg-gray-50/50 dark:hover:bg-neutral-900 transition-all text-gray-500 dark:text-neutral-500">
+                <div className="border border-dashed border-gray-300 dark:border-neutral-800 rounded-xl p-4 flex flex-col items-center justify-center gap-1.5 text-gray-500 dark:text-neutral-500">
                   <Camera size={20} />
-                  <span className="text-[9px] font-bold uppercase tracking-wider">Upload media</span>
+                  <span className="text-[9px] font-bold uppercase tracking-wider">Coming soon</span>
                 </div>
-              </div>
-
-              {/* Title your review mock input */}
-              <div className="space-y-1.5 pb-2">
-                <label className="block text-[10px] font-black uppercase tracking-widest text-gray-400">Title your review (required)</label>
-                <input
-                  type="text"
-                  placeholder="What's most important to know?"
-                  className="w-full px-3.5 h-10 text-xs bg-gray-50/50 dark:bg-neutral-900 border border-gray-300 dark:border-neutral-800 rounded-xl focus:outline-none focus:border-black dark:focus:border-white transition-all placeholder-gray-400 font-semibold"
-                  defaultValue={rating >= 4 ? 'Verified Quality' : 'Fit Verification'}
-                />
               </div>
 
               {/* Submit Buttons */}

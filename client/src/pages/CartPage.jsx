@@ -66,13 +66,19 @@ const CartPage = ({ user: propUser }) => {
 
   // Load saved addresses when component mounts
   useEffect(() => {
-    const savedAddresses = localStorage.getItem('userAddresses');
-    if (savedAddresses) {
-      const parsedAddresses = JSON.parse(savedAddresses);
-      setAddresses(parsedAddresses);
-      if (parsedAddresses.length > 0) {
-        setSelectedAddress(parsedAddresses[0]);
+    try {
+      const savedAddresses = localStorage.getItem('userAddresses');
+      if (savedAddresses) {
+        const parsedAddresses = JSON.parse(savedAddresses);
+        if (Array.isArray(parsedAddresses)) {
+          setAddresses(parsedAddresses);
+          if (parsedAddresses.length > 0) {
+            setSelectedAddress(parsedAddresses[0]);
+          }
+        }
       }
+    } catch {
+      // Ignore malformed data
     }
   }, []);
 
@@ -85,9 +91,13 @@ const CartPage = ({ user: propUser }) => {
     if (!newAddress.flatNo || !newAddress.society || !newAddress.name || !newAddress.phone) {
       return;
     }
+    if (newAddress.phone.replace(/\D/g, '').length < 10) {
+      toast('Please enter a valid 10-digit phone number', 'error');
+      return;
+    }
 
     const address = {
-      id: Date.now(),
+      id: crypto.randomUUID(),
       ...newAddress
     };
 
@@ -108,7 +118,7 @@ const CartPage = ({ user: propUser }) => {
   const handlePhoneChange = (e) => {
     const value = e.target.value.replace(/\D/g, '');
     if (value.length <= 10) {
-      setNewAddress({ ...newAddress, phone: value });
+      setNewAddress(prev => ({ ...prev, phone: value }));
     }
   };
 

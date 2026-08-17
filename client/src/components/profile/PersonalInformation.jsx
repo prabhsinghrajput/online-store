@@ -38,7 +38,7 @@ const PersonalInformation = ({ formData, setFormData, isEditing, setIsEditing, h
               <input
                 type="text"
                 value={formData.displayName}
-                onChange={(e) => setFormData({ ...formData, displayName: e.target.value })}
+                onChange={(e) => setFormData(prev => ({ ...prev, displayName: e.target.value }))}
                 disabled={!isEditing}
                 className="w-full pl-11 pr-4 py-3 bg-transparent border border-gray-200 dark:border-neutral-800 rounded-xl text-xs font-semibold focus:ring-0 focus:border-black dark:focus:border-white focus:outline-none disabled:bg-gray-50/50 dark:disabled:bg-zinc-900/20 disabled:text-gray-500 dark:disabled:text-neutral-500 transition-all"
                 placeholder="Enter your name"
@@ -71,7 +71,7 @@ const PersonalInformation = ({ formData, setFormData, isEditing, setIsEditing, h
               <input
                 type="tel"
                 value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                onChange={(e) => setFormData(prev => ({ ...prev, phone: e.target.value }))}
                 disabled={!isEditing}
                 className="w-full pl-11 pr-4 py-3 bg-transparent border border-gray-200 dark:border-neutral-800 rounded-xl text-xs font-semibold focus:ring-0 focus:border-black dark:focus:border-white focus:outline-none disabled:bg-gray-50/50 dark:disabled:bg-zinc-900/20 disabled:text-gray-500 dark:disabled:text-neutral-500 transition-all"
                 placeholder="Enter phone number"
@@ -87,7 +87,7 @@ const PersonalInformation = ({ formData, setFormData, isEditing, setIsEditing, h
             <MapPin className="absolute left-3.5 top-3.5 text-gray-400 dark:text-neutral-500" size={16} />
             <textarea
               value={formData.address}
-              onChange={(e) => setFormData({ ...formData, address: e.target.value })}
+              onChange={(e) => setFormData(prev => ({ ...prev, address: e.target.value }))}
               disabled={!isEditing}
               className="w-full pl-11 pr-4 py-3 bg-transparent border border-gray-200 dark:border-neutral-800 rounded-xl text-xs font-semibold focus:ring-0 focus:border-black dark:focus:border-white focus:outline-none disabled:bg-gray-50/50 dark:disabled:bg-zinc-900/20 disabled:text-gray-500 dark:disabled:text-neutral-500 transition-all resize-none"
               rows="3"

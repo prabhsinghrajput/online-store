@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useReducer, useEffect } from 'react';
+import React, { createContext, useContext, useReducer, useEffect, useMemo } from 'react';
 
 const WishlistContext = createContext();
 
@@ -50,9 +50,18 @@ export const WishlistProvider = ({ children }) => {
   const [state, dispatch] = useReducer(wishlistReducer, initialState);
 
   useEffect(() => {
-    const savedWishlist = localStorage.getItem('wishlist');
-    if (savedWishlist) {
-      dispatch({ type: 'LOAD_WISHLIST', payload: JSON.parse(savedWishlist) });
+    try {
+      const savedWishlist = localStorage.getItem('wishlist');
+      if (savedWishlist) {
+        const parsed = JSON.parse(savedWishlist);
+        if (Array.isArray(parsed) && parsed.every(item => item && typeof item === 'object' && item.id)) {
+          dispatch({ type: 'LOAD_WISHLIST', payload: parsed });
+        } else {
+          localStorage.removeItem('wishlist');
+        }
+      }
+    } catch {
+      localStorage.removeItem('wishlist');
     }
   }, []);
 
@@ -60,12 +69,12 @@ export const WishlistProvider = ({ children }) => {
     localStorage.setItem('wishlist', JSON.stringify(state.items));
   }, [state.items]);
 
-  const value = {
+  const value = useMemo(() => ({
     state,
     dispatch,
     items: state.items,
     totalItems: state.items.length
-  };
+  }), [state]);
 
   return (
     <WishlistContext.Provider value={value}>

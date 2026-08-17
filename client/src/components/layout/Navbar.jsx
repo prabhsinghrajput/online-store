@@ -28,15 +28,20 @@ const Navbar = ({ user }) => {
   const [profileImage, setProfileImage] = useState(null);
 
   useEffect(() => {
+    const controller = new AbortController();
+
     const fetchCategories = async () => {
       try {
-        const data = await api.categories.getAll();
+        const data = await api.categories.getAll({ signal: controller.signal });
         setCategories(data || []);
       } catch (error) {
+        if (error.name === 'AbortError') return;
         console.error("Error fetching categories:", error);
       }
     };
     fetchCategories();
+
+    return () => controller.abort();
   }, []);
 
   useEffect(() => {

@@ -52,7 +52,7 @@ const ProductDetails = () => {
   if (product && product.weight) {
     try {
       const obj = JSON.parse(product.weight);
-      if (obj && typeof obj === 'object') {
+      if (obj && typeof obj === 'object' && !Array.isArray(obj)) {
         parsedSizes = obj;
       }
     } catch (e) {}

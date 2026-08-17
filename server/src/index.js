@@ -3,6 +3,7 @@ import path from 'path';
 import { fileURLToPath } from 'url';
 import express from 'express';
 import cors from 'cors';
+import cookieParser from 'cookie-parser';
 import helmet from 'helmet';
 import rateLimit from 'express-rate-limit';
 import { connectDB } from './db/mongo.js';
@@ -24,6 +25,10 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const UPLOADS_DIR = path.join(__dirname, '..', 'uploads');
 
+app.use(cookieParser());
+
+const isProd = process.env.NODE_ENV === 'production';
+
 // Security headers
 app.use(helmet({
   crossOriginResourcePolicy: { policy: "cross-origin" },
@@ -32,8 +37,8 @@ app.use(helmet({
       defaultSrc: ["'self'"],
       styleSrc: ["'self'", "'unsafe-inline'"],
       scriptSrc: ["'self'"],
-      imgSrc: ["'self'", "data:", "http:", "https:"],
-      connectSrc: ["'self'", "http:"],
+      imgSrc: isProd ? ["'self'", "data:", "https:"] : ["'self'", "data:", "http:", "https:"],
+      connectSrc: isProd ? ["'self'", "https:"] : ["'self'", "http:", "https:"],
       fontSrc: ["'self'"],
       objectSrc: ["'none'"],
       mediaSrc: ["'self'"],
@@ -58,8 +63,13 @@ const allowedOrigins = process.env.CLIENT_ORIGIN
 
 app.use(cors({
   origin: function(origin, callback) {
-    // Allow requests with no origin (like mobile apps or curl requests)
-    if (!origin) return callback(null, true);
+    // Allow requests with no origin (like server-to-server or tools) only in development
+    if (!origin) {
+      if (process.env.NODE_ENV !== 'production') {
+        return callback(null, true);
+      }
+      return callback(new Error('CORS Policy: Origin header is required in production'), false);
+    }
 
     if (allowedOrigins.indexOf(origin) === -1) {
       const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
