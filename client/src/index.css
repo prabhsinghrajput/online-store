@@ -4,6 +4,8 @@
 
 @theme {
   --color-primary: #4f46e5;
+  --font-bebas: "Bebas Neue", sans-serif;
+  --font-outfit: "Outfit", sans-serif;
 }
 
 /* Global Dark Mode Overrides - Pure Black Theme */

@@ -114,6 +114,38 @@ router.get('/user', authenticateUser, async (req, res) => {
 });
 
 /**
+ * PUT /api/auth/profile
+ * Update profile details for the authenticated user
+ */
+router.put('/profile', authenticateUser, async (req, res) => {
+  try {
+    const { displayName, phone, address, photoURL } = req.body;
+    
+    const updatedUser = await User.findOneAndUpdate(
+      { _id: req.user.id },
+      {
+        $set: {
+          'user_metadata.displayName': displayName,
+          'user_metadata.phone': phone,
+          'user_metadata.address': address,
+          'user_metadata.avatar_url': photoURL,
+        }
+      },
+      { new: true }
+    ).select('-password_hash').lean();
+
+    if (!updatedUser) {
+      return res.status(404).json({ error: 'User not found' });
+    }
+
+    res.json({ user: updatedUser });
+  } catch (error) {
+    console.error('Update profile error:', error);
+    res.status(500).json({ error: 'Failed to update profile' });
+  }
+});
+
+/**
  * POST /api/auth/logout
  * Invalidate all tokens issued to the current user
  */

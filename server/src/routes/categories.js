@@ -1,24 +1,26 @@
 import { Router } from 'express';
 import { Category } from '../models/Category.js';
+import { leanWithId } from '../models/base.js';
 import { authenticateUser, requireAdmin } from '../middleware/auth.js';
 import { validate, categorySchema } from '../middleware/validation.js';
+import { cacheMiddleware, invalidateCache } from '../middleware/cache.js';
 
 const router = Router();
 
-router.get('/', async (req, res) => {
+router.get('/', cacheMiddleware(120, 'categories'), async (req, res) => {
   try {
-    const data = await Category.find().sort({ name: 1 });
-    res.json(data || []);
+    const data = await Category.find().sort({ name: 1 }).lean();
+    res.json(leanWithId(data) || []);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch categories' });
   }
 });
 
-router.get('/:id', validate(categorySchema.partial().pick({ id: true }), 'params'), async (req, res) => {
+router.get('/:id', validate(categorySchema.partial().pick({ id: true }), 'params'), cacheMiddleware(120, 'categories'), async (req, res) => {
   try {
-    const data = await Category.findById(req.params.id);
+    const data = await Category.findById(req.params.id).lean();
     if (!data) return res.status(404).json({ error: 'Category not found' });
-    res.json(data);
+    res.json(leanWithId(data));
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch category' });
   }
@@ -27,6 +29,9 @@ router.get('/:id', validate(categorySchema.partial().pick({ id: true }), 'params
 router.post('/', authenticateUser, requireAdmin, validate(categorySchema), async (req, res) => {
   try {
     const data = await Category.create(req.body);
+    invalidateCache('categories');
+    invalidateCache('products');
+    invalidateCache('analytics');
     res.status(201).json(data.toObject());
   } catch (error) {
     if (error.code === 11000) {
@@ -40,6 +45,9 @@ router.put('/:id', authenticateUser, requireAdmin, validate(categorySchema.parti
   try {
     const data = await Category.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true });
     if (!data) return res.status(404).json({ error: 'Category not found' });
+    invalidateCache('categories');
+    invalidateCache('products');
+    invalidateCache('analytics');
     res.json(data);
   } catch (error) {
     if (error.code === 11000) {
@@ -53,6 +61,9 @@ router.delete('/:id', authenticateUser, requireAdmin, validate(categorySchema.pa
   try {
     const result = await Category.findByIdAndDelete(req.params.id);
     if (!result) return res.status(404).json({ error: 'Category not found' });
+    invalidateCache('categories');
+    invalidateCache('products');
+    invalidateCache('analytics');
     res.json({ success: true });
   } catch (error) {
     res.status(500).json({ error: 'Failed to delete category' });

@@ -4,7 +4,8 @@ import {
   Sparkles, MapPin, CreditCard, BarChart2, Package, 
   Plus, LayoutGrid, ImageIcon, ShoppingBag, ArrowLeft, Shield 
 } from 'lucide-react';
-import { signOut, getStoredUser } from '../lib/auth';
+import { signOut, getStoredUser, saveSession, getToken } from '../lib/auth';
+import api from '../lib/api';
 import { useToast } from '../context/ToastContext';
 
 // Import subcomponents
@@ -95,21 +96,16 @@ const Profile = ({ user: propUser }) => {
     photoURL: ''
   });
 
-  // Load profile data from localStorage or auth profile
+  // Load profile data from auth profile
   useEffect(() => {
     if (user) {
-      const savedData = localStorage.getItem(`profile_${user.id}`);
-      if (savedData) {
-        setFormData(JSON.parse(savedData));
-      } else {
-        setFormData({
-          displayName: user.user_metadata?.displayName || user.user_metadata?.full_name || '',
-          email: user.email || '',
-          phone: user.user_metadata?.phone || '',
-          address: user.user_metadata?.address || '',
-          photoURL: user.user_metadata?.avatar_url || ''
-        });
-      }
+      setFormData({
+        displayName: user.user_metadata?.displayName || user.user_metadata?.full_name || '',
+        email: user.email || '',
+        phone: user.user_metadata?.phone || '',
+        address: user.user_metadata?.address || '',
+        photoURL: user.user_metadata?.avatar_url || ''
+      });
     }
   }, [user]);
 
@@ -119,15 +115,18 @@ const Profile = ({ user: propUser }) => {
 
     try {
       setUploading(true);
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        const base64String = reader.result;
-        const updatedData = { ...formData, photoURL: base64String };
-        setFormData(updatedData);
-        localStorage.setItem(`profile_${user.id}`, JSON.stringify(updatedData));
-        window.dispatchEvent(new Event('profile:updated'));
-      };
-      reader.readAsDataURL(file);
+      const uploadRes = await api.upload.profile(file);
+      const photoURL = uploadRes.url;
+      
+      const updatedData = { ...formData, photoURL };
+      setFormData(updatedData);
+      
+      // Update metadata on the backend
+      const response = await api.auth.updateProfile(updatedData);
+      if (response.user) {
+        saveSession(getToken(), response.user);
+        toast('Profile image updated successfully', 'success');
+      }
     } catch (error) {
       console.error('Error uploading profile image:', error);
       toast('Failed to upload image: ' + error.message, 'error');
@@ -139,7 +138,6 @@ const Profile = ({ user: propUser }) => {
   const handleLogout = async () => {
     try {
       await signOut();
-      localStorage.removeItem(`profile_${user?.id}`);
       localStorage.removeItem('userAddresses');
       navigate("/", { replace: true });
     } catch (error) {
@@ -147,14 +145,21 @@ const Profile = ({ user: propUser }) => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
     if (!user) return;
-    localStorage.setItem(`profile_${user.id}`, JSON.stringify(formData));
-    window.dispatchEvent(new Event('profile:updated'));
-    setIsEditing(false);
-    setSaveSuccess(true);
-    setTimeout(() => setSaveSuccess(false), 2500);
+    try {
+      const response = await api.auth.updateProfile(formData);
+      if (response.user) {
+        saveSession(getToken(), response.user);
+        setIsEditing(false);
+        setSaveSuccess(true);
+        setTimeout(() => setSaveSuccess(false), 2500);
+      }
+    } catch (error) {
+      console.error('Error updating profile:', error);
+      toast('Failed to update profile: ' + error.message, 'error');
+    }
   };
 
   if (isLoading) {

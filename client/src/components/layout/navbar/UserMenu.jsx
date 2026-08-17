@@ -28,21 +28,21 @@ const UserMenu = ({ user, profileImage, onLogout }) => {
         <ChevronDown size={12} className={`text-gray-400 hidden md:block transition-transform ${isDropdownOpen ? 'rotate-180' : ''}`} />
       </button>
       {isDropdownOpen && (
-        <div className="absolute right-0 mt-2 w-52 bg-white rounded-2xl shadow-2xl py-1 border border-gray-100 z-50" style={{ animation: 'fadeIn 0.15s ease-out' }}>
+        <div className="absolute right-0 mt-2 w-52 bg-white dark:bg-[#121214] rounded-2xl shadow-2xl py-1 border border-gray-100 dark:border-zinc-800 z-50" style={{ animation: 'fadeIn 0.15s ease-out' }}>
           <div className="px-4 py-3">
-            <p className="text-sm font-bold text-gray-800 truncate">{user.user_metadata?.full_name || 'User'}</p>
-            <p className="text-[11px] text-gray-500 truncate">{user.email}</p>
+            <p className="text-sm font-bold text-gray-800 dark:text-zinc-100 truncate">{user.user_metadata?.full_name || 'User'}</p>
+            <p className="text-[11px] text-gray-500 dark:text-zinc-400 truncate">{user.email}</p>
           </div>
-          <div className="py-1 border-t border-gray-100">
+          <div className="py-1 border-t border-gray-100 dark:border-zinc-800">
             <button onClick={() => { navigate('/profile'); setIsDropdownOpen(false); }}
-              className="w-full px-4 py-2.5 text-left text-sm text-gray-600 hover:bg-gray-50 hover:text-primary flex items-center gap-3 transition-colors"
+              className="w-full px-4 py-2.5 text-left text-sm text-gray-600 dark:text-zinc-300 hover:bg-gray-50 dark:hover:bg-zinc-800/60 hover:text-primary dark:hover:text-white flex items-center gap-3 transition-colors"
             >
               <User size={16} /> Profile
             </button>
           </div>
-          <div className="border-t border-gray-100 py-1">
+          <div className="border-t border-gray-100 dark:border-zinc-800 py-1">
             <button onClick={() => { onLogout(); setIsDropdownOpen(false); }}
-              className="w-full px-4 py-2.5 text-left text-sm text-red-500 hover:bg-red-50 flex items-center gap-3 transition-colors"
+              className="w-full px-4 py-2.5 text-left text-sm text-red-500 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-950/30 flex items-center gap-3 transition-colors"
             >
               <LogOut size={16} /> Sign Out
             </button>

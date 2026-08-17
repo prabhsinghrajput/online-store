@@ -15,6 +15,9 @@ const bannerSchema = new mongoose.Schema(
   { _id: false, versionKey: false }
 );
 
+bannerSchema.index({ created_at: -1 });
+bannerSchema.index({ active: 1, created_at: -1 });
+
 bannerSchema.pre('findOneAndUpdate', function (next) {
   this.set({ updated_at: new Date() });
   next();

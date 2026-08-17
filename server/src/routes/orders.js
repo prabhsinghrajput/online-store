@@ -1,7 +1,9 @@
 import { Router } from 'express';
 import { Order } from '../models/Order.js';
+import { leanWithId } from '../models/base.js';
 import { authenticateUser } from '../middleware/auth.js';
 import { validate, orderSchema } from '../middleware/validation.js';
+import { invalidateCache } from '../middleware/cache.js';
 
 const router = Router();
 
@@ -14,8 +16,8 @@ router.get('/', authenticateUser, async (req, res) => {
     const isAdmin = isAdminEmail(req.user.email) || req.user.isAdmin;
 
     const filter = isAdmin ? {} : { user_email: req.user.email };
-    const data = await Order.find(filter).sort({ created_at: -1 });
-    res.json(data || []);
+    const data = await Order.find(filter).sort({ created_at: -1 }).lean();
+    res.json(leanWithId(data) || []);
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch orders' });
   }
@@ -23,7 +25,7 @@ router.get('/', authenticateUser, async (req, res) => {
 
 router.get('/:id', authenticateUser, async (req, res) => {
   try {
-    const data = await Order.findById(req.params.id);
+    const data = await Order.findById(req.params.id).lean();
     if (!data) return res.status(404).json({ error: 'Order not found' });
 
     const isAdmin = isAdminEmail(req.user.email) || req.user.isAdmin;
@@ -31,7 +33,7 @@ router.get('/:id', authenticateUser, async (req, res) => {
       return res.status(403).json({ error: 'Forbidden' });
     }
 
-    res.json(data);
+    res.json(leanWithId(data));
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch order' });
   }
@@ -60,6 +62,7 @@ router.post('/', authenticateUser, validate(orderSchema), async (req, res) => {
       items: orderItems,
     });
 
+    invalidateCache('analytics');
     res.status(201).json(order.toObject());
   } catch (error) {
     res.status(500).json({ error: 'Failed to create order' });
@@ -80,6 +83,7 @@ router.put('/:id/status', authenticateUser, async (req, res) => {
 
     const data = await Order.findByIdAndUpdate(req.params.id, { status }, { new: true, runValidators: true });
     if (!data) return res.status(404).json({ error: 'Order not found' });
+    invalidateCache('analytics');
     res.json(data);
   } catch (error) {
     res.status(500).json({ error: 'Failed to update order status' });

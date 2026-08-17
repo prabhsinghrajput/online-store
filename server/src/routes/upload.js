@@ -14,27 +14,22 @@ const __dirname = path.dirname(__filename);
 const UPLOADS_DIR = path.join(__dirname, '..', '..', 'uploads');
 const PUBLIC_URL = process.env.PUBLIC_URL || 'http://localhost:3001';
 
-const allowedBuckets = ['products', 'categories', 'banners', 'documents'];
+const allowedBuckets = ['products', 'categories', 'banners', 'documents', 'profile'];
 
 // Configure Cloudinary
 const isCloudinaryConfigured = !!(process.env.CLOUDINARY_URL || (process.env.CLOUDINARY_CLOUD_NAME && process.env.CLOUDINARY_API_KEY && process.env.CLOUDINARY_API_SECRET));
 
-if (isCloudinaryConfigured) {
-  if (process.env.CLOUDINARY_URL) {
-    // Cloudinary SDK automatically configures itself if CLOUDINARY_URL is present
-  } else {
-    cloudinary.config({
-      cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-      api_key: process.env.CLOUDINARY_API_KEY,
-      api_secret: process.env.CLOUDINARY_API_SECRET
-    });
-  }
+if (!isCloudinaryConfigured) {
+  throw new Error('Cloudinary not configured. Set CLOUDINARY_CLOUD_NAME, CLOUDINARY_API_KEY, CLOUDINARY_API_SECRET');
+}
+
+if (process.env.CLOUDINARY_URL) {
+  // Cloudinary SDK automatically configures itself if CLOUDINARY_URL is present
 } else {
-  // Safe default fallback config if not defined in .env
   cloudinary.config({
-    cloud_name: 'dwfalgx6c',
-    api_key: '296766465492476',
-    api_secret: 'Z7G1Gsk2dFhWdDkwP0q0q43_s7g' // Fallback preset credentials
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET
   });
 }
 
@@ -96,6 +91,51 @@ function sanitizeFolder(folder) {
 
 // File upload validation schema for query/body parameters
 const uploadParamsSchema = fileUploadSchema;
+
+/**
+ * POST /api/upload/profile
+ * Upload a profile picture (authenticated users only)
+ */
+router.post('/profile', authenticateUser, (req, res, next) => {
+  req.body.bucket = 'profile';
+  next();
+}, upload.single('file'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ error: 'No file provided' });
+    }
+
+    let imageUrl = '';
+    
+    try {
+      // Upload local file directly to Cloudinary under the "profile" folder
+      const uploadResult = await cloudinary.uploader.upload(req.file.path, {
+        folder: 'profile',
+      });
+      imageUrl = uploadResult.secure_url;
+      
+      // Delete temporary local file
+      try {
+        fs.unlinkSync(req.file.path);
+      } catch (err) {
+        console.error('Error deleting temp file:', err);
+      }
+    } catch (cloudinaryError) {
+      console.error('Cloudinary upload failed, falling back to local storage:', cloudinaryError);
+      imageUrl = `${PUBLIC_URL}/uploads/profile/${req.file.filename}`;
+    }
+
+    res.json({
+      url: imageUrl,
+      bucket: 'profile',
+      size: req.file.size,
+      type: req.file.mimetype
+    });
+  } catch (error) {
+    console.error('Upload error:', error);
+    res.status(500).json({ error: 'Failed to process upload' });
+  }
+});
 
 router.post('/', authenticateUser, requireAdmin, upload.single('file'), validate(uploadParamsSchema, 'body'), async (req, res) => {
   try {

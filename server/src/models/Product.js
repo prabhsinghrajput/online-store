@@ -23,6 +23,8 @@ const productSchema = new mongoose.Schema(
 );
 
 productSchema.index({ category_id: 1 });
+productSchema.index({ created_at: -1 });
+productSchema.index({ category_id: 1, created_at: -1 });
 
 productSchema.pre('findOneAndUpdate', function (next) {
   this.set({ updated_at: new Date() });

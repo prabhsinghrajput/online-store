@@ -84,6 +84,15 @@ const api = {
       formData.append('file', file);
       return request('/upload', { method: 'POST', body: formData });
     },
+    profile: (file) => {
+      const formData = new FormData();
+      formData.append('file', file);
+      return request('/upload/profile', { method: 'POST', body: formData });
+    },
+  },
+
+  auth: {
+    updateProfile: (data) => request('/auth/profile', { method: 'PUT', body: JSON.stringify(data) }),
   },
 };
 

@@ -12,6 +12,8 @@ const categorySchema = new mongoose.Schema(
   { _id: false, versionKey: false }
 );
 
+categorySchema.index({ name: 1 });
+
 categorySchema.pre('findOneAndUpdate', function (next) {
   this.set({ updated_at: new Date() });
   next();

@@ -84,7 +84,7 @@ const SearchOverlay = ({ isOpen, onClose }) => {
       )}
 
       {showResults && (
-        <div className="absolute left-0 right-0 top-full bg-white shadow-2xl max-h-[70vh] overflow-y-auto border-t border-gray-100 z-50 search-area">
+        <div className="absolute left-0 right-0 top-full bg-white dark:bg-[#121214] shadow-2xl max-h-[70vh] overflow-y-auto border-t border-gray-100 dark:border-zinc-800 z-50 search-area">
           <div className="w-full px-6 md:px-12 py-4">
             <div className="flex justify-between items-center mb-3">
               <p className="text-xs font-semibold text-gray-400 uppercase tracking-wider">{searchResults.length} results for "{searchQuery}"</p>

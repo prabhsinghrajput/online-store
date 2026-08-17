@@ -42,19 +42,16 @@ const Navbar = ({ user }) => {
   useEffect(() => {
     const updateProfileImage = () => {
       if (user) {
-        const storedProfile = JSON.parse(localStorage.getItem(`profile_${user.id}`) || '{}');
-        setProfileImage(storedProfile.photoURL || user.user_metadata?.avatar_url || null);
+        setProfileImage(user.user_metadata?.avatar_url || null);
       } else {
         setProfileImage(null);
       }
     };
 
     updateProfileImage();
-    window.addEventListener('profile:updated', updateProfileImage);
     window.addEventListener('auth:changed', updateProfileImage);
 
     return () => {
-      window.removeEventListener('profile:updated', updateProfileImage);
       window.removeEventListener('auth:changed', updateProfileImage);
     };
   }, [user]);

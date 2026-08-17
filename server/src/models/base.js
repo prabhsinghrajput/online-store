@@ -30,3 +30,24 @@ export const applyIdVirtual = (schema) => {
   schema.set('toJSON', { virtuals: true });
   schema.set('toObject', { virtuals: true });
 };
+
+/**
+ * Ensures plain objects returned by .lean() include an `id` field equal to `_id`.
+ * Supports both arrays and single documents.
+ */
+export const leanWithId = (doc) => {
+  if (!doc) return doc;
+  if (Array.isArray(doc)) {
+    for (let i = 0; i < doc.length; i++) {
+      if (doc[i] && doc[i]._id && !doc[i].id) {
+        doc[i].id = doc[i]._id;
+      }
+    }
+    return doc;
+  }
+  if (doc && doc._id && !doc.id) {
+    doc.id = doc._id;
+  }
+  return doc;
+};
+
