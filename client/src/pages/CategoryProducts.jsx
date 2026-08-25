@@ -97,19 +97,7 @@ const CategoryProducts = () => {
             cleanId === 'new arrivals' ||
             matchedCat?.name?.toLowerCase().trim() === 'new arrivals'
           ) {
-            const catObj = matchedCat
-              ? {
-                  ...matchedCat,
-                  description:
-                    matchedCat.description ||
-                    'Explore the latest additions and newest releases in our collection.',
-                }
-              : {
-                  name: 'New Arrivals',
-                  description:
-                    'Explore the latest additions and newest releases in our collection.',
-                };
-
+            const catObj = matchedCat || { name: 'New Arrivals' };
             setCategory(catObj);
 
             // If products explicitly tagged with New Arrivals category exist, show them;
@@ -130,22 +118,7 @@ const CategoryProducts = () => {
               setProducts(newestProducts);
             }
           } else if (matchedCat) {
-            const categoryDescriptions = {
-              men: "Explore the Men's collection featuring premium oversized fits, hoodies, and streetwear essentials.",
-              women: "Explore the Women's collection designed with contemporary silhouettes and premium fabrics.",
-              accessories:
-                'Complete your look with our signature caps, bags, belts, and streetwear accessories.',
-            };
-            const catKey = matchedCat.name?.toLowerCase().trim();
-            const enhancedCategory = {
-              ...matchedCat,
-              description:
-                matchedCat.description ||
-                categoryDescriptions[catKey] ||
-                `Browse our ${matchedCat.name} collection.`,
-            };
-
-            setCategory(enhancedCategory);
+            setCategory(matchedCat);
             setProducts(
               (prodData || []).filter(
                 (p) => String(p.category_id) === String(matchedCat.id || matchedCat._id)
@@ -154,21 +127,9 @@ const CategoryProducts = () => {
           } else {
             // Known fallback mapping if categories API is still loading or category wasn't found directly
             const knownFallbacks = {
-              men: {
-                name: 'Men',
-                description:
-                  "Explore the Men's collection featuring premium oversized fits, hoodies, and streetwear essentials.",
-              },
-              women: {
-                name: 'Women',
-                description:
-                  "Explore the Women's collection designed with contemporary silhouettes and premium fabrics.",
-              },
-              accessories: {
-                name: 'Accessories',
-                description:
-                  'Complete your look with our signature caps, bags, belts, and streetwear accessories.',
-              },
+              men: { name: 'Men' },
+              women: { name: 'Women' },
+              accessories: { name: 'Accessories' },
             };
 
             if (knownFallbacks[slugId]) {
@@ -368,13 +329,6 @@ const CategoryProducts = () => {
                 />
               </div>
             </div>
-
-            {/* Description Card */}
-            {category?.description && (
-              <div className="bg-gray-50/50 rounded-2xl p-5 border border-gray-100">
-                <p className="text-sm text-gray-500 leading-relaxed font-medium">{category.description}</p>
-              </div>
-            )}
 
             {/* Products Grid */}
             {filteredAndSortedProducts.length === 0 ? (
