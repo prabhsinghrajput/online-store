@@ -202,16 +202,16 @@ const AdminOrders = () => {
     );
 };
 
-const StatCard = ({ title, value, icon: Icon, color }) => (
-  <div className="bg-white dark:bg-zinc-900 p-6 rounded-3xl border border-gray-100 dark:border-neutral-900 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 group">
+const StatCard = ({ title, value, icon: Icon }) => (
+  <div className="bg-white dark:bg-zinc-900/90 p-5 sm:p-6 rounded-2xl border border-gray-200/80 dark:border-neutral-800 shadow-sm hover:border-gray-300 dark:hover:border-neutral-700 transition-all duration-300 group">
     <div className="flex items-start justify-between mb-4">
-      <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-105 duration-300 ${color} shadow-sm`}>
-        <Icon size={22} className="stroke-[2]" />
+      <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-gray-100 dark:bg-neutral-800 text-gray-800 dark:text-neutral-200 border border-gray-200/60 dark:border-neutral-700/60 transition-transform duration-300 group-hover:scale-105 shadow-sm">
+        <Icon size={18} className="stroke-[2]" />
       </div>
     </div>
     <div className="space-y-1">
-      <p className="text-[10px] font-black text-gray-400 dark:text-neutral-500 uppercase tracking-widest">{title}</p>
-      <h3 className="text-3xl font-black text-gray-900 dark:text-white tracking-tight">{value}</h3>
+      <p className="text-[11px] font-bold text-gray-400 dark:text-neutral-500 uppercase tracking-wider">{title}</p>
+      <h3 className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight">{value}</h3>
     </div>
   </div>
 );

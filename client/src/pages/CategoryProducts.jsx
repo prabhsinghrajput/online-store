@@ -67,16 +67,20 @@ const CategoryProducts = () => {
         const catsList = allCats || [];
         setAllCategories(catsList);
 
-        if (!id || id === 'products') {
+        const cleanId = decodeURIComponent(id || '').toLowerCase().trim();
+        const slugId = cleanId.replace(/\s+/g, '-');
+
+        if (!id || cleanId === 'products') {
           setCategory({ name: 'All Products', description: 'Browse our complete catalog of products' });
           setProducts(prodData || []);
         } else {
           // Find the category by ID, name, or slug
           let matchedCat = catsList.find(
-            (c) => 
-              String(c.id) === String(id) || 
-              c.name.toLowerCase().trim() === decodeURIComponent(id).toLowerCase().trim() ||
-              c.name.toLowerCase().trim().replace(/\s+/g, '-') === decodeURIComponent(id).toLowerCase().trim()
+            (c) =>
+              String(c.id) === String(id) ||
+              String(c._id) === String(id) ||
+              c.name?.toLowerCase().trim() === cleanId ||
+              c.name?.toLowerCase().trim().replace(/\s+/g, '-') === slugId
           );
 
           if (!matchedCat) {
@@ -87,14 +91,107 @@ const CategoryProducts = () => {
             }
           }
 
-          if (!matchedCat) {
-            setError('Category not found');
-            setProducts([]);
-          } else {
-            setCategory(matchedCat);
-            setProducts(
-              (prodData || []).filter((p) => String(p.category_id) === String(matchedCat.id))
+          // Handle New Arrivals specifically
+          if (
+            slugId === 'new-arrivals' ||
+            cleanId === 'new arrivals' ||
+            matchedCat?.name?.toLowerCase().trim() === 'new arrivals'
+          ) {
+            const catObj = matchedCat
+              ? {
+                  ...matchedCat,
+                  description:
+                    matchedCat.description ||
+                    'Explore the latest additions and newest releases in our collection.',
+                }
+              : {
+                  name: 'New Arrivals',
+                  description:
+                    'Explore the latest additions and newest releases in our collection.',
+                };
+
+            setCategory(catObj);
+
+            // If products explicitly tagged with New Arrivals category exist, show them;
+            // otherwise show all products sorted by newest first
+            const explicitNewArrivals = (prodData || []).filter(
+              (p) =>
+                (matchedCat &&
+                  String(p.category_id) === String(matchedCat.id || matchedCat._id)) ||
+                p.is_new_arrival
             );
+
+            if (explicitNewArrivals.length > 0) {
+              setProducts(explicitNewArrivals);
+            } else {
+              const newestProducts = [...(prodData || [])].sort(
+                (a, b) => new Date(b.created_at || 0) - new Date(a.created_at || 0)
+              );
+              setProducts(newestProducts);
+            }
+          } else if (matchedCat) {
+            const categoryDescriptions = {
+              men: "Explore the Men's collection featuring premium oversized fits, hoodies, and streetwear essentials.",
+              women: "Explore the Women's collection designed with contemporary silhouettes and premium fabrics.",
+              accessories:
+                'Complete your look with our signature caps, bags, belts, and streetwear accessories.',
+            };
+            const catKey = matchedCat.name?.toLowerCase().trim();
+            const enhancedCategory = {
+              ...matchedCat,
+              description:
+                matchedCat.description ||
+                categoryDescriptions[catKey] ||
+                `Browse our ${matchedCat.name} collection.`,
+            };
+
+            setCategory(enhancedCategory);
+            setProducts(
+              (prodData || []).filter(
+                (p) => String(p.category_id) === String(matchedCat.id || matchedCat._id)
+              )
+            );
+          } else {
+            // Known fallback mapping if categories API is still loading or category wasn't found directly
+            const knownFallbacks = {
+              men: {
+                name: 'Men',
+                description:
+                  "Explore the Men's collection featuring premium oversized fits, hoodies, and streetwear essentials.",
+              },
+              women: {
+                name: 'Women',
+                description:
+                  "Explore the Women's collection designed with contemporary silhouettes and premium fabrics.",
+              },
+              accessories: {
+                name: 'Accessories',
+                description:
+                  'Complete your look with our signature caps, bags, belts, and streetwear accessories.',
+              },
+            };
+
+            if (knownFallbacks[slugId]) {
+              const fallbackCat = knownFallbacks[slugId];
+              const fallbackMatchedCat = catsList.find((c) =>
+                c.name?.toLowerCase().includes(slugId)
+              );
+              setCategory(fallbackCat);
+              if (fallbackMatchedCat) {
+                setProducts(
+                  (prodData || []).filter(
+                    (p) =>
+                      String(p.category_id) ===
+                      String(fallbackMatchedCat.id || fallbackMatchedCat._id)
+                  )
+                );
+              } else {
+                setProducts(prodData || []);
+              }
+            } else {
+              setError('Category not found');
+              setProducts([]);
+            }
           }
         }
       } catch (err) {

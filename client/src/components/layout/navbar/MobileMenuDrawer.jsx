@@ -1,10 +1,45 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { X } from "lucide-react";
 
-const FALLBACK_LINKS = ["New Arrivals", "Men", "Women", "Accessories"];
+const FALLBACK_LINKS = [
+  { name: "New Arrivals", path: "/new-arrivals" },
+  { name: "Men", path: "/men" },
+  { name: "Women", path: "/women" },
+  { name: "Accessories", path: "/accessories" },
+];
 
-const MobileMenuDrawer = ({ categories, isOpen, onClose }) => {
-  const filteredCategories = categories.filter(cat => cat.name?.toLowerCase() !== 'clothing');
+const MobileMenuDrawer = ({ categories = [], isOpen, onClose }) => {
+  const location = useLocation();
+
+  // Exclude internal categories
+  const filteredCategories = categories.filter(
+    (cat) => !['clothing', 'collection'].includes(cat.name?.toLowerCase().trim())
+  );
+
+  // Preferred order: New Arrivals, Men, Women, Accessories, then any custom categories
+  const sortOrder = ['new arrivals', 'men', 'women', 'accessories'];
+  const sortedCategories = [...filteredCategories].sort((a, b) => {
+    const nameA = a.name?.toLowerCase().trim() || '';
+    const nameB = b.name?.toLowerCase().trim() || '';
+    const indexA = sortOrder.indexOf(nameA);
+    const indexB = sortOrder.indexOf(nameB);
+    if (indexA !== -1 && indexB !== -1) return indexA - indexB;
+    if (indexA !== -1) return -1;
+    if (indexB !== -1) return 1;
+    return nameA.localeCompare(nameB);
+  });
+
+  const linksToRender = sortedCategories.length > 0
+    ? sortedCategories.map((cat) => ({
+        id: cat.id || cat._id,
+        name: cat.name,
+        path: `/${cat.name.toLowerCase().trim().replace(/\s+/g, '-')}`,
+      }))
+    : FALLBACK_LINKS.map((item) => ({
+        id: item.name,
+        name: item.name,
+        path: item.path,
+      }));
 
   return (
     <div className={`fixed inset-0 z-50 flex transition-all duration-300 ${isOpen ? 'pointer-events-auto' : 'pointer-events-none'}`}>
@@ -26,27 +61,24 @@ const MobileMenuDrawer = ({ categories, isOpen, onClose }) => {
           </button>
         </div>
 
-        <div className="flex-1 overflow-y-auto py-6 px-6 space-y-4">
-          {filteredCategories.map((cat) => (
-            <Link
-              key={cat.id}
-              to={`/${cat.name}`}
-              onClick={onClose}
-              className="block text-base font-bold text-gray-800 dark:text-gray-200 hover:text-primary py-2 uppercase tracking-wide transition-colors"
-            >
-              {cat.name}
-            </Link>
-          ))}
-          {categories.length === 0 && (
-            <>
-              {FALLBACK_LINKS.map((label) => (
-                <Link key={label} to="/products" onClick={onClose}
-                  className="block text-base font-bold text-gray-800 dark:text-gray-200 hover:text-primary py-2 uppercase tracking-wide transition-colors">
-                  {label}
-                </Link>
-              ))}
-            </>
-          )}
+        <div className="flex-1 overflow-y-auto py-6 px-6 space-y-3">
+          {linksToRender.map((link) => {
+            const isActive = location.pathname.toLowerCase() === link.path.toLowerCase();
+            return (
+              <Link
+                key={link.id || link.name}
+                to={link.path}
+                onClick={onClose}
+                className={`block text-base font-bold uppercase tracking-wide py-2 transition-colors ${
+                  isActive
+                    ? 'text-primary font-extrabold'
+                    : 'text-gray-800 dark:text-gray-200 hover:text-primary'
+                }`}
+              >
+                {link.name}
+              </Link>
+            );
+          })}
         </div>
       </div>
     </div>

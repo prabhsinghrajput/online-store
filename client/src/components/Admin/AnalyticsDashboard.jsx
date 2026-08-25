@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import api from '../../lib/api';
 import { 
-  DollarSign, 
-  ShoppingBag, 
+  IndianRupee, 
+  Package, 
   Users, 
-  TrendingUp, 
-  Target,
+  Receipt,
   BarChart2,
-  Package,
+  TrendingUp,
   ArrowUpRight,
   ArrowDownRight
 } from 'lucide-react';
@@ -242,39 +241,44 @@ const AnalyticsDashboard = () => {
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-4">
         <div>
-          <h2 className="text-2xl font-bold text-gray-800">Analytics Dashboard</h2>
-          <p className="text-sm text-gray-500">Overview of your store's performance</p>
+          <h2 className="text-2xl font-bold text-gray-800 dark:text-white">Analytics Dashboard</h2>
+          <p className="text-sm text-gray-500 dark:text-neutral-400">Overview of your store's performance</p>
         </div>
         
         <div className="flex flex-col sm:flex-row items-center gap-2">
-           <div className="flex items-center gap-1 bg-white p-1 rounded-xl border border-gray-100 shadow-sm">
-             {['7d', '30d', '6m', 'custom'].map((range) => (
-                <button
-                   key={range}
-                   onClick={() => setDateRange(range)}
-                   className={`px-3 py-1.5 text-xs font-semibold rounded-lg transition-all ${
-                      dateRange === range ? 'bg-gray-900 text-white shadow-sm' : 'text-gray-500 hover:bg-gray-50'
-                   }`}
-                >
-                  {range === '7d' ? '7 Days' : range === '30d' ? '30 Days' : range === '6m' ? '6 Months' : 'Custom'}
-                </button>
-             ))}
+           <div className="flex items-center gap-1 bg-white dark:bg-zinc-900 border border-gray-200 dark:border-neutral-900 rounded-2xl p-1.5 shadow-sm dark:shadow-none">
+             {['7d', '30d', '6m', 'custom'].map((range) => {
+                const isActive = dateRange === range;
+                return (
+                  <button
+                     key={range}
+                     onClick={() => setDateRange(range)}
+                     className={`px-4 py-2 rounded-xl text-xs font-bold tracking-wide transition-all duration-200 ${
+                        isActive
+                          ? 'bg-gray-100 dark:bg-neutral-900 text-gray-900 dark:text-white shadow-sm'
+                          : 'text-gray-500 dark:text-neutral-400 hover:text-gray-900 dark:hover:text-white'
+                     }`}
+                  >
+                    {range === '7d' ? '7 Days' : range === '30d' ? '30 Days' : range === '6m' ? '6 Months' : 'Custom'}
+                  </button>
+                );
+             })}
            </div>
            
            {dateRange === 'custom' && (
-             <div className="flex items-center gap-2 bg-white px-2 py-1 rounded-xl border border-gray-100 shadow-sm">
+             <div className="flex items-center gap-2 bg-white dark:bg-zinc-900 px-3 py-2 rounded-2xl border border-gray-200 dark:border-neutral-900 shadow-sm dark:shadow-none">
                 <input 
                   type="date" 
                   value={customStart}
                   onChange={(e) => setCustomStart(e.target.value)}
-                  className="text-xs border-none outline-none text-gray-600 font-medium bg-transparent"
+                  className="text-xs border-none outline-none text-gray-700 dark:text-neutral-200 font-semibold bg-transparent"
                 />
-                <span className="text-gray-300">-</span>
+                <span className="text-gray-300 dark:text-neutral-600">-</span>
                 <input 
                   type="date"
                   value={customEnd}
                   onChange={(e) => setCustomEnd(e.target.value)} 
-                  className="text-xs border-none outline-none text-gray-600 font-medium bg-transparent"
+                  className="text-xs border-none outline-none text-gray-700 dark:text-neutral-200 font-semibold bg-transparent"
                 />
              </div>
            )}
@@ -286,26 +290,23 @@ const AnalyticsDashboard = () => {
         <StatCard 
           title="Total Revenue" 
           value={`₹${stats.totalRevenue.toLocaleString()}`} 
-          icon={DollarSign} 
+          icon={IndianRupee} 
           trend={dateRange === '7d' ? "+-" : null} 
           trendUp={true}
-          color="bg-emerald-50 dark:bg-emerald-950/20 text-emerald-600 dark:text-emerald-400"
         />
         <StatCard 
           title="Total Orders" 
           value={stats.totalOrders} 
-          icon={ShoppingBag} 
+          icon={Package} 
           trend={null} 
           trendUp={true}
-          color="bg-blue-50 dark:bg-blue-950/20 text-blue-600 dark:text-blue-400"
         />
-         <StatCard 
+        <StatCard 
           title="Avg. Order Value" 
           value={`₹${Math.round(stats.averageOrderValue).toLocaleString()}`} 
-          icon={Target} 
+          icon={Receipt} 
           trend={null} 
           trendUp={false}
-          color="bg-purple-50 dark:bg-purple-950/20 text-purple-600 dark:text-purple-400"
         />
         <StatCard 
           title="Total Customers" 
@@ -313,16 +314,15 @@ const AnalyticsDashboard = () => {
           icon={Users} 
           trend={null}
           trendUp={true}
-          color="bg-amber-50 dark:bg-amber-950/20 text-amber-600 dark:text-amber-400"
         />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
         {/* Revenue Chart */}
-        <div className="lg:col-span-2 bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
+        <div className="lg:col-span-2 bg-white dark:bg-zinc-900/90 rounded-2xl border border-gray-200/80 dark:border-neutral-800 p-5 shadow-sm">
           <div className="flex items-center justify-between mb-6">
-            <h3 className="font-bold text-gray-800 flex items-center gap-2">
-              <BarChart2 size={18} className="text-gray-400" />
+            <h3 className="font-bold text-gray-900 dark:text-white flex items-center gap-2">
+              <BarChart2 size={18} className="text-gray-400 dark:text-neutral-500" />
               Revenue Trend
             </h3>
           </div>
@@ -332,23 +332,23 @@ const AnalyticsDashboard = () => {
               const height = (data.value / maxVal) * 100;
               return (
                 <div key={i} className="flex flex-col items-center gap-2 min-w-[30px] w-full group">
-                  <div className="relative w-full max-w-[40px] bg-gray-50 rounded-t-lg h-full flex items-end overflow-hidden group-hover:bg-gray-100 transition-colors">
+                  <div className="relative w-full max-w-[40px] bg-gray-50 dark:bg-neutral-800 rounded-t-lg h-full flex items-end overflow-hidden group-hover:bg-gray-100 dark:group-hover:bg-neutral-700 transition-colors">
                      <div 
-                        className="w-full bg-primary/80 rounded-t-lg transition-all duration-500 group-hover:bg-primary"
+                        className="w-full bg-primary rounded-t-lg transition-all duration-500 group-hover:opacity-90"
                         style={{ height: `${height}%` }}
                      />
-                     <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-800 text-white text-[10px] py-1 px-2 rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10 pointer-events-none">
+                     <div className="absolute -top-10 left-1/2 -translate-x-1/2 bg-gray-900 dark:bg-black text-white text-[10px] py-1 px-2 rounded-lg border border-gray-800 dark:border-neutral-800 opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap z-10 pointer-events-none shadow-lg">
                         ₹{data.value.toLocaleString()}
-                        <div className="text-[9px] text-gray-400">{data.label}</div>
+                        <div className="text-[9px] text-gray-400 dark:text-neutral-400">{data.label}</div>
                      </div>
                   </div>
-                  <span className="text-[9px] sm:text-[10px] text-gray-400 font-medium whitespace-nowrap rotate-0 sm:rotate-0">
+                  <span className="text-[9px] sm:text-[10px] text-gray-400 dark:text-neutral-500 font-medium whitespace-nowrap rotate-0 sm:rotate-0">
                     {data.label.split(',')[0]}
                   </span>
                 </div>
               );
             }) : (
-              <div className="w-full h-full flex items-center justify-center text-gray-400 text-sm">
+              <div className="w-full h-full flex items-center justify-center text-gray-400 dark:text-neutral-500 text-sm">
                 No revenue data for this period
               </div>
             )}
@@ -356,9 +356,9 @@ const AnalyticsDashboard = () => {
         </div>
 
         {/* Product & Category Lists */}
-        <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
-          <h3 className="font-bold text-gray-800 mb-6 flex items-center gap-2">
-            <Package size={18} className="text-gray-400" />
+        <div className="bg-white dark:bg-zinc-900/90 rounded-2xl border border-gray-200/80 dark:border-neutral-800 p-5 shadow-sm">
+          <h3 className="font-bold text-gray-900 dark:text-white mb-6 flex items-center gap-2">
+            <Package size={18} className="text-gray-400 dark:text-neutral-500" />
             Sales by Category
           </h3>
           <div className="space-y-4">
@@ -367,22 +367,22 @@ const AnalyticsDashboard = () => {
                const percent = total > 0 ? (cat.value / total) * 100 : 0;
                return (
                  <div key={i}>
-                   <div className="flex items-center justify-between text-sm mb-1">
-                     <span className="font-medium text-gray-700">{cat.name}</span>
-                     <span className="text-gray-500">{Math.round(percent)}%</span>
+                   <div className="flex items-center justify-between text-sm mb-1.5">
+                     <span className="font-semibold text-gray-800 dark:text-neutral-200">{cat.name}</span>
+                     <span className="text-xs font-bold text-gray-500 dark:text-neutral-400">{Math.round(percent)}%</span>
                    </div>
-                   <div className="h-2 w-full bg-gray-100 rounded-full overflow-hidden">
+                   <div className="h-2 w-full bg-gray-100 dark:bg-neutral-800 rounded-full overflow-hidden">
                      <div 
                         className="h-full bg-primary rounded-full transition-all duration-300"
                         style={{ width: `${percent}%` }}
                      />
                    </div>
-                   <p className="text-[10px] text-gray-400 mt-1 text-right">₹{cat.value.toLocaleString()}</p>
+                   <p className="text-[10px] font-semibold text-gray-400 dark:text-neutral-500 mt-1 text-right">₹{cat.value.toLocaleString()}</p>
                  </div>
                );
              })}
              {categorySales.length === 0 && (
-                <p className="text-sm text-gray-400 text-center py-4">No sales data yet</p>
+                <p className="text-sm text-gray-400 dark:text-neutral-500 text-center py-4">No sales data yet</p>
              )}
           </div>
         </div>
@@ -390,71 +390,58 @@ const AnalyticsDashboard = () => {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Top Selling Products */}
-        <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
-           <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
-             <TrendingUp size={18} className="text-gray-400" />
+        <div className="bg-white dark:bg-zinc-900/90 rounded-2xl border border-gray-200/80 dark:border-neutral-800 p-5 shadow-sm">
+           <h3 className="font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+             <TrendingUp size={18} className="text-gray-400 dark:text-neutral-500" />
              Top Selling Products
            </h3>
-           <div className="space-y-3">
+           <div className="space-y-2">
              {topProducts.map((product, i) => (
-               <div key={i} className="flex items-center justify-between p-3 hover:bg-gray-50 rounded-xl transition-colors">
+               <div key={i} className="flex items-center justify-between p-3 hover:bg-gray-50 dark:hover:bg-neutral-800/60 rounded-xl transition-colors">
                  <div className="flex items-center gap-3">
-                   <span className="w-6 h-6 flex items-center justify-center bg-gray-100 text-xs font-bold text-gray-500 rounded-full">
+                   <span className="w-6 h-6 flex items-center justify-center bg-gray-100 dark:bg-neutral-800 text-xs font-bold text-gray-600 dark:text-neutral-300 rounded-full">
                      {i + 1}
                    </span>
                    <div>
-                     <p className="text-sm font-semibold text-gray-800 line-clamp-1">{product.name}</p>
-                     <p className="text-[11px] text-gray-400">{product.sold} units sold</p>
+                     <p className="text-sm font-semibold text-gray-900 dark:text-white line-clamp-1">{product.name}</p>
+                     <p className="text-[11px] text-gray-400 dark:text-neutral-400">{product.sold} units sold</p>
                    </div>
                  </div>
-                 <span className="text-sm font-bold text-gray-700">₹{product.revenue.toLocaleString()}</span>
+                 <span className="text-sm font-bold text-gray-900 dark:text-white">₹{product.revenue.toLocaleString()}</span>
                </div>
              ))}
               {topProducts.length === 0 && (
-                <p className="text-sm text-gray-400 text-center py-4">No product data available</p>
+                <p className="text-sm text-gray-400 dark:text-neutral-500 text-center py-4">No product data available</p>
              )}
            </div>
         </div>
 
         {/* Customer Insights */}
-        <div className="bg-white rounded-2xl border border-gray-100 p-5 shadow-sm">
-           <h3 className="font-bold text-gray-800 mb-4 flex items-center gap-2">
-             <Users size={18} className="text-gray-400" />
+        <div className="bg-white dark:bg-zinc-900/90 rounded-2xl border border-gray-200/80 dark:border-neutral-800 p-5 shadow-sm">
+           <h3 className="font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2">
+             <Users size={18} className="text-gray-400 dark:text-neutral-500" />
              Top Customers
            </h3>
-           <div className="overflow-x-auto">
-             <table className="w-full text-sm item-center text-left">
-                <thead className="text-[11px] text-gray-400 uppercase tracking-wider border-b border-gray-100">
-                  <tr>
-                    <th className="pb-2 font-medium">Customer</th>
-                    <th className="pb-2 font-medium text-center">Orders</th>
-                    <th className="pb-2 font-medium text-right">Total Spent</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-gray-50">
-                  {customerInsights.map((customer, i) => (
-                    <tr key={i} className="group hover:bg-gray-50 transition-colors">
-                      <td className="py-3 pr-2">
-                        <div className="flex items-center gap-2">
-                          <div className="w-8 h-8 rounded-full bg-primary/10 text-primary flex items-center justify-center font-bold text-xs uppercase">
-                            {customer.email.slice(0, 2)}
-                          </div>
-                          <div>
-                             <p className="font-medium text-gray-800 truncate max-w-[140px]">{customer.email}</p>
-                          </div>
-                        </div>
-                      </td>
-                      <td className="py-3 text-center text-gray-600">{customer.ordersCount}</td>
-                      <td className="py-3 text-right font-bold text-gray-700">₹{customer.totalSpent.toLocaleString()}</td>
-                    </tr>
-                  ))}
-                   {customerInsights.length === 0 && (
-                      <tr>
-                        <td colSpan="3" className="text-center py-4 text-gray-400">No customer data yet</td>
-                      </tr>
-                   )}
-                </tbody>
-             </table>
+           <div className="space-y-2">
+             {customerInsights.map((customer, i) => (
+               <div key={i} className="flex items-center justify-between p-3 hover:bg-gray-50 dark:hover:bg-neutral-800/60 rounded-xl transition-colors">
+                 <div className="flex items-center gap-3">
+                   <span className="w-6 h-6 flex items-center justify-center bg-gray-100 dark:bg-neutral-800 text-xs font-bold text-gray-600 dark:text-neutral-300 rounded-full">
+                     {i + 1}
+                   </span>
+                   <div>
+                     <p className="text-sm font-semibold text-gray-900 dark:text-white line-clamp-1">{customer.email}</p>
+                     <p className="text-[11px] text-gray-400 dark:text-neutral-400">
+                       {customer.ordersCount} {customer.ordersCount === 1 ? 'order' : 'orders'}
+                     </p>
+                   </div>
+                 </div>
+                 <span className="text-sm font-bold text-gray-900 dark:text-white">₹{customer.totalSpent.toLocaleString()}</span>
+               </div>
+             ))}
+              {customerInsights.length === 0 && (
+                <p className="text-sm text-gray-400 dark:text-neutral-500 text-center py-4">No customer data yet</p>
+             )}
            </div>
         </div>
       </div>
@@ -463,17 +450,17 @@ const AnalyticsDashboard = () => {
   );
 };
 
-const StatCard = ({ title, value, icon: Icon, trend, trendUp, color }) => (
-  <div className="bg-white dark:bg-zinc-900 p-6 rounded-3xl border border-gray-100 dark:border-neutral-900 shadow-sm hover:shadow-md hover:-translate-y-0.5 transition-all duration-300 group">
+const StatCard = ({ title, value, icon: Icon, trend, trendUp }) => (
+  <div className="bg-white dark:bg-zinc-900/90 p-5 sm:p-6 rounded-2xl border border-gray-200/80 dark:border-neutral-800 shadow-sm hover:border-gray-300 dark:hover:border-neutral-700 transition-all duration-300 group">
     <div className="flex items-start justify-between mb-4">
-      <div className={`w-12 h-12 rounded-2xl flex items-center justify-center transition-transform group-hover:scale-105 duration-300 ${color} shadow-sm`}>
-        <Icon size={22} className="stroke-[2]" />
+      <div className="w-10 h-10 rounded-xl flex items-center justify-center bg-gray-100 dark:bg-neutral-800 text-gray-800 dark:text-neutral-200 border border-gray-200/60 dark:border-neutral-700/60 transition-transform duration-300 group-hover:scale-105 shadow-sm">
+        <Icon size={18} className="stroke-[2]" />
       </div>
       {trend && (
-        <div className={`flex items-center gap-1 text-[11px] font-extrabold px-2.5 py-1 rounded-full shadow-sm ${
+        <div className={`flex items-center gap-1 text-[11px] font-extrabold px-2.5 py-1 rounded-full ${
           trendUp 
-            ? 'bg-green-50 dark:bg-green-950/20 text-green-600 dark:text-green-400 border border-green-100 dark:border-green-900/30' 
-            : 'bg-red-50 dark:bg-red-950/20 text-red-600 dark:text-red-400 border border-red-100 dark:border-red-900/30'
+            ? 'bg-emerald-50 dark:bg-emerald-950/30 text-emerald-600 dark:text-emerald-400 border border-emerald-100 dark:border-emerald-900/40' 
+            : 'bg-red-50 dark:bg-red-950/30 text-red-600 dark:text-red-400 border border-red-100 dark:border-red-900/40'
         }`}>
           {trendUp ? <ArrowUpRight size={12} className="stroke-[2.5]" /> : <ArrowDownRight size={12} className="stroke-[2.5]" />}
           {trend}
@@ -481,8 +468,8 @@ const StatCard = ({ title, value, icon: Icon, trend, trendUp, color }) => (
       )}
     </div>
     <div className="space-y-1">
-      <p className="text-[10px] font-black text-gray-400 dark:text-neutral-500 uppercase tracking-widest">{title}</p>
-      <h3 className="text-3xl font-black text-gray-900 dark:text-white tracking-tight">{value}</h3>
+      <p className="text-[11px] font-bold text-gray-400 dark:text-neutral-500 uppercase tracking-wider">{title}</p>
+      <h3 className="text-2xl sm:text-3xl font-extrabold text-gray-900 dark:text-white tracking-tight">{value}</h3>
     </div>
   </div>
 );

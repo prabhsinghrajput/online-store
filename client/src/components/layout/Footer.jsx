@@ -63,11 +63,9 @@ function Footer() {
             </h4>
             <ul className="space-y-2 text-[11px] font-semibold">
               <li><Link to="/products" className="hover:text-gray-900 dark:hover:text-white transition-colors">All Products</Link></li>
-              <li><Link to="/products" className="hover:text-gray-900 dark:hover:text-white transition-colors">T-Shirts</Link></li>
-              <li><Link to="/products" className="hover:text-gray-900 dark:hover:text-white transition-colors">Hoodies</Link></li>
-              <li><Link to="/products" className="hover:text-gray-900 dark:hover:text-white transition-colors">Jackets</Link></li>
-              <li><Link to="/products" className="hover:text-gray-900 dark:hover:text-white transition-colors">Pants</Link></li>
-              <li><Link to="/products" className="hover:text-gray-900 dark:hover:text-white transition-colors">Accessories</Link></li>
+              <li><Link to="/men" className="hover:text-gray-900 dark:hover:text-white transition-colors">Men</Link></li>
+              <li><Link to="/women" className="hover:text-gray-900 dark:hover:text-white transition-colors">Women</Link></li>
+              <li><Link to="/accessories" className="hover:text-gray-900 dark:hover:text-white transition-colors">Accessories</Link></li>
             </ul>
           </div>
 
@@ -77,12 +75,10 @@ function Footer() {
               Collections
             </h4>
             <ul className="space-y-2 text-[11px] font-semibold">
-              <li><Link to="/products" className="hover:text-gray-900 dark:hover:text-white transition-colors">New Arrivals</Link></li>
-              <li><Link to="/products" className="hover:text-gray-900 dark:hover:text-white transition-colors">Essentials</Link></li>
-              <li><Link to="/products" className="hover:text-gray-900 dark:hover:text-white transition-colors">Signature</Link></li>
-              <li><Link to="/products" className="hover:text-gray-900 dark:hover:text-white transition-colors">Street</Link></li>
-              <li><Link to="/products" className="hover:text-gray-900 dark:hover:text-white transition-colors">Denim</Link></li>
-              <li><Link to="/products" className="text-red-500 hover:text-red-600 transition-colors">Sale</Link></li>
+              <li><Link to="/new-arrivals" className="hover:text-gray-900 dark:hover:text-white transition-colors">New Arrivals</Link></li>
+              <li><Link to="/men" className="hover:text-gray-900 dark:hover:text-white transition-colors">Hoodies & Tops</Link></li>
+              <li><Link to="/women" className="hover:text-gray-900 dark:hover:text-white transition-colors">Bottoms & Crops</Link></li>
+              <li><Link to="/accessories" className="hover:text-gray-900 dark:hover:text-white transition-colors">Caps & Bags</Link></li>
             </ul>
           </div>
 
