@@ -26,9 +26,21 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 const UPLOADS_DIR = path.join(__dirname, '..', 'uploads');
 
+app.set('trust proxy', 1);
 app.use(cookieParser());
 
 const isProd = process.env.NODE_ENV === 'production';
+
+// Connect to MongoDB before handling API requests
+app.use(async (req, res, next) => {
+  try {
+    await connectDB();
+    next();
+  } catch (err) {
+    console.error('Database connection error in request:', err);
+    res.status(500).json({ error: 'Database connection failed' });
+  }
+});
 
 // Security headers
 app.use(helmet({
@@ -51,7 +63,7 @@ app.use(helmet({
 // Rate limiting - 100 requests per 15 minutes per IP (increased in development)
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: process.env.NODE_ENV === 'production' ? 100 : 10000, // Limit each IP to 100 requests per windowMs in production, 10000 in dev
+  max: process.env.NODE_ENV === 'production' ? 500 : 10000,
   message: { error: 'Too many requests from this IP, please try again later.' },
   standardHeaders: true,
   legacyHeaders: false,
@@ -60,21 +72,21 @@ const limiter = rateLimit({
 // CORS configuration
 const allowedOrigins = process.env.CLIENT_ORIGIN
   ? process.env.CLIENT_ORIGIN.split(',').map(origin => origin.trim())
-  : ['http://localhost:5173'];
+  : ['http://localhost:5173', 'http://localhost:3000'];
 
 app.use(cors({
   origin: function(origin, callback) {
-    // Allow requests with no origin (like server-to-server or tools) only in development
+    // Allow requests with no origin (like same-origin, server-to-server, mobile, curl)
     if (!origin) {
-      if (process.env.NODE_ENV !== 'production') {
-        return callback(null, true);
-      }
-      return callback(new Error('CORS Policy: Origin header is required in production'), false);
+      return callback(null, true);
     }
 
-    if (allowedOrigins.indexOf(origin) === -1) {
-      const msg = 'The CORS policy for this site does not allow access from the specified Origin.';
-      return callback(new Error(msg), false);
+    if (process.env.NODE_ENV === 'production') {
+      if (origin.endsWith('.vercel.app') || allowedOrigins.includes(origin)) {
+        return callback(null, true);
+      }
+    } else {
+      return callback(null, true);
     }
     return callback(null, true);
   },
@@ -86,7 +98,7 @@ app.use(cors({
 // Apply rate limiting to all API routes
 app.use('/api', limiter);
 
-// Body parser with reduced size limit (was 10mb, now 100kb)
+// Body parser
 app.use(express.json({ limit: '100kb' }));
 app.use(express.urlencoded({ limit: '100kb', extended: true }));
 
@@ -107,12 +119,15 @@ app.use('/api/upload', uploadRouter);
 // Error handling middleware (must be last)
 app.use(errorHandler);
 
-// Start server
-connectDB().then(() => {
-  app.listen(PORT, () => {
-    console.log(`Server running on http://localhost:${PORT}`);
-    console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
-    console.log(`Allowed origins: ${allowedOrigins.join(', ')}`);
+// Start server locally when not running inside Vercel serverless environment
+if (!process.env.VERCEL) {
+  connectDB().then(() => {
+    app.listen(PORT, () => {
+      console.log(`Server running on http://localhost:${PORT}`);
+      console.log(`Environment: ${process.env.NODE_ENV || 'development'}`);
+      console.log(`Allowed origins: ${allowedOrigins.join(', ')}`);
+    });
   });
-});
-// Trigger restart to pick up free port 3001
+}
+
+export default app;
